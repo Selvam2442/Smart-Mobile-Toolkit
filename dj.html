@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DJ Screen - Toolkit</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .setting-group { text-align: left; margin-bottom: 20px; }
+        .setting-group label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.9rem; color: var(--text-muted); }
+        .styled-select { width: 100%; padding: 12px; background: rgba(0,0,0,0.5); color: #fff; border: 1px solid var(--surface-border); border-radius: 8px; outline: none; font-size: 1rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="tool-header">
+            <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
+            <h2>DJ Screen</h2>
+        </div>
+        
+        <div class="tool-panel">
+            <div class="setting-group">
+                <label><i class="fa-solid fa-sliders"></i> Select Mode:</label>
+                <select id="dj-mode" class="styled-select">
+                    <option value="normal">Static Color</option>
+                    <option value="disco">Strobe (Random)</option>
+                    <option value="police">Police (Red & Blue)</option>
+                </select>
+            </div>
+
+            <div class="setting-group">
+                <label><i class="fa-solid fa-gauge-high"></i> Strobe Speed:</label>
+                <input type="range" id="dj-speed" min="10" max="1000" value="850">
+            </div>
+
+            <div class="setting-group">
+                <label><i class="fa-solid fa-lightbulb"></i> Brightness:</label>
+                <input type="range" id="dj-bright" min="10" max="100" value="100">
+            </div>
+            
+            <div class="setting-group">
+                <label><i class="fa-solid fa-fill-drip"></i> Static Base Color:</label>
+                <input type="color" id="dj-color" value="#aa00ff" style="width:100%; height: 50px; border:none; background:none; cursor:pointer; border-radius: 8px;">
+            </div>
+
+            <button id="dj-toggle" class="btn btn-secondary" style="width: 100%; margin-top: 10px;"><i class="fa-solid fa-expand"></i> LAUNCH FULLSCREEN</button>
+        </div>
+    </div>
+    
+    <div id="fullscreen-overlay" style="background-color: #000; z-index: 9999;"></div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const clickSound = new Audio('data:audio/wav;base64,UklGRlIAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YTEAAAAA/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/w==');
+            document.querySelectorAll('.btn, .back-btn').forEach(el => el.addEventListener('click', () => clickSound.cloneNode().play().catch(()=>{})));
+
+            const overlay = document.getElementById('fullscreen-overlay');
+            const toggleBtn = document.getElementById('dj-toggle');
+            const modeSelect = document.getElementById('dj-mode');
+            const speedSlider = document.getElementById('dj-speed');
+            const brightSlider = document.getElementById('dj-bright');
+            const colorPicker = document.getElementById('dj-color');
+            
+            let djInterval;
+            let isDjOn = false;
+
+            function updateDjScreen() {
+                if (!isDjOn) return;
+                clearInterval(djInterval);
+                
+                const layer = document.getElementById('dj-layer');
+                if(!layer) return;
+
+                let speed = 1010 - speedSlider.value;
+                // Opacity applies to the color layer. Since the main overlay is pure black,
+                // lowering opacity just makes the color darker without showing the background UI.
+                layer.style.opacity = brightSlider.value / 100;
+
+                if (modeSelect.value === 'normal') {
+                    layer.style.backgroundColor = colorPicker.value;
+                } else if (modeSelect.value === 'disco') {
+                    djInterval = setInterval(() => {
+                        layer.style.backgroundColor = '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0');
+                    }, speed);
+                } else if (modeSelect.value === 'police') {
+                    let isRed = true;
+                    djInterval = setInterval(() => {
+                        layer.style.backgroundColor = isRed ? '#ff0000' : '#0000ff';
+                        isRed = !isRed;
+                    }, speed);
+                }
+            }
+
+            toggleBtn.addEventListener('click', () => {
+                isDjOn = !isDjOn;
+                if (isDjOn) {
+                    overlay.style.display = 'flex';
+                    // We inject a color layer AND a button. 
+                    // The color layer changes, but the button stays on top.
+                    overlay.innerHTML = `
+                        <div id="dj-layer" style="position:absolute; top:0; left:0; width:100%; height:100%; z-index: 1;"></div>
+                        <button id="exit-dj" class="btn" style="background:#000; border-color:#fff; color:#fff; position:absolute; bottom:40px; box-shadow: 0 10px 20px rgba(0,0,0,0.5); z-index: 2;"><i class="fa-solid fa-compress"></i> EXIT DJ MODE</button>
+                    `;
+                    
+                    document.documentElement.requestFullscreen().catch(()=>{});
+                    updateDjScreen();
+                    
+                    document.getElementById('exit-dj').addEventListener('click', () => toggleBtn.click());
+                } else {
+                    overlay.style.display = 'none';
+                    clearInterval(djInterval);
+                    overlay.innerHTML = ''; // Clean up
+                    if(document.fullscreenElement) document.exitFullscreen().catch(()=>{});
+                }
+            });
+
+            [modeSelect, speedSlider, brightSlider, colorPicker].forEach(el => el.addEventListener('input', updateDjScreen));
+        });
+    </script>
+</body>
+</html>

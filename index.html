@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Smart Mobile Toolkit</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <header>
+        <h1>Mobile Toolkit</h1>
+    </header>
+
+    <main class="container">
+        <div class="grid">
+            <a href="audio.html" class="card">
+                <i class="fa-solid fa-headphones-simple"></i>
+                <h3>Audio Tester</h3>
+            </a>
+            <a href="dj.html" class="card">
+                <i class="fa-solid fa-compact-disc"></i>
+                <h3>DJ Screen</h3>
+            </a>
+            <a href="flashlight.html" class="card">
+                <i class="fa-solid fa-bolt"></i>
+                <h3>Flashlight</h3>
+            </a>
+            <a href="timer.html" class="card">
+                <i class="fa-solid fa-stopwatch"></i>
+                <h3>Timer</h3>
+            </a>
+            <a href="color.html" class="card">
+                <i class="fa-solid fa-eye-dropper"></i>
+                <h3>Color Picker</h3>
+            </a>
+            <a href="notes.html" class="card">
+                <i class="fa-solid fa-clipboard-list"></i>
+                <h3>Notes</h3>
+            </a>
+        </div>
+    </main>
+
+    <footer>
+        <p><i class="fa-solid fa-code"></i> Created by Antony</p>
+    </footer>
+
+    <script>
+        // Global button click sound for interactive elements
+        document.addEventListener("DOMContentLoaded", () => {
+            const clickSound = new Audio('data:audio/wav;base64,UklGRlIAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YTEAAAAA/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/w==');
+            document.querySelectorAll('a.card, .btn').forEach(el => {
+                el.addEventListener('click', () => { clickSound.cloneNode().play().catch(()=>{}); });
+            });
+        });
+    </script>
+</body>
+</html>

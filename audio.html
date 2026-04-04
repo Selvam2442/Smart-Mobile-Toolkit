@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Tester - Toolkit</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="tool-header">
+            <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
+            <h2>Audio Tester</h2>
+        </div>
+        
+        <div class="tool-panel">
+            <i class="fa-solid fa-headphones-simple" style="font-size: 5rem; color: var(--primary-glow); margin-bottom: 20px; filter: drop-shadow(0 0 10px var(--primary-glow));"></i>
+            <p id="audio-feedback" style="margin-bottom: 30px; color: var(--text-muted); font-size: 1.1rem;">Ready to test</p>
+            
+            <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
+                <button id="btn-left" class="btn"><i class="fa-solid fa-arrow-left"></i> LEFT</button>
+                <button id="btn-right" class="btn">RIGHT <i class="fa-solid fa-arrow-right"></i></button>
+            </div>
+            <p style="margin-top: 30px; font-size: 0.85rem; color: #777;">Click to play the short test audio.</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const feedback = document.getElementById('audio-feedback');
+
+            const leftAudio = new Audio("left.mp3");
+            const rightAudio = new Audio("right.mp3");
+
+            // LEFT BUTTON CLICK
+            document.getElementById('btn-left').addEventListener('click', () => {
+                // 1. Immediately stop right audio and reset it
+                rightAudio.pause();
+                rightAudio.currentTime = 0;
+                
+                // 2. Play left audio from the beginning
+                leftAudio.currentTime = 0; 
+                leftAudio.play().catch(() => {});
+                
+                // 3. Update UI
+                feedback.innerHTML = `Playing <strong style="color:var(--primary-glow)">LEFT</strong>...`;
+                setTimeout(() => feedback.innerText = "Ready to test", 3000); // Reset text after 3 seconds
+            });
+
+            // RIGHT BUTTON CLICK
+            document.getElementById('btn-right').addEventListener('click', () => {
+                // 1. Immediately stop left audio and reset it
+                leftAudio.pause();
+                leftAudio.currentTime = 0;
+                
+                // 2. Play right audio from the beginning
+                rightAudio.currentTime = 0; 
+                rightAudio.play().catch(() => {});
+                
+                // 3. Update UI
+                feedback.innerHTML = `Playing <strong style="color:var(--primary-glow)">RIGHT</strong>...`;
+                setTimeout(() => feedback.innerText = "Ready to test", 3000); // Reset text after 3 seconds
+            });
+        });
+    </script>
+</body>
+</html>

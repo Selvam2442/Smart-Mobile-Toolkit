@@ -20,7 +20,7 @@ This project also serves as a showcase of:
 ---
 
 ## 🌐 Live Demo 
-**[Visit Website]((https://selvam2442.github.io/Smart-Mobile-Toolkit/))**
+**[Visit Website](https://selvam2442.github.io/Smart-Mobile-Toolkit/)**
 
 ---
 

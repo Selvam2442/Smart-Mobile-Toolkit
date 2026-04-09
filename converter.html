@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit Converter - Toolkit</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .converter-box { display: flex; gap: 10px; align-items: center; }
+        .swap-btn {
+            background: transparent; border: none; color: var(--secondary-glow);
+            font-size: 1.8rem; cursor: pointer; margin: 10px 0; transition: 0.3s;
+            display: flex; justify-content: center; width: 100%;
+        }
+        .swap-btn:hover { transform: scale(1.1) rotate(180deg); color: var(--primary-glow); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="tool-header">
+            <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
+            <h2>Unit Converter</h2>
+        </div>
+        
+        <div class="tool-panel">
+            <div class="input-group">
+                <label><i class="fa-solid fa-layer-group"></i> Category</label>
+                <select id="category-select" class="styled-select">
+                    <option value="length">📏 Length & Distance</option>
+                    <option value="weight">⚖️ Weight & Mass</option>
+                    <option value="temperature">🌡️ Temperature</option>
+                </select>
+            </div>
+
+            <hr style="border-color: var(--surface-border); margin: 20px 0;">
+
+            <div class="input-group">
+                <label>From</label>
+                <div class="converter-box">
+                    <input type="number" id="input-value" class="styled-input" style="flex: 2;" value="1">
+                    <select id="input-unit" class="styled-select" style="flex: 1.5;"></select>
+                </div>
+            </div>
+
+            <button id="btn-swap" class="swap-btn" title="Swap Units"><i class="fa-solid fa-arrows-up-down"></i></button>
+
+            <div class="input-group">
+                <label>To</label>
+                <div class="converter-box">
+                    <input type="number" id="output-value" class="styled-input" style="flex: 2; color: var(--primary-glow); font-weight: 800;" readonly>
+                    <select id="output-unit" class="styled-select" style="flex: 1.5;"></select>
+                </div>
+            </div>
+            
+            <button id="btn-copy" class="btn" style="width: 100%; margin-top: 15px;"><i class="fa-solid fa-copy"></i> COPY RESULT</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const clickSound = new Audio('data:audio/wav;base64,UklGRlIAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YTEAAAAA/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/w==');
+            document.querySelectorAll('button, .back-btn, select').forEach(el => el.addEventListener('click', () => clickSound.cloneNode().play().catch(()=>{})));
+
+            const categorySelect = document.getElementById('category-select');
+            const inputUnit = document.getElementById('input-unit');
+            const outputUnit = document.getElementById('output-unit');
+            const inputValue = document.getElementById('input-value');
+            const outputValue = document.getElementById('output-value');
+            const btnSwap = document.getElementById('btn-swap');
+            const btnCopy = document.getElementById('btn-copy');
+
+            // Simplified Unit Data
+            const unitsData = {
+                length: {
+                    options: { "Meter (m)": 1, "Kilometer (km)": 1000, "Centimeter (cm)": 0.01, "Mile (mi)": 1609.34, "Foot (ft)": 0.3048, "Inch (in)": 0.0254 }
+                },
+                weight: {
+                    options: { "Kilogram (kg)": 1, "Gram (g)": 0.001, "Pound (lb)": 0.453592, "Ounce (oz)": 0.0283495 }
+                },
+                temperature: {
+                    options: { "Celsius (°C)": "C", "Fahrenheit (°F)": "F", "Kelvin (K)": "K" }
+                }
+            };
+
+            function populateUnits() {
+                const category = categorySelect.value;
+                const options = Object.keys(unitsData[category].options);
+                inputUnit.innerHTML = '';
+                outputUnit.innerHTML = '';
+                options.forEach(opt => {
+                    inputUnit.innerHTML += `<option value="${opt}">${opt}</option>`;
+                    outputUnit.innerHTML += `<option value="${opt}">${opt}</option>`;
+                });
+                outputUnit.selectedIndex = 1;
+                calculate();
+            }
+
+            function calculate() {
+                const category = categorySelect.value;
+                const val = parseFloat(inputValue.value);
+                if (isNaN(val)) { outputValue.value = ""; return; }
+
+                const fromUnit = inputUnit.value;
+                const toUnit = outputUnit.value;
+
+                if (category === "temperature") {
+                    const fromCode = unitsData.temperature.options[fromUnit];
+                    const toCode = unitsData.temperature.options[toUnit];
+                    let result = val;
+                    if (fromCode === "C" && toCode === "F") result = (val * 9/5) + 32;
+                    else if (fromCode === "C" && toCode === "K") result = val + 273.15;
+                    else if (fromCode === "F" && toCode === "C") result = (val - 32) * 5/9;
+                    else if (fromCode === "F" && toCode === "K") result = (val - 32) * 5/9 + 273.15;
+                    else if (fromCode === "K" && toCode === "C") result = val - 273.15;
+                    else if (fromCode === "K" && toCode === "F") result = (val - 273.15) * 9/5 + 32;
+                    outputValue.value = Number.isInteger(result) ? result : result.toFixed(2);
+                    return;
+                }
+
+                const fromRate = unitsData[category].options[fromUnit];
+                const toRate = unitsData[category].options[toUnit];
+                const finalResult = (val * fromRate) / toRate;
+                outputValue.value = Number.isInteger(finalResult) ? finalResult : parseFloat(finalResult.toPrecision(6));
+            }
+
+            btnSwap.addEventListener('click', () => {
+                const tempIndex = inputUnit.selectedIndex;
+                inputUnit.selectedIndex = outputUnit.selectedIndex;
+                outputUnit.selectedIndex = tempIndex;
+                calculate();
+            });
+
+            btnCopy.addEventListener('click', () => {
+                if (!outputValue.value) return;
+                navigator.clipboard.writeText(outputValue.value);
+                const ogHtml = btnCopy.innerHTML;
+                btnCopy.innerHTML = '<i class="fa-solid fa-check"></i> COPIED';
+                setTimeout(() => btnCopy.innerHTML = ogHtml, 1500);
+            });
+
+            categorySelect.addEventListener('change', populateUnits);
+            [inputValue, inputUnit, outputUnit].forEach(el => el.addEventListener('input', calculate));
+            populateUnits();
+        });
+    </script>
+</body>
+</html>

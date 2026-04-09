@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Reverser - Toolkit</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .input-group { margin-bottom: 20px; text-align: left; }
+        .input-group label { display: block; margin-bottom: 8px; font-weight: 600; color: var(--text-muted); font-size: 0.9rem; }
+        .styled-input { width: 100%; padding: 12px; background: rgba(0,0,0,0.5); color: #fff; border: 1px solid var(--surface-border); border-radius: 8px; outline: none; transition: 0.3s; }
+        .styled-input:focus { border-color: var(--secondary-glow); box-shadow: 0 0 15px rgba(170, 0, 255, 0.1) inset;}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="tool-header">
+            <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
+            <h2>Text Reverser</h2>
+        </div>
+        
+        <div class="tool-panel" style="padding: 30px 20px;">
+            <div class="input-group">
+                <label>Original Text</label>
+                <textarea id="rev-input" class="styled-input" style="height: 120px;" placeholder="Type text to reverse..."></textarea>
+            </div>
+
+            <div class="input-group">
+                <label>Reverse Mode</label>
+                <select id="rev-mode" class="styled-input" style="appearance: auto;">
+                    <option value="chars">Reverse Characters (olleh)</option>
+                    <option value="words">Reverse Word Order (world hello)</option>
+                </select>
+            </div>
+
+            <div style="display: flex; gap: 10px; margin-bottom: 30px;">
+                <button id="btn-reverse" class="btn btn-secondary" style="flex: 2;"><i class="fa-solid fa-right-left"></i> REVERSE IT</button>
+                <button id="btn-clear" class="btn" style="flex: 1; border-color: #ff4444; color: #ff4444;"><i class="fa-solid fa-eraser"></i></button>
+            </div>
+
+            <div class="input-group">
+                <label>Reversed Result</label>
+                <textarea id="rev-output" class="styled-input" style="height: 120px;" readonly placeholder="Result will appear here..."></textarea>
+            </div>
+
+            <button id="btn-copy" class="btn" style="width: 100%;"><i class="fa-solid fa-copy"></i> COPY RESULT</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const clickSound = new Audio('data:audio/wav;base64,UklGRlIAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YTEAAAAA/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/w==');
+            document.querySelectorAll('button, .back-btn').forEach(el => el.addEventListener('click', () => clickSound.cloneNode().play().catch(()=>{})));
+
+            const inputTxt = document.getElementById('rev-input');
+            const outputTxt = document.getElementById('rev-output');
+            const modeSelect = document.getElementById('rev-mode');
+
+            document.getElementById('btn-reverse').addEventListener('click', () => {
+                const text = inputTxt.value;
+                if (!text) return;
+
+                if (modeSelect.value === 'chars') {
+                    // Reverses every single letter: "Hello" -> "olleH"
+                    outputTxt.value = text.split('').reverse().join('');
+                } else if (modeSelect.value === 'words') {
+                    // Reverses the word order: "Hello World" -> "World Hello"
+                    outputTxt.value = text.split(' ').reverse().join(' ');
+                }
+            });
+
+            document.getElementById('btn-clear').addEventListener('click', () => {
+                inputTxt.value = '';
+                outputTxt.value = '';
+            });
+
+            const copyBtn = document.getElementById('btn-copy');
+            copyBtn.addEventListener('click', () => {
+                if (!outputTxt.value) return;
+                navigator.clipboard.writeText(outputTxt.value);
+                const ogHtml = copyBtn.innerHTML;
+                copyBtn.innerHTML = '<i class="fa-solid fa-check"></i> COPIED!';
+                copyBtn.style.backgroundColor = 'var(--secondary-glow)';
+                copyBtn.style.color = '#fff';
+                setTimeout(() => {
+                    copyBtn.innerHTML = ogHtml;
+                    copyBtn.style.backgroundColor = '';
+                    copyBtn.style.color = '';
+                }, 1500);
+            });
+        });
+    </script>
+</body>
+</html>

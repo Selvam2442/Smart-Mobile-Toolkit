@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-bs-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -57,6 +57,7 @@
             document.querySelectorAll('button, .back-btn').forEach(el => el.addEventListener('click', () => clickSound.cloneNode().play().catch(()=>{})));
 
             const feedback = document.getElementById('audio-feedback');
+            // Ensure you place 'left.mp3' and 'right.mp3' in the same folder!
             const leftTrack = new Audio("left.mp3");
             const rightTrack = new Audio("right.mp3");
 

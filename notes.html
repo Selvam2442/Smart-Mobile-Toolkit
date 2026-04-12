@@ -4,20 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Advanced Notes - Toolkit</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <div class="container" id="main-container">
+    <div class="app-container" id="main-container">
         <div id="list-view">
             <div class="tool-header">
                 <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
-                <h2>Notes Library</h2>
-                <div class="info-btn" id="open-info"><i class="fa-solid fa-info"></i></div>
+                <h2 class="m-0">Notes Library</h2>
+                <button class="info-btn" data-bs-toggle="modal" data-bs-target="#infoModal"><i class="fa-solid fa-info"></i></button>
             </div>
             
             <div class="tool-panel">
-                <button id="create-new-btn" class="btn" style="width: 100%;"><i class="fa-solid fa-plus"></i> CREATE NEW NOTE</button>
+                <button id="create-new-btn" class="btn custom-btn w-100 m-0"><i class="fa-solid fa-plus"></i> CREATE NEW NOTE</button>
                 <div id="notes-grid"></div>
             </div>
         </div>
@@ -25,7 +26,7 @@
         <div id="editor-view" style="display: none; flex-direction: column; height: 100%;">
             <div class="tool-panel" id="editor-panel" style="display: flex; flex-direction: column; flex-grow: 1; padding: 20px;">
                 <div class="notes-header">
-                    <button id="back-to-list" class="back-btn" style="width: 45px; height: 45px;"><i class="fa-solid fa-arrow-left"></i></button>
+                    <button id="back-to-list" class="back-btn"><i class="fa-solid fa-arrow-left"></i></button>
                     <button id="toggle-fullscreen" class="tool-btn" style="flex-grow: 0; width: 45px; margin: 0;"><i class="fa-solid fa-expand"></i></button>
                 </div>
 
@@ -40,34 +41,38 @@
                 </div>
 
                 <div id="editor-area" contenteditable="true" placeholder="Start typing here..."></div>
-                
-                <button id="save-note" class="btn" style="width: 100%; margin-top: 15px;"><i class="fa-solid fa-floppy-disk"></i> SAVE NOTE</button>
+                <button id="save-note" class="btn custom-btn w-100 mt-3"><i class="fa-solid fa-floppy-disk"></i> SAVE NOTE</button>
             </div>
         </div>
     </div>
 
-    <div class="modal-overlay" id="info-modal">
-        <div class="info-modal">
-            <i class="fa-solid fa-clipboard-list modal-hero-icon"></i>
-            <h3>Advanced Notes</h3>
-            <p>Jot down formatted ideas instantly without heavy apps. Everything saves securely to your device offline!</p>
-            <ul>
-                <li><i class="fa-solid fa-pen-nib"></i> <strong>Rich Text:</strong> Use the toolbar to Bold, Italicize, or add clean Headings.</li>
-                <li><i class="fa-solid fa-square-check"></i> <strong>Smart Lists:</strong> Click the Checkbox icon. Press 'Enter' and a new box appears automatically!</li>
-                <li><i class="fa-solid fa-floppy-disk"></i> <strong>Auto-Save:</strong> Click back, and your note is automatically stored locally.</li>
-            </ul>
-            <button class="btn btn-secondary close-modal-btn" id="close-info"><i class="fa-solid fa-check"></i> GOT IT</button>
+    <div class="modal fade" id="infoModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fa-solid fa-clipboard-list"></i> About Advanced Notes</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Jot down formatted ideas instantly without heavy apps. Everything saves securely to your device offline!</p>
+                    <ul>
+                        <li><i class="fa-solid fa-pen-nib"></i> <strong>Rich Text:</strong> Use the toolbar to Bold, Italicize, or add clean Headings.</li>
+                        <li><i class="fa-solid fa-square-check"></i> <strong>Smart Lists:</strong> Click the Checkbox icon. Press 'Enter' and a new box appears automatically!</li>
+                        <li><i class="fa-solid fa-floppy-disk"></i> <strong>Auto-Save:</strong> Click back, and your note is automatically stored locally.</li>
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn custom-btn btn-secondary w-100 m-0" data-bs-dismiss="modal">GOT IT</button>
+                </div>
+            </div>
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             const playClick = () => new Audio('data:audio/wav;base64,UklGRlIAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YTEAAAAA/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/w==').play().catch(()=>{});
-            document.querySelectorAll('button, .back-btn, .info-btn').forEach(el => el.addEventListener('click', playClick));
-
-            const modal = document.getElementById('info-modal');
-            document.getElementById('open-info').addEventListener('click', () => modal.classList.add('active'));
-            document.getElementById('close-info').addEventListener('click', () => modal.classList.remove('active'));
+            document.querySelectorAll('button, .back-btn').forEach(el => el.addEventListener('click', playClick));
 
             const listView = document.getElementById('list-view'), editorView = document.getElementById('editor-view');
             const notesGrid = document.getElementById('notes-grid'), titleInput = document.getElementById('note-title-input');

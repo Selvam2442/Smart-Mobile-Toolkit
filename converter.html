@@ -4,15 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Unit Converter - Toolkit</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <div class="container">
+    <div class="app-container">
         <div class="tool-header">
             <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
-            <h2>Unit Converter</h2>
-            <div class="info-btn" id="open-info"><i class="fa-solid fa-info"></i></div>
+            <h2 class="m-0">Unit Converter</h2>
+            <button class="info-btn" data-bs-toggle="modal" data-bs-target="#infoModal"><i class="fa-solid fa-info"></i></button>
         </div>
         
         <div class="tool-panel">
@@ -21,32 +22,37 @@
             <div class="input-group"><label>From</label><div class="converter-box"><input type="number" id="input-value" class="styled-input" style="flex: 2;" value="1"><select id="input-unit" class="styled-select" style="flex: 1.5;"></select></div></div>
             <button id="btn-swap" class="swap-btn" title="Swap Units"><i class="fa-solid fa-arrows-up-down"></i></button>
             <div class="input-group"><label>To</label><div class="converter-box"><input type="number" id="output-value" class="styled-input" style="flex: 2; color: var(--primary-glow); font-weight: 800;" readonly><select id="output-unit" class="styled-select" style="flex: 1.5;"></select></div></div>
-            <button id="btn-copy" class="btn" style="width: 100%; margin-top: 15px;"><i class="fa-solid fa-copy"></i> COPY RESULT</button>
+            <button id="btn-copy" class="btn custom-btn w-100 mt-3"><i class="fa-solid fa-copy"></i> COPY RESULT</button>
         </div>
     </div>
 
-    <div class="modal-overlay" id="info-modal">
-        <div class="info-modal">
-            <i class="fa-solid fa-calculator modal-hero-icon"></i>
-            <h3>Unit Converter</h3>
-            <p>Get instant, offline conversions for real-world scenarios without needing to Google it.</p>
-            <ul>
-                <li><i class="fa-solid fa-ruler"></i> <strong>Length:</strong> Perfect for measuring distances or height.</li>
-                <li><i class="fa-solid fa-temperature-half"></i> <strong>Temperature:</strong> Easily convert Celsius to Fahrenheit for weather or recipes.</li>
-                <li><i class="fa-solid fa-arrows-up-down"></i> <strong>Quick Swap:</strong> Click the middle arrow icon to reverse the calculation instantly!</li>
-            </ul>
-            <button class="btn btn-secondary close-modal-btn" id="close-info"><i class="fa-solid fa-check"></i> GOT IT</button>
+    <div class="modal fade" id="infoModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fa-solid fa-calculator"></i> Unit Converter</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Get instant, offline conversions for real-world scenarios without needing to Google it.</p>
+                    <ul>
+                        <li><i class="fa-solid fa-ruler"></i> <strong>Length:</strong> Perfect for measuring distances or height.</li>
+                        <li><i class="fa-solid fa-temperature-half"></i> <strong>Temperature:</strong> Easily convert Celsius to Fahrenheit.</li>
+                        <li><i class="fa-solid fa-arrows-up-down"></i> <strong>Quick Swap:</strong> Click the middle arrow icon to reverse the calculation instantly!</li>
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn custom-btn btn-secondary w-100 m-0" data-bs-dismiss="modal">GOT IT</button>
+                </div>
+            </div>
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             const playClick = () => new Audio('data:audio/wav;base64,UklGRlIAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YTEAAAAA/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/w==').play().catch(()=>{});
-            document.querySelectorAll('button, .back-btn, select, .info-btn').forEach(el => el.addEventListener('click', playClick));
-
-            const modal = document.getElementById('info-modal');
-            document.getElementById('open-info').addEventListener('click', () => modal.classList.add('active'));
-            document.getElementById('close-info').addEventListener('click', () => modal.classList.remove('active'));
+            document.querySelectorAll('button, .back-btn, select').forEach(el => el.addEventListener('click', playClick));
 
             const categorySelect = document.getElementById('category-select'), inputUnit = document.getElementById('input-unit'), outputUnit = document.getElementById('output-unit');
             const inputValue = document.getElementById('input-value'), outputValue = document.getElementById('output-value'), btnSwap = document.getElementById('btn-swap'), btnCopy = document.getElementById('btn-copy');

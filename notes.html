@@ -13,20 +13,20 @@
             <div class="tool-header">
                 <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
                 <h2>Notes Library</h2>
+                <div class="info-btn" id="open-info"><i class="fa-solid fa-info"></i></div>
             </div>
             
-            <div class="tool-panel" style="padding: 30px 20px;">
+            <div class="tool-panel">
                 <button id="create-new-btn" class="btn" style="width: 100%;"><i class="fa-solid fa-plus"></i> CREATE NEW NOTE</button>
-                <div id="notes-grid">
-                    </div>
+                <div id="notes-grid"></div>
             </div>
         </div>
 
         <div id="editor-view" style="display: none; flex-direction: column; height: 100%;">
-            <div class="tool-panel" id="editor-panel" style="display: flex; flex-direction: column; flex-grow: 1;">
+            <div class="tool-panel" id="editor-panel" style="display: flex; flex-direction: column; flex-grow: 1; padding: 20px;">
                 <div class="notes-header">
                     <button id="back-to-list" class="back-btn" style="width: 45px; height: 45px;"><i class="fa-solid fa-arrow-left"></i></button>
-                    <button id="toggle-fullscreen" class="tool-btn" style="flex-grow: 0; width: 45px;"><i class="fa-solid fa-expand"></i></button>
+                    <button id="toggle-fullscreen" class="tool-btn" style="flex-grow: 0; width: 45px; margin: 0;"><i class="fa-solid fa-expand"></i></button>
                 </div>
 
                 <input type="text" id="note-title-input" placeholder="Note Title..." style="width: 100%; background: transparent; border: none; border-bottom: 2px solid var(--surface-border); color: #fff; font-size: 1.5rem; font-weight: 600; padding: 10px 5px; margin-bottom: 15px; outline: none;">
@@ -34,195 +34,95 @@
                 <div class="toolbar">
                     <button class="tool-btn" onclick="formatDoc('bold')" title="Bold"><i class="fa-solid fa-bold"></i></button>
                     <button class="tool-btn" onclick="formatDoc('italic')" title="Italic"><i class="fa-solid fa-italic"></i></button>
-                    <button class="tool-btn" onclick="formatDoc('formatBlock', 'H1')" title="Heading 1">H1</button>
                     <button class="tool-btn" onclick="formatDoc('formatBlock', 'H2')" title="Heading 2">H2</button>
                     <button class="tool-btn" onclick="formatDoc('insertUnorderedList')" title="Bullet List"><i class="fa-solid fa-list-ul"></i></button>
                     <button class="tool-btn" onclick="insertCheckbox()" title="To-Do Checkbox"><i class="fa-regular fa-square-check"></i></button>
                 </div>
 
-                <div id="editor-area" contenteditable="true" placeholder="Start typing your awesome ideas here..."></div>
+                <div id="editor-area" contenteditable="true" placeholder="Start typing here..."></div>
                 
-                <div style="display: flex; gap: 15px; margin-top: 20px;">
-                    <button id="save-note" class="btn" style="width: 100%;"><i class="fa-solid fa-floppy-disk"></i> SAVE NOTE</button>
-                </div>
+                <button id="save-note" class="btn" style="width: 100%; margin-top: 15px;"><i class="fa-solid fa-floppy-disk"></i> SAVE NOTE</button>
             </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="info-modal">
+        <div class="info-modal">
+            <i class="fa-solid fa-clipboard-list modal-hero-icon"></i>
+            <h3>Advanced Notes</h3>
+            <p>Jot down formatted ideas instantly without heavy apps. Everything saves securely to your device offline!</p>
+            <ul>
+                <li><i class="fa-solid fa-pen-nib"></i> <strong>Rich Text:</strong> Use the toolbar to Bold, Italicize, or add clean Headings.</li>
+                <li><i class="fa-solid fa-square-check"></i> <strong>Smart Lists:</strong> Click the Checkbox icon. Press 'Enter' and a new box appears automatically!</li>
+                <li><i class="fa-solid fa-floppy-disk"></i> <strong>Auto-Save:</strong> Click back, and your note is automatically stored locally.</li>
+            </ul>
+            <button class="btn btn-secondary close-modal-btn" id="close-info"><i class="fa-solid fa-check"></i> GOT IT</button>
         </div>
     </div>
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            const clickSound = new Audio('data:audio/wav;base64,UklGRlIAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YTEAAAAA/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/w==');
-            const playClick = () => clickSound.cloneNode().play().catch(()=>{});
-            document.querySelectorAll('button, .back-btn').forEach(el => el.addEventListener('click', playClick));
+            const playClick = () => new Audio('data:audio/wav;base64,UklGRlIAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YTEAAAAA/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/w==').play().catch(()=>{});
+            document.querySelectorAll('button, .back-btn, .info-btn').forEach(el => el.addEventListener('click', playClick));
 
-            const listView = document.getElementById('list-view');
-            const editorView = document.getElementById('editor-view');
-            const notesGrid = document.getElementById('notes-grid');
-            const titleInput = document.getElementById('note-title-input');
-            const editorArea = document.getElementById('editor-area');
-            const editorPanel = document.getElementById('editor-panel');
+            const modal = document.getElementById('info-modal');
+            document.getElementById('open-info').addEventListener('click', () => modal.classList.add('active'));
+            document.getElementById('close-info').addEventListener('click', () => modal.classList.remove('active'));
+
+            const listView = document.getElementById('list-view'), editorView = document.getElementById('editor-view');
+            const notesGrid = document.getElementById('notes-grid'), titleInput = document.getElementById('note-title-input');
+            const editorArea = document.getElementById('editor-area'), editorPanel = document.getElementById('editor-panel');
             
-            let notes = JSON.parse(localStorage.getItem('smart_notes_advanced')) || [];
-            let currentEditingId = null;
+            let notes = JSON.parse(localStorage.getItem('smart_notes_advanced')) || []; let currentId = null;
 
             function renderNotes() {
                 notesGrid.innerHTML = '';
-                if(notes.length === 0) {
-                    notesGrid.innerHTML = '<p style="color: var(--text-muted); grid-column: 1/-1; text-align: center; margin-top: 20px;">No notes yet. Create one!</p>';
-                    return;
-                }
-
-                notes.sort((a, b) => b.updatedAt - a.updatedAt).forEach(note => {
-                    const card = document.createElement('div');
-                    card.className = 'note-card';
-                    card.onclick = () => openEditor(note.id);
-                    
-                    const tmp = document.createElement('div');
-                    tmp.innerHTML = note.content;
-                    const previewText = tmp.textContent || tmp.innerText || "";
-
-                    card.innerHTML = `
-                        <h4>${note.title || 'Untitled Note'}</h4>
-                        <p>${previewText || 'No content...'}</p>
-                        <span class="date">${new Date(note.updatedAt).toLocaleString()}</span>
-                        <button class="delete-note" onclick="deleteNote(event, ${note.id})"><i class="fa-solid fa-trash"></i></button>
-                    `;
-                    notesGrid.appendChild(card);
+                if(notes.length === 0) return notesGrid.innerHTML = '<p style="color: var(--text-muted); grid-column: 1/-1; text-align: center; margin-top: 20px;">No notes yet.</p>';
+                notes.sort((a,b) => b.updatedAt - a.updatedAt).forEach(n => {
+                    const tmp = document.createElement('div'); tmp.innerHTML = n.content;
+                    notesGrid.innerHTML += `<div class="note-card" onclick="openEditor(${n.id})"><h4>${n.title || 'Untitled'}</h4><p>${tmp.innerText || 'Empty...'}</p><span class="date">${new Date(n.updatedAt).toLocaleString()}</span><button class="delete-note" onclick="deleteNote(event, ${n.id})"><i class="fa-solid fa-trash"></i></button></div>`;
                 });
             }
 
-            function openEditor(id = null) {
-                listView.style.display = 'none';
-                editorView.style.display = 'flex';
-                
-                if (id) {
-                    const note = notes.find(n => n.id === id);
-                    currentEditingId = id;
-                    titleInput.value = note.title;
-                    editorArea.innerHTML = note.content;
-                } else {
-                    currentEditingId = Date.now();
-                    titleInput.value = '';
-                    editorArea.innerHTML = '';
-                }
-            }
+            window.openEditor = id => {
+                listView.style.display = 'none'; editorView.style.display = 'flex';
+                if (id) { const n = notes.find(x => x.id === id); currentId = id; titleInput.value = n.title; editorArea.innerHTML = n.content; } 
+                else { currentId = Date.now(); titleInput.value = ''; editorArea.innerHTML = ''; }
+            };
 
             document.getElementById('save-note').addEventListener('click', () => {
-                const title = titleInput.value.trim();
-                const content = editorArea.innerHTML;
-                
-                const existingIndex = notes.findIndex(n => n.id === currentEditingId);
-                
-                if (existingIndex > -1) {
-                    notes[existingIndex].title = title;
-                    notes[existingIndex].content = content;
-                    notes[existingIndex].updatedAt = Date.now();
-                } else {
-                    if (title !== '' || content !== '') {
-                        notes.push({ id: currentEditingId, title: title, content: content, updatedAt: Date.now() });
-                    }
-                }
-                
+                const t = titleInput.value.trim(), c = editorArea.innerHTML, i = notes.findIndex(n => n.id === currentId);
+                if (i > -1) { notes[i].title = t; notes[i].content = c; notes[i].updatedAt = Date.now(); } 
+                else if (t !== '' || c !== '') notes.push({ id: currentId, title: t, content: c, updatedAt: Date.now() });
                 localStorage.setItem('smart_notes_advanced', JSON.stringify(notes));
-                
-                const saveBtn = document.getElementById('save-note');
-                const originalHtml = saveBtn.innerHTML;
-                saveBtn.innerHTML = '<i class="fa-solid fa-check-double"></i> SAVED!';
-                saveBtn.style.backgroundColor = 'var(--primary-glow)';
-                saveBtn.style.color = '#000';
-                setTimeout(() => {
-                    saveBtn.innerHTML = originalHtml;
-                    saveBtn.style.backgroundColor = '';
-                    saveBtn.style.color = '';
-                }, 1500);
+                const b = document.getElementById('save-note'), og = b.innerHTML; b.innerHTML = '<i class="fa-solid fa-check"></i> SAVED!'; b.style.background = 'var(--primary-glow)'; b.style.color = '#000'; setTimeout(()=> { b.innerHTML=og; b.style.background=''; b.style.color=''; }, 1500);
             });
 
-            window.deleteNote = function(event, id) {
-                event.stopPropagation(); 
-                if(confirm("Delete this note permanently?")) {
-                    playClick();
-                    notes = notes.filter(n => n.id !== id);
-                    localStorage.setItem('smart_notes_advanced', JSON.stringify(notes));
-                    renderNotes();
-                }
-            };
-
+            window.deleteNote = (e, id) => { e.stopPropagation(); if(confirm("Delete note?")) { playClick(); notes = notes.filter(n => n.id !== id); localStorage.setItem('smart_notes_advanced', JSON.stringify(notes)); renderNotes(); } };
             document.getElementById('create-new-btn').addEventListener('click', () => openEditor(null));
-            
-            document.getElementById('back-to-list').addEventListener('click', () => {
-                document.getElementById('save-note').click();
-                editorView.style.display = 'none';
-                listView.style.display = 'block';
-                if(editorPanel.classList.contains('fullscreen-active')) toggleFullscreen();
-                renderNotes();
-            });
+            document.getElementById('back-to-list').addEventListener('click', () => { document.getElementById('save-note').click(); editorView.style.display = 'none'; listView.style.display = 'block'; if(editorPanel.classList.contains('fullscreen-active')) toggleFullscreen(); renderNotes(); });
 
-            const fullscreenBtn = document.getElementById('toggle-fullscreen');
-            window.toggleFullscreen = function() {
-                editorPanel.classList.toggle('fullscreen-active');
-                if(editorPanel.classList.contains('fullscreen-active')) {
-                    fullscreenBtn.innerHTML = '<i class="fa-solid fa-compress"></i>';
-                } else {
-                    fullscreenBtn.innerHTML = '<i class="fa-solid fa-expand"></i>';
-                }
-            };
-            fullscreenBtn.addEventListener('click', toggleFullscreen);
+            const fsBtn = document.getElementById('toggle-fullscreen');
+            window.toggleFullscreen = () => { editorPanel.classList.toggle('fullscreen-active'); fsBtn.innerHTML = editorPanel.classList.contains('fullscreen-active') ? '<i class="fa-solid fa-compress"></i>' : '<i class="fa-solid fa-expand"></i>'; };
+            fsBtn.addEventListener('click', toggleFullscreen);
 
-            window.formatDoc = function(cmd, value=null) {
-                document.execCommand(cmd, false, value);
-                editorArea.focus();
-            };
+            window.formatDoc = (cmd, val=null) => { document.execCommand(cmd, false, val); editorArea.focus(); };
+            window.insertCheckbox = () => { document.execCommand('insertHTML', false, '&nbsp;<input type="checkbox" style="vertical-align: middle;">&nbsp;'); editorArea.focus(); };
 
-            window.insertCheckbox = function() {
-                const checkboxHTML = '&nbsp;<input type="checkbox" style="vertical-align: middle;">&nbsp;';
-                document.execCommand('insertHTML', false, checkboxHTML);
-                editorArea.focus();
-            };
-
-            // 🐛 BUG FIX 1: Plain Text Paste Interceptor
-            editorArea.addEventListener('paste', function(e) {
-                e.preventDefault();
-                // Get plain text from clipboard
-                const text = (e.originalEvent || e).clipboardData.getData('text/plain');
-                // Insert it cleanly without website formatting
-                document.execCommand('insertText', false, text);
-            });
-
-            // 🐛 BUG FIX 2: Placeholder '<br>' Fix
-            editorArea.addEventListener('keyup', function() {
-                if(this.innerHTML === '<br>' || this.innerHTML === '<br><br>') {
-                    this.innerHTML = '';
-                }
-            });
-
-            // 🐛 BUG FIX 3: Smart Enter Key for Checkboxes
-            editorArea.addEventListener('keydown', function(e) {
+            editorArea.addEventListener('paste', e => { e.preventDefault(); document.execCommand('insertText', false, (e.originalEvent || e).clipboardData.getData('text/plain')); });
+            editorArea.addEventListener('keyup', function() { if(this.innerHTML==='<br>'||this.innerHTML==='<br><br>') this.innerHTML=''; });
+            editorArea.addEventListener('keydown', e => {
                 if (e.key === 'Enter') {
-                    const sel = window.getSelection();
-                    if (!sel.rangeCount) return;
-                    const range = sel.getRangeAt(0);
+                    const sel = window.getSelection(); if (!sel.rangeCount) return; const range = sel.getRangeAt(0);
                     let block = range.startContainer.nodeType === 3 ? range.startContainer.parentElement : range.startContainer;
-                    
-                    while (block && block.parentElement !== editorArea && block !== editorArea) {
-                        block = block.parentElement;
-                    }
+                    while (block && block.parentElement !== editorArea && block !== editorArea) block = block.parentElement;
                     if (block === editorArea) block = range.startContainer;
-
                     if (block && block.querySelector && block.querySelector('input[type="checkbox"]')) {
-                        const textContent = block.textContent.replace(/\u00A0/g, '').trim();
-                        if (textContent === '') {
-                            e.preventDefault();
-                            block.innerHTML = ''; 
-                            document.execCommand('insertParagraph', false); 
-                        } else {
-                            e.preventDefault();
-                            document.execCommand('insertParagraph', false);
-                            document.execCommand('insertHTML', false, '&nbsp;<input type="checkbox" style="vertical-align: middle;">&nbsp;');
-                        }
+                        if (block.textContent.replace(/\u00A0/g, '').trim() === '') { e.preventDefault(); block.innerHTML = ''; document.execCommand('insertParagraph', false); } 
+                        else { e.preventDefault(); document.execCommand('insertParagraph', false); document.execCommand('insertHTML', false, '&nbsp;<input type="checkbox" style="vertical-align: middle;">&nbsp;'); }
                     }
                 }
             });
-
             renderNotes();
         });
     </script>

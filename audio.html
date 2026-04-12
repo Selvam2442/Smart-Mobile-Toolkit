@@ -12,56 +12,51 @@
         <div class="tool-header">
             <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
             <h2>Audio Tester</h2>
+            <div class="info-btn" id="open-info"><i class="fa-solid fa-info"></i></div>
         </div>
         
         <div class="tool-panel">
-            <i class="fa-solid fa-headphones-simple" style="font-size: 5rem; color: var(--primary-glow); margin-bottom: 20px; filter: drop-shadow(0 0 10px var(--primary-glow));"></i>
-            <p id="audio-feedback" style="margin-bottom: 30px; color: var(--text-muted); font-size: 1.1rem;">Ready to test</p>
+            <i class="fa-solid fa-headphones-simple" style="font-size: 5rem; color: var(--primary-glow); margin-bottom: 20px; filter: drop-shadow(0 0 15px var(--primary-glow));"></i>
+            <p id="audio-feedback" style="margin-bottom: 30px; color: var(--text-muted); font-size: 1.1rem;">Ready to test stereo channels</p>
             
-            <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                 <button id="btn-left" class="btn"><i class="fa-solid fa-arrow-left"></i> LEFT</button>
+                <button id="btn-stop" class="btn btn-secondary" style="flex-grow: 0; padding: 12px 20px;"><i class="fa-solid fa-stop"></i></button>
                 <button id="btn-right" class="btn">RIGHT <i class="fa-solid fa-arrow-right"></i></button>
             </div>
-            <p style="margin-top: 30px; font-size: 0.85rem; color: #777;">Click to play the short test audio.</p>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="info-modal">
+        <div class="info-modal">
+            <i class="fa-solid fa-headphones-simple modal-hero-icon"></i>
+            <h3>Audio Tester</h3>
+            <p>Wearing headphones backward ruins stereo mixing, directional gaming, and your overall audio experience.</p>
+            <ul>
+                <li><i class="fa-solid fa-circle-check"></i> Wear your wired headphones.</li>
+                <li><i class="fa-solid fa-circle-check"></i> Click <strong>LEFT</strong>. If sound plays in your right ear, they are backward!</li>
+                <li><i class="fa-solid fa-circle-check"></i> Wear them correctly and enjoy perfect sound quality.</li>
+            </ul>
+            <button class="btn btn-secondary close-modal-btn" id="close-info"><i class="fa-solid fa-check"></i> GOT IT</button>
         </div>
     </div>
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {
+            const clickSound = new Audio('data:audio/wav;base64,UklGRlIAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YTEAAAAA/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/w==');
+            document.querySelectorAll('.btn, .back-btn, .info-btn').forEach(el => el.addEventListener('click', () => clickSound.cloneNode().play().catch(()=>{})));
+
+            const modal = document.getElementById('info-modal');
+            document.getElementById('open-info').addEventListener('click', () => modal.classList.add('active'));
+            document.getElementById('close-info').addEventListener('click', () => modal.classList.remove('active'));
+
             const feedback = document.getElementById('audio-feedback');
+            const leftTrack = new Audio("left_audio.mp3");
+            const rightTrack = new Audio("right_audio.mp3");
 
-            const leftAudio = new Audio("left.mp3");
-            const rightAudio = new Audio("right.mp3");
-
-            // LEFT BUTTON CLICK
-            document.getElementById('btn-left').addEventListener('click', () => {
-                // 1. Immediately stop right audio and reset it
-                rightAudio.pause();
-                rightAudio.currentTime = 0;
-                
-                // 2. Play left audio from the beginning
-                leftAudio.currentTime = 0; 
-                leftAudio.play().catch(() => {});
-                
-                // 3. Update UI
-                feedback.innerHTML = `Playing <strong style="color:var(--primary-glow)">LEFT</strong>...`;
-                setTimeout(() => feedback.innerText = "Ready to test", 3000); // Reset text after 3 seconds
-            });
-
-            // RIGHT BUTTON CLICK
-            document.getElementById('btn-right').addEventListener('click', () => {
-                // 1. Immediately stop left audio and reset it
-                leftAudio.pause();
-                leftAudio.currentTime = 0;
-                
-                // 2. Play right audio from the beginning
-                rightAudio.currentTime = 0; 
-                rightAudio.play().catch(() => {});
-                
-                // 3. Update UI
-                feedback.innerHTML = `Playing <strong style="color:var(--primary-glow)">RIGHT</strong>...`;
-                setTimeout(() => feedback.innerText = "Ready to test", 3000); // Reset text after 3 seconds
-            });
+            document.getElementById('btn-left').addEventListener('click', () => { rightTrack.pause(); rightTrack.currentTime = 0; leftTrack.play().catch(()=>{}); feedback.innerHTML = `Playing in <strong style="color:var(--primary-glow)">LEFT</strong> ear...`; });
+            document.getElementById('btn-right').addEventListener('click', () => { leftTrack.pause(); leftTrack.currentTime = 0; rightTrack.play().catch(()=>{}); feedback.innerHTML = `Playing in <strong style="color:var(--primary-glow)">RIGHT</strong> ear...`; });
+            document.getElementById('btn-stop').addEventListener('click', () => { leftTrack.pause(); leftTrack.currentTime = 0; rightTrack.pause(); rightTrack.currentTime = 0; feedback.innerHTML = "Ready to test stereo channels"; });
         });
     </script>
 </body>

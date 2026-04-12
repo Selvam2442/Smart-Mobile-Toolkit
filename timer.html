@@ -6,201 +6,100 @@
     <title>Time Notes - Toolkit</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        .input-group {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-bottom: 20px;
-            text-align: left;
-        }
-        .styled-input {
-            width: 100%;
-            padding: 12px 15px;
-            background: rgba(0,0,0,0.5);
-            color: #fff;
-            border: 1px solid var(--surface-border);
-            border-radius: 8px;
-            outline: none;
-            font-size: 1rem;
-            transition: 0.3s;
-        }
-        .styled-input:focus {
-            border-color: var(--primary-glow);
-            box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
-        }
-        .log-item {
-            background: rgba(255,255,255,0.03);
-            border-left: 3px solid var(--primary-glow);
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            text-align: left;
-        }
-        .log-time {
-            font-weight: 800;
-            color: var(--primary-glow);
-            font-size: 1.1rem;
-            min-width: 90px;
-        }
-        .log-text {
-            flex-grow: 1;
-            margin: 0 15px;
-            color: #e0e0e0;
-            word-break: break-word;
-        }
-        .delete-log {
-            background: transparent;
-            border: none;
-            color: #ff4444;
-            cursor: pointer;
-            font-size: 1.1rem;
-            padding: 5px;
-            transition: 0.2s;
-        }
-        .delete-log:hover {
-            color: #ff0000;
-            transform: scale(1.1);
-        }
-    </style>
 </head>
 <body>
     <div class="container">
         <div class="tool-header">
             <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
             <h2>Time Notes</h2>
+            <div class="info-btn" id="open-info"><i class="fa-solid fa-info"></i></div>
         </div>
         
         <div class="tool-panel">
-            <div id="real-time-clock" style="font-size: 3.5rem; font-weight: 800; font-variant-numeric: tabular-nums; margin-bottom: 5px; text-shadow: 0 0 20px rgba(0, 240, 255, 0.4); letter-spacing: 2px;">
-                00:00:00
-            </div>
-            <div id="real-time-date" style="color: var(--text-muted); margin-bottom: 30px; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">
-                Loading date...
-            </div>
+            <div id="real-time-clock" style="font-size: 3.5rem; font-weight: 800; font-variant-numeric: tabular-nums; margin-bottom: 5px; text-shadow: 0 0 20px rgba(0, 240, 255, 0.4);">00:00:00</div>
+            <div id="real-time-date" style="color: var(--text-muted); margin-bottom: 30px; font-size: 0.9rem; text-transform: uppercase;">Loading date...</div>
             
             <div class="input-group">
                 <input type="text" id="quick-note" class="styled-input" placeholder="What's happening? (e.g., Boarded bus)">
-                <button id="btn-log-now" class="btn"><i class="fa-solid fa-bolt"></i> LOG CURRENT TIME</button>
+                <button id="btn-log-now" class="btn" style="width: 100%; margin-top: 10px;"><i class="fa-solid fa-bolt"></i> LOG CURRENT TIME</button>
             </div>
 
-            <div id="log-list" style="margin-top: 30px; max-height: 250px; overflow-y: auto; padding-right: 5px;">
-                </div>
+            <div id="log-list" style="margin-top: 25px; max-height: 250px; overflow-y: auto;"></div>
 
             <hr style="border-color: var(--surface-border); margin: 30px 0;">
 
-            <h4 style="text-align: left; margin-bottom: 15px; color: var(--text-muted);"><i class="fa-solid fa-pen-to-square"></i> Set Manual Time</h4>
             <div class="input-group">
-                <div style="display: flex; gap: 10px;">
+                <div style="display: flex; gap: 10px; margin-bottom: 10px;">
                     <input type="time" id="manual-time" class="styled-input" style="flex: 1;">
                     <input type="text" id="manual-note" class="styled-input" style="flex: 2;" placeholder="Manual note...">
                 </div>
-                <button id="btn-log-manual" class="btn btn-secondary"><i class="fa-solid fa-plus"></i> ADD MANUAL LOG</button>
+                <button id="btn-log-manual" class="btn btn-secondary" style="width: 100%;"><i class="fa-solid fa-plus"></i> ADD MANUAL LOG</button>
             </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="info-modal">
+        <div class="info-modal">
+            <i class="fa-solid fa-stopwatch modal-hero-icon"></i>
+            <h3>Time Notes</h3>
+            <p>Stopwatches are tedious. This is a rapid-entry event logger perfect for daily travel and tracking routines.</p>
+            <ul>
+                <li><i class="fa-solid fa-bolt"></i> <strong>Quick Log:</strong> Type "Bus arrived" and hit Log to instantly save the exact current time.</li>
+                <li><i class="fa-solid fa-clock-rotate-left"></i> <strong>Check Back:</strong> Review logs tomorrow so you know exactly when to leave the house!</li>
+                <li><i class="fa-solid fa-pen-to-square"></i> <strong>Manual Log:</strong> Missed an event? Easily log it manually at the bottom.</li>
+            </ul>
+            <button class="btn btn-secondary close-modal-btn" id="close-info"><i class="fa-solid fa-check"></i> GOT IT</button>
         </div>
     </div>
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            const clickSound = new Audio('data:audio/wav;base64,UklGRlIAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YTEAAAAA/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/w==');
-            const playClick = () => clickSound.cloneNode().play().catch(()=>{});
-            document.querySelectorAll('button, .back-btn').forEach(el => el.addEventListener('click', playClick));
+            const playClick = () => new Audio('data:audio/wav;base64,UklGRlIAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YTEAAAAA/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/w==').play().catch(()=>{});
+            document.querySelectorAll('button, .back-btn, .info-btn').forEach(el => el.addEventListener('click', playClick));
+
+            const modal = document.getElementById('info-modal');
+            document.getElementById('open-info').addEventListener('click', () => modal.classList.add('active'));
+            document.getElementById('close-info').addEventListener('click', () => modal.classList.remove('active'));
 
             const clockDisplay = document.getElementById('real-time-clock');
             const dateDisplay = document.getElementById('real-time-date');
             const logList = document.getElementById('log-list');
-            
-            // State
             let timeLogs = JSON.parse(localStorage.getItem('smart_time_logs')) || [];
 
-            // 1. Real-Time Clock Function
             function updateClock() {
                 const now = new Date();
                 clockDisplay.innerText = now.toLocaleTimeString('en-US', { hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' });
                 dateDisplay.innerText = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
             }
-            setInterval(updateClock, 1000);
-            updateClock(); // Initial call
+            setInterval(updateClock, 1000); updateClock();
 
-            // 2. Render Logs
             function renderLogs() {
                 logList.innerHTML = '';
-                if(timeLogs.length === 0) {
-                    logList.innerHTML = '<p style="color: var(--text-muted); text-align: center; font-size: 0.9rem;">No time logs yet.</p>';
-                    return;
-                }
-
+                if(timeLogs.length === 0) return logList.innerHTML = '<p style="color: var(--text-muted);">No time logs yet.</p>';
                 timeLogs.forEach(log => {
-                    const div = document.createElement('div');
-                    div.className = 'log-item';
-                    div.innerHTML = `
-                        <span class="log-time">${log.timeStr}</span>
-                        <span class="log-text">${log.note}</span>
-                        <button class="delete-log" onclick="deleteLog(${log.id})"><i class="fa-solid fa-trash"></i></button>
-                    `;
-                    logList.prepend(div); // Prepend so newest is on top
+                    logList.innerHTML = `<div class="log-item"><span class="log-time">${log.timeStr}</span><span class="log-text">${log.note}</span><button class="delete-log" onclick="deleteLog(${log.id})"><i class="fa-solid fa-trash"></i></button></div>` + logList.innerHTML;
                 });
             }
 
-            // 3. Save to LocalStorage
-            function saveLogs() {
-                localStorage.setItem('smart_time_logs', JSON.stringify(timeLogs));
-                renderLogs();
-            }
-
-            // 4. Log Current Time
             document.getElementById('btn-log-now').addEventListener('click', () => {
-                const noteInput = document.getElementById('quick-note');
-                const noteText = noteInput.value.trim() || "Event Logged";
-                
-                const now = new Date();
-                const timeString = now.toLocaleTimeString('en-US', { hour12: true, hour: '2-digit', minute: '2-digit' });
-
-                timeLogs.push({ id: Date.now(), timeStr: timeString, note: noteText });
-                saveLogs();
-                
-                noteInput.value = ''; // Clear input
+                const note = document.getElementById('quick-note').value.trim() || "Event Logged";
+                const timeStr = new Date().toLocaleTimeString('en-US', { hour12: true, hour: '2-digit', minute: '2-digit' });
+                timeLogs.push({ id: Date.now(), timeStr, note });
+                localStorage.setItem('smart_time_logs', JSON.stringify(timeLogs)); renderLogs();
+                document.getElementById('quick-note').value = '';
             });
 
-            // 5. Format 24hr Time to 12hr AM/PM
-            function formatManualTime(time24) {
-                let [hours, minutes] = time24.split(':');
-                let ampm = hours >= 12 ? 'PM' : 'AM';
-                hours = hours % 12 || 12;
-                return `${hours}:${minutes} ${ampm}`;
-            }
-
-            // 6. Log Manual Time
             document.getElementById('btn-log-manual').addEventListener('click', () => {
-                const timeInput = document.getElementById('manual-time').value;
-                const noteInput = document.getElementById('manual-note');
-                const noteText = noteInput.value.trim() || "Manual Log";
-
-                if (!timeInput) {
-                    alert("Please select a time first.");
-                    return;
-                }
-
-                const formattedTime = formatManualTime(timeInput);
-                timeLogs.push({ id: Date.now(), timeStr: formattedTime, note: noteText });
-                saveLogs();
-
-                // Clear inputs
-                document.getElementById('manual-time').value = '';
-                noteInput.value = '';
+                const t = document.getElementById('manual-time').value;
+                if (!t) return alert("Select a time.");
+                let [h, m] = t.split(':'); let ampm = h >= 12 ? 'PM' : 'AM'; h = h % 12 || 12;
+                const note = document.getElementById('manual-note').value.trim() || "Manual Log";
+                timeLogs.push({ id: Date.now(), timeStr: `${h}:${m} ${ampm}`, note });
+                localStorage.setItem('smart_time_logs', JSON.stringify(timeLogs)); renderLogs();
+                document.getElementById('manual-time').value = ''; document.getElementById('manual-note').value = '';
             });
 
-            // 7. Delete Log
-            window.deleteLog = function(id) {
-                playClick();
-                timeLogs = timeLogs.filter(log => log.id !== id);
-                saveLogs();
-            };
-
-            // Initial Render
+            window.deleteLog = id => { playClick(); timeLogs = timeLogs.filter(l => l.id !== id); localStorage.setItem('smart_time_logs', JSON.stringify(timeLogs)); renderLogs(); };
             renderLogs();
         });
     </script>

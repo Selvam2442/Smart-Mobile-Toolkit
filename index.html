@@ -15,30 +15,12 @@
 
     <main class="container">
         <div class="grid">
-            <a href="audio.html" class="card">
-                <i class="fa-solid fa-headphones-simple"></i>
-                <h3>Audio Tester</h3>
-            </a>
-            <a href="timer.html" class="card">
-                <i class="fa-solid fa-stopwatch"></i>
-                <h3>Time Notes</h3>
-            </a>
-            <a href="notes.html" class="card">
-                <i class="fa-solid fa-clipboard-list"></i>
-                <h3>Advanced Notes</h3>
-            </a>
-            <a href="converter.html" class="card">
-                <i class="fa-solid fa-calculator"></i>
-                <h3>Unit Converter</h3>
-            </a>
-            <a href="repeater.html" class="card">
-                <i class="fa-solid fa-repeat"></i>
-                <h3>Text Repeater</h3>
-            </a>
-            <a href="reverser.html" class="card">
-                <i class="fa-solid fa-right-left"></i>
-                <h3>Text Reverser</h3>
-            </a>
+            <a href="audio.html" class="card"><i class="fa-solid fa-headphones-simple"></i><h3>Audio Tester</h3></a>
+            <a href="timer.html" class="card"><i class="fa-solid fa-stopwatch"></i><h3>Time Notes</h3></a>
+            <a href="notes.html" class="card"><i class="fa-solid fa-clipboard-list"></i><h3>Advanced Notes</h3></a>
+            <a href="converter.html" class="card"><i class="fa-solid fa-calculator"></i><h3>Unit Converter</h3></a>
+            <a href="repeater.html" class="card"><i class="fa-solid fa-repeat"></i><h3>Text Repeater</h3></a>
+            <a href="reverser.html" class="card"><i class="fa-solid fa-right-left"></i><h3>Text Reverser</h3></a>
         </div>
     </main>
 
@@ -49,9 +31,7 @@
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             const clickSound = new Audio('data:audio/wav;base64,UklGRlIAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YTEAAAAA/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/w==');
-            document.querySelectorAll('a.card').forEach(el => {
-                el.addEventListener('click', () => { clickSound.cloneNode().play().catch(()=>{}); });
-            });
+            document.querySelectorAll('a.card').forEach(el => el.addEventListener('click', () => clickSound.cloneNode().play().catch(()=>{})));
         });
     </script>
 </body>

@@ -6,114 +6,75 @@
     <title>Text Repeater - Toolkit</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        .input-group { margin-bottom: 20px; text-align: left; }
-        .input-group label { display: block; margin-bottom: 8px; font-weight: 600; color: var(--text-muted); font-size: 0.9rem; }
-        .styled-input { width: 100%; padding: 12px; background: rgba(0,0,0,0.5); color: #fff; border: 1px solid var(--surface-border); border-radius: 8px; outline: none; transition: 0.3s; }
-        .styled-input:focus { border-color: var(--primary-glow); }
-        .checkbox-group { display: flex; gap: 15px; margin-top: 10px; align-items: center; }
-        .checkbox-group input[type="checkbox"] { accent-color: var(--primary-glow); transform: scale(1.2); }
-        .checkbox-group label { margin: 0; color: #fff; font-weight: normal; cursor: pointer; }
-    </style>
 </head>
 <body>
     <div class="container">
         <div class="tool-header">
             <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
             <h2>Text Repeater</h2>
+            <div class="info-btn" id="open-info"><i class="fa-solid fa-info"></i></div>
         </div>
         
-        <div class="tool-panel" style="padding: 30px 20px;">
-            <div class="input-group">
-                <label>Text to repeat</label>
-                <textarea id="rep-input" class="styled-input" style="height: 120px;" placeholder="Type or paste your text here..."></textarea>
-            </div>
-
+        <div class="tool-panel">
+            <div class="input-group"><label>Text to repeat</label><textarea id="rep-input" class="styled-input" style="height: 100px;" placeholder="Type here..."></textarea></div>
             <div style="display: flex; gap: 15px; flex-wrap: wrap;">
-                <div class="input-group" style="flex: 1; min-width: 150px;">
-                    <label>Number of repetitions</label>
-                    <input type="number" id="rep-count" class="styled-input" value="10" min="1" max="10000">
-                </div>
-                <div class="input-group" style="flex: 1; min-width: 150px;">
-                    <label>Separator</label>
-                    <input type="text" id="rep-sep" class="styled-input" placeholder="Custom separator">
-                </div>
+                <div class="input-group" style="flex: 1; min-width: 130px;"><label>Count</label><input type="number" id="rep-count" class="styled-input" value="10" min="1" max="10000"></div>
+                <div class="input-group" style="flex: 1; min-width: 130px;"><label>Separator</label><input type="text" id="rep-sep" class="styled-input" placeholder="e.g. , "></div>
             </div>
-
             <div class="checkbox-group" style="margin-bottom: 25px;">
                 <input type="checkbox" id="check-newline"> <label for="check-newline">New Line</label>
                 <input type="checkbox" id="check-space" checked> <label for="check-space">Space</label>
             </div>
-
             <div style="display: flex; gap: 10px;">
                 <button id="btn-repeat" class="btn" style="flex: 2;"><i class="fa-solid fa-repeat"></i> REPEAT TEXT</button>
                 <button id="btn-clear" class="btn btn-secondary" style="flex: 1;"><i class="fa-solid fa-eraser"></i></button>
             </div>
-
             <hr style="border-color: var(--surface-border); margin: 30px 0;">
-
-            <div class="input-group">
-                <label>Repeated Result</label>
-                <textarea id="rep-output" class="styled-input" style="height: 150px;" readonly placeholder="Output will appear here..."></textarea>
-            </div>
-
+            <div class="input-group"><label>Result</label><textarea id="rep-output" class="styled-input" style="height: 120px;" readonly placeholder="Output here..."></textarea></div>
             <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                <button id="btn-copy" class="btn" style="flex: 1; font-size: 0.85rem;"><i class="fa-solid fa-copy"></i> COPY</button>
-                <button id="btn-whatsapp" class="btn" style="flex: 1; font-size: 0.85rem; border-color: #25D366; color: #25D366;"><i class="fa-brands fa-whatsapp"></i> WHATSAPP</button>
+                <button id="btn-copy" class="btn" style="flex: 1;"><i class="fa-solid fa-copy"></i> COPY</button>
+                <button id="btn-whatsapp" class="btn" style="flex: 1; border-color: #25D366; color: #25D366;"><i class="fa-brands fa-whatsapp"></i> WHATSAPP</button>
             </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="info-modal">
+        <div class="info-modal">
+            <i class="fa-solid fa-repeat modal-hero-icon"></i>
+            <h3>Text Repeater</h3>
+            <p>Generate massive blocks of repeating text instantly. Perfect for fun, testing limits, or creating dummy text.</p>
+            <ul>
+                <li><i class="fa-solid fa-keyboard"></i> Type the text and set how many times it should repeat.</li>
+                <li><i class="fa-solid fa-grip-lines"></i> Use the Separator options to divide words perfectly.</li>
+                <li><i class="fa-brands fa-whatsapp" style="color: #25D366;"></i> Use the WhatsApp button to directly share the result!</li>
+            </ul>
+            <button class="btn btn-secondary close-modal-btn" id="close-info"><i class="fa-solid fa-check"></i> GOT IT</button>
         </div>
     </div>
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            const clickSound = new Audio('data:audio/wav;base64,UklGRlIAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YTEAAAAA/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/w==');
-            document.querySelectorAll('button, .back-btn').forEach(el => el.addEventListener('click', () => clickSound.cloneNode().play().catch(()=>{})));
+            const playClick = () => new Audio('data:audio/wav;base64,UklGRlIAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YTEAAAAA/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/w==').play().catch(()=>{});
+            document.querySelectorAll('button, .back-btn, .info-btn').forEach(el => el.addEventListener('click', playClick));
 
-            const inputTxt = document.getElementById('rep-input');
-            const countInp = document.getElementById('rep-count');
-            const sepInp = document.getElementById('rep-sep');
-            const checkNewLine = document.getElementById('check-newline');
-            const checkSpace = document.getElementById('check-space');
-            const outputTxt = document.getElementById('rep-output');
+            const modal = document.getElementById('info-modal');
+            document.getElementById('open-info').addEventListener('click', () => modal.classList.add('active'));
+            document.getElementById('close-info').addEventListener('click', () => modal.classList.remove('active'));
 
-            // Generate Repeated Text
+            const inTxt = document.getElementById('rep-input'), outTxt = document.getElementById('rep-output');
             document.getElementById('btn-repeat').addEventListener('click', () => {
-                const text = inputTxt.value;
-                const count = parseInt(countInp.value) || 1;
-                
+                const text = inTxt.value, count = parseInt(document.getElementById('rep-count').value) || 1;
                 if (!text) return alert("Please enter some text to repeat.");
-
-                let separator = sepInp.value;
-                if (checkSpace.checked && separator === "") separator = " ";
-                if (checkNewLine.checked) separator += "\n";
-
-                const repeatedText = Array(count).fill(text).join(separator);
-                outputTxt.value = repeatedText;
+                let sep = document.getElementById('rep-sep').value;
+                if (document.getElementById('check-space').checked && sep === "") sep = " ";
+                if (document.getElementById('check-newline').checked) sep += "\n";
+                outTxt.value = Array(count).fill(text).join(sep);
             });
 
-            // Clear Fields
-            document.getElementById('btn-clear').addEventListener('click', () => {
-                inputTxt.value = '';
-                outputTxt.value = '';
-                sepInp.value = '';
-            });
-
-            // Copy to Clipboard
+            document.getElementById('btn-clear').addEventListener('click', () => { inTxt.value = ''; outTxt.value = ''; document.getElementById('rep-sep').value = ''; });
             const copyBtn = document.getElementById('btn-copy');
-            copyBtn.addEventListener('click', () => {
-                if (!outputTxt.value) return;
-                navigator.clipboard.writeText(outputTxt.value);
-                const ogHtml = copyBtn.innerHTML;
-                copyBtn.innerHTML = '<i class="fa-solid fa-check"></i> COPIED!';
-                setTimeout(() => copyBtn.innerHTML = ogHtml, 1500);
-            });
-
-            // Share to WhatsApp
-            document.getElementById('btn-whatsapp').addEventListener('click', () => {
-                if (!outputTxt.value) return;
-                const encodedText = encodeURIComponent(outputTxt.value);
-                window.open(`https://api.whatsapp.com/send?text=${encodedText}`, '_blank');
-            });
+            copyBtn.addEventListener('click', () => { if (!outTxt.value) return; navigator.clipboard.writeText(outTxt.value); const og = copyBtn.innerHTML; copyBtn.innerHTML = '<i class="fa-solid fa-check"></i> COPIED'; setTimeout(() => copyBtn.innerHTML = og, 1500); });
+            document.getElementById('btn-whatsapp').addEventListener('click', () => { if (!outTxt.value) return; window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(outTxt.value)}`, '_blank'); });
         });
     </script>
 </body>

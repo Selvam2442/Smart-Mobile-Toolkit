@@ -64,9 +64,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            const playClick = () => new Audio('data:audio/wav;base64,UklGRlIAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YTEAAAAA/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/w==').play().catch(()=>{});
-            document.querySelectorAll('button, .back-btn').forEach(el => el.addEventListener('click', playClick));
-
             const inTxt = document.getElementById('rep-input'), outTxt = document.getElementById('rep-output');
             document.getElementById('btn-repeat').addEventListener('click', () => {
                 const text = inTxt.value, count = parseInt(document.getElementById('rep-count').value) || 1;

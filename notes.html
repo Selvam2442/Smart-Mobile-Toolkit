@@ -71,9 +71,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            const playClick = () => new Audio('data:audio/wav;base64,UklGRlIAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YTEAAAAA/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/w==').play().catch(()=>{});
-            document.querySelectorAll('button, .back-btn').forEach(el => el.addEventListener('click', playClick));
-
             const listView = document.getElementById('list-view'), editorView = document.getElementById('editor-view');
             const notesGrid = document.getElementById('notes-grid'), titleInput = document.getElementById('note-title-input');
             const editorArea = document.getElementById('editor-area'), editorPanel = document.getElementById('editor-panel');
@@ -103,7 +100,7 @@
                 const b = document.getElementById('save-note'), og = b.innerHTML; b.innerHTML = '<i class="fa-solid fa-check"></i> SAVED!'; b.style.background = 'var(--primary-glow)'; b.style.color = '#000'; setTimeout(()=> { b.innerHTML=og; b.style.background=''; b.style.color=''; }, 1500);
             });
 
-            window.deleteNote = (e, id) => { e.stopPropagation(); if(confirm("Delete note?")) { playClick(); notes = notes.filter(n => n.id !== id); localStorage.setItem('smart_notes_advanced', JSON.stringify(notes)); renderNotes(); } };
+            window.deleteNote = (e, id) => { e.stopPropagation(); if(confirm("Delete note?")) { notes = notes.filter(n => n.id !== id); localStorage.setItem('smart_notes_advanced', JSON.stringify(notes)); renderNotes(); } };
             document.getElementById('create-new-btn').addEventListener('click', () => openEditor(null));
             document.getElementById('back-to-list').addEventListener('click', () => { document.getElementById('save-note').click(); editorView.style.display = 'none'; listView.style.display = 'block'; if(editorPanel.classList.contains('fullscreen-active')) toggleFullscreen(); renderNotes(); });
 

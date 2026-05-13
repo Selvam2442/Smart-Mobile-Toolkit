@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video to Audio - Toolkit</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- LameJS for Offline MP3 Encoding -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lamejs/1.2.1/lame.min.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <div class="tool-header">
+            <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
+            <h2 class="m-0">Video to Audio</h2>
+            <button class="info-btn" data-bs-toggle="modal" data-bs-target="#infoModal"><i class="fa-solid fa-info"></i></button>
+        </div>
+        
+        <div class="tool-panel">
+            <div class="input-group">
+                <label>Select a Video File</label>
+                <!-- accept="video/*" STRICTLY limits selection to video formats only -->
+                <input type="file" id="video-file" class="styled-input" accept="video/*" style="padding: 10px;">
+            </div>
+
+            <div class="input-group">
+                <label>Output Format</label>
+                <select id="format-select" class="styled-select">
+                    <option value="mp3" selected>MP3 (Standard Quality & Small Size)</option>
+                    <option value="wav">WAV (Lossless Quality & Large Size)</option>
+                </select>
+            </div>
+
+            <p id="status-text" style="color: var(--primary-glow); font-weight: 600; display: none; margin-bottom: 15px;"><i class="fa-solid fa-spinner fa-spin"></i> Extracting Audio... Please do not close the page.</p>
+            
+            <button id="btn-extract" class="btn custom-btn w-100 mt-2"><i class="fa-solid fa-wand-magic-sparkles"></i> EXTRACT AUDIO</button>
+            <a id="download-link" class="btn custom-btn btn-secondary w-100 mt-3" style="display: none; text-decoration: none;"><i class="fa-solid fa-download"></i> DOWNLOAD FILE</a>
+        </div>
+    </div>
+
+    <!-- Bootstrap Info Modal -->
+    <div class="modal fade" id="infoModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fa-solid fa-file-audio"></i> Video to Audio Extractor</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Easily strip the audio track from any video file entirely offline, using advanced client-side processing.</p>
+                    <ul>
+                        <li><i class="fa-solid fa-upload"></i> Upload any video file. The system will only accept video extensions.</li>
+                        <li><i class="fa-solid fa-caret-down"></i> Choose between <strong>MP3</strong> for general use or <strong>WAV</strong> for raw, uncompressed quality.</li>
+                        <li><i class="fa-solid fa-microchip"></i> The browser's audio engine will extract and encode the track automatically!</li>
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn custom-btn btn-secondary w-100 m-0" data-bs-dismiss="modal">GOT IT</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const btnExtract = document.getElementById('btn-extract');
+            const fileInput = document.getElementById('video-file');
+            const formatSelect = document.getElementById('format-select');
+            const statusText = document.getElementById('status-text');
+            const downloadLink = document.getElementById('download-link');
+
+            // --- WAV ENCODER ---
+            function audioBufferToWav(buffer) {
+                let numOfChan = buffer.numberOfChannels, length = buffer.length * numOfChan * 2 + 44,
+                    bufferWav = new ArrayBuffer(length), view = new DataView(bufferWav),
+                    channels = [], i, sample, offset = 0, pos = 0;
+                setUint32(0x46464952); setUint32(length - 8); setUint32(0x45564157);
+                setUint32(0x20746d66); setUint32(16); setUint16(1); setUint16(numOfChan);
+                setUint32(buffer.sampleRate); setUint32(buffer.sampleRate * 2 * numOfChan);
+                setUint16(numOfChan * 2); setUint16(16); setUint32(0x61746164); setUint32(length - pos - 4);
+                for(i = 0; i < buffer.numberOfChannels; i++) channels.push(buffer.getChannelData(i));
+                while(pos < length) {
+                    for(i = 0; i < numOfChan; i++) {
+                        sample = Math.max(-1, Math.min(1, channels[i][offset])); 
+                        sample = (0.5 + sample < 0 ? sample * 32768 : sample * 32767)|0; 
+                        view.setInt16(pos, sample, true); pos += 2;
+                    }
+                    offset++;
+                }
+                function setUint16(data) { view.setUint16(pos, data, true); pos += 2; }
+                function setUint32(data) { view.setUint32(pos, data, true); pos += 4; }
+                return new Blob([bufferWav], {type: "audio/wav"});
+            }
+
+            // --- MP3 ENCODER (Async to prevent UI freezing) ---
+            async function audioBufferToMp3Async(buffer) {
+                return new Promise((resolve) => {
+                    const channels = buffer.numberOfChannels;
+                    const sampleRate = buffer.sampleRate;
+                    // Initialize LameJS (Requires global lamejs object loaded from CDN)
+                    const mp3encoder = new lamejs.Mp3Encoder(channels, sampleRate, 128);
+                    const mp3Data = [];
+                    
+                    const left = buffer.getChannelData(0);
+                    const right = channels > 1 ? buffer.getChannelData(1) : left;
+                    const sampleBlockSize = 11520; // 11520 is a safe chunk size multiple of 576
+                    
+                    const leftInt = new Int16Array(left.length);
+                    const rightInt = new Int16Array(right.length);
+                    
+                    // Convert Float32 to Int16
+                    for (let i = 0; i < left.length; i++) {
+                        leftInt[i] = left[i] < 0 ? left[i] * 32768 : left[i] * 32767;
+                        if (channels > 1) rightInt[i] = right[i] < 0 ? right[i] * 32768 : right[i] * 32767;
+                    }
+
+                    let i = 0;
+                    function processChunk() {
+                        const end = Math.min(i + sampleBlockSize, left.length);
+                        const leftChunk = leftInt.subarray(i, end);
+                        const rightChunk = channels > 1 ? rightInt.subarray(i, end) : leftChunk;
+                        
+                        const mp3buf = mp3encoder.encodeBuffer(leftChunk, rightChunk);
+                        if (mp3buf.length > 0) mp3Data.push(new Int8Array(mp3buf));
+                        
+                        i += sampleBlockSize;
+                        
+                        if (i < left.length) {
+                            setTimeout(processChunk, 5); // Yields to browser UI to prevent crash
+                        } else {
+                            const mp3bufFlush = mp3encoder.flush();
+                            if (mp3bufFlush.length > 0) mp3Data.push(new Int8Array(mp3bufFlush));
+                            resolve(new Blob(mp3Data, {type: 'audio/mp3'}));
+                        }
+                    }
+                    processChunk();
+                });
+            }
+
+            btnExtract.addEventListener('click', () => {
+                if (!fileInput.files[0]) return alert("Please select a video file first.");
+                
+                // UX Changes
+                statusText.style.display = "block"; 
+                btnExtract.style.display = "none"; 
+                downloadLink.style.display = "none";
+                
+                const targetFormat = formatSelect.value;
+                const reader = new FileReader();
+
+                reader.onload = async function(e) {
+                    try {
+                        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                        const decodedAudio = await audioContext.decodeAudioData(e.target.result);
+                        
+                        let finalBlob;
+                        if (targetFormat === "mp3") {
+                            finalBlob = await audioBufferToMp3Async(decodedAudio);
+                        } else {
+                            finalBlob = audioBufferToWav(decodedAudio);
+                        }
+                        
+                        const url = URL.createObjectURL(finalBlob);
+                        downloadLink.href = url;
+                        downloadLink.download = `extracted_audio.${targetFormat}`;
+                        
+                        // Reset UX
+                        statusText.style.display = "none";
+                        btnExtract.style.display = "block";
+                        downloadLink.style.display = "flex";
+                        downloadLink.innerHTML = `<i class="fa-solid fa-download"></i> DOWNLOAD .${targetFormat.toUpperCase()}`;
+                        btnExtract.innerHTML = '<i class="fa-solid fa-check"></i> EXTRACTION COMPLETE';
+                        
+                    } catch (err) {
+                        alert("Error extracting audio. The video format might not be supported.");
+                        statusText.style.display = "none"; 
+                        btnExtract.style.display = "block";
+                        btnExtract.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> EXTRACT AUDIO';
+                    }
+                };
+                reader.readAsArrayBuffer(fileInput.files[0]);
+            });
+        });
+    </script>
+</body>
+</html>

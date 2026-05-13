@@ -6,12 +6,22 @@
     <priority>1.00</priority>
   </url>
   <url>
+    <loc>https://selvam2442.github.io/Smart-Mobile-Toolkit/compressor.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.90</priority>
+  </url>
+  <url>
     <loc>https://selvam2442.github.io/Smart-Mobile-Toolkit/vid2aud.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://selvam2442.github.io/Smart-Mobile-Toolkit/cutter.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://selvam2442.github.io/Smart-Mobile-Toolkit/format.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.80</priority>
   </url>
@@ -49,10 +59,5 @@
     <loc>https://selvam2442.github.io/Smart-Mobile-Toolkit/reverser.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.64</priority>
-  </url>
-  <url>
-    <loc>https://selvam2442.github.io/Smart-Mobile-Toolkit/format.html</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.80</priority>
   </url>
 </urlset>

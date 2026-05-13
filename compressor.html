@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Compressor - Toolkit</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- PDF-Lib for offline PDF structural compression -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <div class="tool-header">
+            <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
+            <h2 class="m-0">File Compressor</h2>
+            <button class="info-btn" data-bs-toggle="modal" data-bs-target="#infoModal"><i class="fa-solid fa-info"></i></button>
+        </div>
+        
+        <div class="tool-panel">
+            <div class="input-group">
+                <label>Select File (Images or PDF)</label>
+                <input type="file" id="upload-file" class="styled-input" accept="image/*, application/pdf" style="padding: 10px;">
+                <p id="file-info" style="color: var(--text-muted); font-size: 0.85rem; margin-top: 8px; display: none;"></p>
+            </div>
+
+            <!-- TARGET SIZE CONTROLS -->
+            <div id="target-size-container" style="display: none; background: rgba(0,240,255,0.05); border: 1px solid rgba(0,240,255,0.2); padding: 15px; border-radius: 12px; margin-bottom: 20px;">
+                <div class="input-group" style="margin-bottom: 10px;">
+                    <label style="color: var(--primary-glow);"><i class="fa-solid fa-bullseye"></i> Target File Size (MB)</label>
+                    <input type="number" id="target-size" class="styled-input" step="0.1" min="0.1">
+                </div>
+                <button id="btn-recommend" class="btn custom-btn btn-secondary w-100" style="padding: 8px; font-size: 0.85rem;">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> USE RECOMMENDED SIZE
+                </button>
+                <p style="color: var(--text-muted); font-size: 0.75rem; text-align: center; margin-top: 10px; margin-bottom: 0;">
+                    Our AI engine will adjust quality to hit this exact size.
+                </p>
+            </div>
+
+            <div id="stats-box" style="display: none; background: rgba(0,0,0,0.4); padding: 20px; border-radius: 12px; margin: 20px 0; border: 1px solid var(--surface-border);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <span style="color: #bbb;">Original Size:</span>
+                    <strong id="size-old" style="color: #fff; font-family: monospace; font-size: 1.1rem;">0 MB</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="color: #bbb;">New Size:</span>
+                    <strong id="size-new" style="color: #25D366; font-family: monospace; font-size: 1.1rem;">0 MB</strong>
+                </div>
+            </div>
+
+            <p id="status-text" style="color: var(--primary-glow); font-weight: 600; display: none;"><i class="fa-solid fa-spinner fa-spin"></i> Compressing & Optimizing offline...</p>
+            <button id="btn-compress" class="btn custom-btn w-100 mt-2"><i class="fa-solid fa-compress"></i> COMPRESS FILE</button>
+            <a id="download-link" class="btn custom-btn btn-secondary w-100 mt-3" style="display: none; text-decoration: none;"><i class="fa-solid fa-download"></i> DOWNLOAD REDUCED FILE</a>
+        </div>
+    </div>
+
+    <!-- Bootstrap Info Modal -->
+    <div class="modal fade" id="infoModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fa-solid fa-file-zipper"></i> Smart File Compressor</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Reduce the size of your files intelligently, completely offline!</p>
+                    <ul>
+                        <li><i class="fa-solid fa-bullseye"></i> <strong>Target Size (Images):</strong> Enter exactly how many MBs you want the image to be.</li>
+                        <li><i class="fa-solid fa-image"></i> <strong>Original Format Kept:</strong> If you upload a JPG, you get a compressed JPG. If you upload a PNG, the engine automatically calculates dimension-scaling to compress it.</li>
+                        <li><i class="fa-solid fa-file-pdf"></i> <strong>PDF Optimization:</strong> Automatically strips useless structural metadata to save space.</li>
+                    </ul>
+                    <hr style="border-color: rgba(255,255,255,0.1); margin: 15px 0;">
+                    <p style="color: #25D366; font-size: 0.9rem; margin-bottom: 0;">
+                        <i class="fa-solid fa-shield-halved"></i> <strong>100% Secure & Private:</strong> Your files are <strong>never</strong> uploaded to any server. All processing happens completely offline inside your browser.
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn custom-btn btn-secondary w-100 m-0" data-bs-dismiss="modal">GOT IT</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const fileInput = document.getElementById('upload-file');
+            const targetContainer = document.getElementById('target-size-container');
+            const targetInput = document.getElementById('target-size');
+            const btnRecommend = document.getElementById('btn-recommend');
+            const fileInfo = document.getElementById('file-info');
+            const btnCompress = document.getElementById('btn-compress');
+            const statusText = document.getElementById('status-text');
+            const statsBox = document.getElementById('stats-box');
+            const sizeOld = document.getElementById('size-old');
+            const sizeNew = document.getElementById('size-new');
+            const downloadLink = document.getElementById('download-link');
+
+            let recommendedSizeMB = 0;
+            let currentFileType = "";
+
+            function formatBytes(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024, dm = 2, sizes = ['Bytes', 'KB', 'MB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+            }
+
+            fileInput.addEventListener('change', () => {
+                if (!fileInput.files[0]) return;
+                const file = fileInput.files[0];
+                currentFileType = file.type;
+                const isImage = currentFileType.startsWith("image/");
+                
+                fileInfo.style.display = "block";
+                fileInfo.innerText = `Format: ${currentFileType.split('/')[1].toUpperCase()} | Original Size: ${formatBytes(file.size)}`;
+
+                if (isImage) {
+                    targetContainer.style.display = "block";
+                    recommendedSizeMB = (file.size * 0.6) / (1024 * 1024);
+                    targetInput.value = recommendedSizeMB.toFixed(2);
+                } else {
+                    targetContainer.style.display = "none";
+                }
+                
+                statsBox.style.display = "none";
+                downloadLink.style.display = "none";
+                btnCompress.innerHTML = '<i class="fa-solid fa-compress"></i> COMPRESS FILE';
+            });
+
+            btnRecommend.addEventListener('click', () => {
+                targetInput.value = recommendedSizeMB.toFixed(2);
+                const originalText = btnRecommend.innerHTML;
+                btnRecommend.innerHTML = '<i class="fa-solid fa-check"></i> APPLIED';
+                setTimeout(() => btnRecommend.innerHTML = originalText, 1500);
+            });
+
+            async function compressImageToTarget(img, targetBytes, fileType) {
+                let minQ = 0.01, maxQ = 1.0, bestBlob = null, attempts = 0; const maxAttempts = 8; 
+                const isPng = fileType === 'image/png';
+
+                while (attempts < maxAttempts) {
+                    let quality = (minQ + maxQ) / 2;
+                    const canvas = document.createElement('canvas');
+                    let scale = isPng ? Math.sqrt(quality) : 1; 
+                    
+                    canvas.width = img.width * scale; canvas.height = img.height * scale;
+                    const ctx = canvas.getContext('2d');
+                    
+                    if (fileType === 'image/jpeg') { ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0, 0, canvas.width, canvas.height); }
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                    let blob = await new Promise(res => canvas.toBlob(res, fileType, isPng ? undefined : quality));
+                    bestBlob = blob;
+
+                    if (Math.abs(blob.size - targetBytes) < (targetBytes * 0.05)) break;
+                    if (blob.size > targetBytes) maxQ = quality; else minQ = quality; 
+                    attempts++;
+                }
+                return bestBlob;
+            }
+
+            btnCompress.addEventListener('click', async () => {
+                if (!fileInput.files[0]) return alert("Please select a file first.");
+                const file = fileInput.files[0], isPDF = file.type === "application/pdf", isImage = file.type.startsWith("image/");
+                if (!isPDF && !isImage) return alert("Only Images and PDFs are supported.");
+
+                statusText.style.display = "block"; btnCompress.style.display = "none"; statsBox.style.display = "none"; downloadLink.style.display = "none"; sizeOld.innerText = formatBytes(file.size);
+
+                try {
+                    let finalBlob;
+                    if (isPDF) {
+                        const arrayBuffer = await file.arrayBuffer(), pdfDoc = await PDFLib.PDFDocument.load(arrayBuffer), pdfBytes = await pdfDoc.save({ useObjectStreams: true });
+                        finalBlob = new Blob([pdfBytes], { type: "application/pdf" });
+                    } else if (isImage) {
+                        const targetBytes = parseFloat(targetInput.value) * 1024 * 1024;
+                        if (isNaN(targetBytes) || targetBytes <= 0) return alert("Please enter a valid target size.");
+                        finalBlob = await new Promise((resolve) => {
+                            const reader = new FileReader();
+                            reader.onload = (e) => { const img = new Image(); img.onload = async () => resolve(await compressImageToTarget(img, targetBytes, currentFileType)); img.src = e.target.result; };
+                            reader.readAsDataURL(file);
+                        });
+                    }
+
+                    sizeNew.innerText = formatBytes(finalBlob.size);
+                    if (finalBlob.size >= file.size && isPDF) { sizeNew.innerText = "Already Optimized!"; sizeNew.style.color = "var(--text-muted)"; } else { sizeNew.style.color = "#25D366"; }
+
+                    statsBox.style.display = "block"; statusText.style.display = "none"; btnCompress.style.display = "block"; btnCompress.innerHTML = '<i class="fa-solid fa-arrows-rotate"></i> COMPRESS ANOTHER';
+                    
+                    const url = URL.createObjectURL(finalBlob); downloadLink.href = url;
+                    const originalName = file.name.substring(0, file.name.lastIndexOf('.')), originalExt = file.name.substring(file.name.lastIndexOf('.'));
+                    downloadLink.download = `${originalName}_compressed${originalExt}`;
+                    downloadLink.innerHTML = `<i class="fa-solid fa-download"></i> DOWNLOAD COMPRESSED ${originalExt.toUpperCase()}`;
+                    downloadLink.style.display = "flex";
+                } catch (error) {
+                    console.error(error); alert("An error occurred while compressing the file."); statusText.style.display = "none"; btnCompress.style.display = "block";
+                }
+            });
+        });
+    </script>
+</body>
+</html>

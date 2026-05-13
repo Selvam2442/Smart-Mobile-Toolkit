@@ -13,22 +13,10 @@
     
     <style>
         #waveform-container {
-            width: 100%;
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px solid var(--surface-border);
-            border-radius: 12px;
-            padding: 10px;
-            margin: 15px 0;
-            display: none;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.5) inset;
+            width: 100%; background: rgba(0, 0, 0, 0.4); border: 1px solid var(--surface-border);
+            border-radius: 12px; padding: 10px; margin: 15px 0; display: none; box-shadow: 0 5px 15px rgba(0,0,0,0.5) inset;
         }
-        #time-display {
-            color: var(--primary-glow);
-            font-family: monospace;
-            font-size: 1.1rem;
-            margin-bottom: 10px;
-            font-weight: 600;
-        }
+        #time-display { color: var(--primary-glow); font-family: monospace; font-size: 1.1rem; margin-bottom: 10px; font-weight: 600; }
     </style>
 </head>
 <body>
@@ -45,7 +33,6 @@
                 <input type="file" id="audio-file" class="styled-input" accept="audio/*" style="padding: 10px;">
             </div>
 
-            <!-- VISUAL WAVEFORM TIMELINE -->
             <div id="waveform-container">
                 <div id="time-display">00:00.0 / 00:00.0</div>
                 <div id="waveform"></div>
@@ -55,19 +42,14 @@
             </div>
 
             <div id="cut-controls" style="display: none;">
-                
                 <div style="display: flex; gap: 10px; margin-bottom: 20px;">
                     <button id="btn-play-preview" class="btn custom-btn" style="flex: 2;"><i class="fa-solid fa-play"></i> PLAY PREVIEW</button>
                     <button id="btn-pause" class="btn custom-btn btn-secondary" style="flex: 1;"><i class="fa-solid fa-pause"></i></button>
                 </div>
-
-                <!-- Fade Controls -->
                 <div class="checkbox-group" style="justify-content: center; margin-bottom: 20px; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 10px; border: 1px solid var(--surface-border);">
                     <input type="checkbox" id="fade-in"> <label for="fade-in" style="margin-right: 15px;">2s Fade In</label>
                     <input type="checkbox" id="fade-out"> <label for="fade-out">2s Fade Out</label>
                 </div>
-
-                <!-- 🔥 NEW: Format Selector 🔥 -->
                 <div class="input-group" style="margin-bottom: 25px;">
                     <label>Output Format</label>
                     <select id="format-select" class="styled-select">
@@ -75,7 +57,6 @@
                         <option value="wav">WAV (Lossless Quality & Large Size)</option>
                     </select>
                 </div>
-
                 <button id="btn-cut" class="btn custom-btn w-100"><i class="fa-solid fa-scissors"></i> CUT AUDIO</button>
             </div>
 
@@ -93,13 +74,17 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <p>Visually trim your audio files with a professional-grade interactive timeline, completely offline.</p>
+                    <p>Visually trim your audio files with a professional-grade interactive timeline.</p>
                     <ul>
                         <li><i class="fa-solid fa-music"></i> Upload your song to generate the visual waveform.</li>
                         <li><i class="fa-solid fa-left-right"></i> Drag the edges of the blue selection box to choose the perfect clip.</li>
                         <li><i class="fa-solid fa-volume-low"></i> Check the <strong>Fade In / Out</strong> boxes for smooth transitions.</li>
                         <li><i class="fa-solid fa-caret-down"></i> Export natively to MP3 or WAV format!</li>
                     </ul>
+                    <hr style="border-color: rgba(255,255,255,0.1); margin: 15px 0;">
+                    <p style="color: #25D366; font-size: 0.9rem; margin-bottom: 0;">
+                        <i class="fa-solid fa-shield-halved"></i> <strong>100% Secure & Private:</strong> Your files are <strong>never</strong> uploaded to any server. All processing happens completely offline inside your browser.
+                    </p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn custom-btn btn-secondary w-100 m-0" data-bs-dismiss="modal">GOT IT</button>
@@ -108,10 +93,7 @@
         </div>
     </div>
 
-    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <!-- WaveSurfer.js Module Import -->
     <script type="module">
         import WaveSurfer from 'https://unpkg.com/wavesurfer.js@7/dist/wavesurfer.esm.js';
         import RegionsPlugin from 'https://unpkg.com/wavesurfer.js@7/dist/plugins/regions.esm.js';
@@ -131,15 +113,8 @@
         let selectedFile = null;
 
         const wavesurfer = WaveSurfer.create({
-            container: '#waveform',
-            waveColor: 'rgba(255, 255, 255, 0.2)',
-            progressColor: 'var(--primary-glow)',
-            cursorColor: '#fff',
-            barWidth: 2,
-            barGap: 1,
-            barRadius: 2,
-            height: 80,
-            normalize: true
+            container: '#waveform', waveColor: 'rgba(255, 255, 255, 0.2)', progressColor: 'var(--primary-glow)',
+            cursorColor: '#fff', barWidth: 2, barGap: 1, barRadius: 2, height: 80, normalize: true
         });
 
         const wsRegions = wavesurfer.registerPlugin(RegionsPlugin.create());
@@ -154,80 +129,48 @@
             if (!fileInput.files[0]) return;
             selectedFile = fileInput.files[0];
             const url = URL.createObjectURL(selectedFile);
-            
-            waveformContainer.style.display = 'block';
-            cutControls.style.display = 'block';
-            downloadLink.style.display = 'none';
+            waveformContainer.style.display = 'block'; cutControls.style.display = 'block'; downloadLink.style.display = 'none';
             wavesurfer.load(url);
         });
 
         wavesurfer.on('ready', () => {
             const duration = wavesurfer.getDuration();
             timeDisplay.innerText = `00:00.0 / ${formatTime(duration)}`;
-            
             wsRegions.clearRegions();
-            wsRegion = wsRegions.addRegion({
-                start: 0,
-                end: Math.min(10, duration),
-                color: 'rgba(0, 240, 255, 0.3)',
-                drag: true,
-                resize: true
-            });
-
-            wsRegion.on('update', () => {
-                timeDisplay.innerText = `${formatTime(wsRegion.start)} / ${formatTime(wsRegion.end)}`;
-            });
+            wsRegion = wsRegions.addRegion({ start: 0, end: Math.min(10, duration), color: 'rgba(0, 240, 255, 0.3)', drag: true, resize: true });
+            wsRegion.on('update', () => timeDisplay.innerText = `${formatTime(wsRegion.start)} / ${formatTime(wsRegion.end)}`);
         });
 
         wavesurfer.on('audioprocess', () => {
-            if (wavesurfer.isPlaying()) {
-                const current = wavesurfer.getCurrentTime();
-                if (wsRegion && current >= wsRegion.end) {
-                    wavesurfer.pause();
-                }
-            }
+            if (wavesurfer.isPlaying() && wsRegion && wavesurfer.getCurrentTime() >= wsRegion.end) wavesurfer.pause();
         });
 
         btnPlay.addEventListener('click', () => { if (wsRegion) wsRegion.play(); });
         btnPause.addEventListener('click', () => wavesurfer.pause());
 
-        // --- WAV ENCODER ---
         function audioBufferToWav(buffer) {
             let numOfChan = buffer.numberOfChannels, length = buffer.length * numOfChan * 2 + 44,
-                bufferWav = new ArrayBuffer(length), view = new DataView(bufferWav),
-                channels = [], i, sample, offset = 0, pos = 0;
-            setUint32(0x46464952); setUint32(length - 8); setUint32(0x45564157);
-            setUint32(0x20746d66); setUint32(16); setUint16(1); setUint16(numOfChan);
-            setUint32(buffer.sampleRate); setUint32(buffer.sampleRate * 2 * numOfChan);
-            setUint16(numOfChan * 2); setUint16(16); setUint32(0x61746164); setUint32(length - pos - 4);
+                bufferWav = new ArrayBuffer(length), view = new DataView(bufferWav), channels = [], i, sample, offset = 0, pos = 0;
+            setUint32(0x46464952); setUint32(length - 8); setUint32(0x45564157); setUint32(0x20746d66); setUint32(16); setUint16(1); setUint16(numOfChan);
+            setUint32(buffer.sampleRate); setUint32(buffer.sampleRate * 2 * numOfChan); setUint16(numOfChan * 2); setUint16(16); setUint32(0x61746164); setUint32(length - pos - 4);
             for(i = 0; i < buffer.numberOfChannels; i++) channels.push(buffer.getChannelData(i));
             while(pos < length) {
                 for(i = 0; i < numOfChan; i++) {
-                    sample = Math.max(-1, Math.min(1, channels[i][offset])); 
-                    sample = (0.5 + sample < 0 ? sample * 32768 : sample * 32767)|0; 
+                    sample = Math.max(-1, Math.min(1, channels[i][offset])); sample = (0.5 + sample < 0 ? sample * 32768 : sample * 32767)|0; 
                     view.setInt16(pos, sample, true); pos += 2;
                 }
                 offset++;
             }
-            function setUint16(data) { view.setUint16(pos, data, true); pos += 2; }
-            function setUint32(data) { view.setUint32(pos, data, true); pos += 4; }
+            function setUint16(data) { view.setUint16(pos, data, true); pos += 2; } function setUint32(data) { view.setUint32(pos, data, true); pos += 4; }
             return new Blob([bufferWav], {type: "audio/wav"});
         }
 
-        // --- MP3 ENCODER ---
         async function audioBufferToMp3Async(buffer) {
             return new Promise((resolve) => {
-                const channels = buffer.numberOfChannels;
-                const sampleRate = buffer.sampleRate;
-                const mp3encoder = new lamejs.Mp3Encoder(channels, sampleRate, 128);
-                const mp3Data = [];
-                
-                const left = buffer.getChannelData(0);
-                const right = channels > 1 ? buffer.getChannelData(1) : left;
-                const sampleBlockSize = 11520;
-                
-                const leftInt = new Int16Array(left.length);
-                const rightInt = new Int16Array(right.length);
+                const channels = buffer.numberOfChannels, sampleRate = buffer.sampleRate;
+                const mp3encoder = new lamejs.Mp3Encoder(channels, sampleRate, 128); const mp3Data = [];
+                const left = buffer.getChannelData(0), right = channels > 1 ? buffer.getChannelData(1) : left;
+                const sampleBlockSize = 11520, leftInt = new Int16Array(left.length), rightInt = new Int16Array(right.length);
                 
                 for (let i = 0; i < left.length; i++) {
                     leftInt[i] = left[i] < 0 ? left[i] * 32768 : left[i] * 32767;
@@ -237,19 +180,13 @@
                 let i = 0;
                 function processChunk() {
                     const end = Math.min(i + sampleBlockSize, left.length);
-                    const leftChunk = leftInt.subarray(i, end);
-                    const rightChunk = channels > 1 ? rightInt.subarray(i, end) : leftChunk;
-                    
+                    const leftChunk = leftInt.subarray(i, end), rightChunk = channels > 1 ? rightInt.subarray(i, end) : leftChunk;
                     const mp3buf = mp3encoder.encodeBuffer(leftChunk, rightChunk);
                     if (mp3buf.length > 0) mp3Data.push(new Int8Array(mp3buf));
-                    
                     i += sampleBlockSize;
-                    
-                    if (i < left.length) {
-                        setTimeout(processChunk, 5); 
-                    } else {
-                        const mp3bufFlush = mp3encoder.flush();
-                        if (mp3bufFlush.length > 0) mp3Data.push(new Int8Array(mp3bufFlush));
+                    if (i < left.length) setTimeout(processChunk, 5); 
+                    else {
+                        const mp3bufFlush = mp3encoder.flush(); if (mp3bufFlush.length > 0) mp3Data.push(new Int8Array(mp3bufFlush));
                         resolve(new Blob(mp3Data, {type: 'audio/mp3'}));
                     }
                 }
@@ -257,76 +194,36 @@
             });
         }
 
-        // CORE PROCESSING
         btnCut.addEventListener('click', async () => {
             if (!wsRegion || !selectedFile) return;
-            
-            wavesurfer.pause();
-            statusText.style.display = "block"; 
-            btnCut.style.display = "none";
-            downloadLink.style.display = "none";
+            wavesurfer.pause(); statusText.style.display = "block"; btnCut.style.display = "none"; downloadLink.style.display = "none";
 
-            const start = wsRegion.start;
-            const end = wsRegion.end;
-            const fadeIn = document.getElementById('fade-in').checked;
-            const fadeOut = document.getElementById('fade-out').checked;
-            const targetFormat = formatSelect.value;
+            const start = wsRegion.start, end = wsRegion.end, fadeIn = document.getElementById('fade-in').checked, fadeOut = document.getElementById('fade-out').checked, targetFormat = formatSelect.value;
 
             try {
                 const arrayBuffer = await selectedFile.arrayBuffer();
                 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                 const originalBuffer = await audioCtx.decodeAudioData(arrayBuffer);
-
-                const sampleRate = originalBuffer.sampleRate;
-                const channels = originalBuffer.numberOfChannels;
-                
-                const startOffset = Math.floor(sampleRate * start);
-                const endOffset = Math.floor(sampleRate * end);
-                const frameCount = endOffset - startOffset;
-
-                const newAudioBuffer = audioCtx.createBuffer(channels, frameCount, sampleRate);
-                const fadeSamples = 2.0 * sampleRate; 
+                const sampleRate = originalBuffer.sampleRate, channels = originalBuffer.numberOfChannels;
+                const startOffset = Math.floor(sampleRate * start), endOffset = Math.floor(sampleRate * end), frameCount = endOffset - startOffset;
+                const newAudioBuffer = audioCtx.createBuffer(channels, frameCount, sampleRate), fadeSamples = 2.0 * sampleRate; 
 
                 for (let i = 0; i < channels; i++) {
-                    const originalData = originalBuffer.getChannelData(i);
-                    const newData = newAudioBuffer.getChannelData(i);
-                    
-                    for (let j = 0; j < frameCount; j++) {
-                        newData[j] = originalData[startOffset + j];
-                    }
-
-                    if (fadeIn) {
-                        const actualFade = Math.min(fadeSamples, frameCount);
-                        for (let j = 0; j < actualFade; j++) newData[j] *= (j / actualFade);
-                    }
-
-                    if (fadeOut) {
-                        const actualFade = Math.min(fadeSamples, frameCount);
-                        for (let j = 0; j < actualFade; j++) newData[frameCount - 1 - j] *= (j / actualFade);
-                    }
+                    const originalData = originalBuffer.getChannelData(i), newData = newAudioBuffer.getChannelData(i);
+                    for (let j = 0; j < frameCount; j++) newData[j] = originalData[startOffset + j];
+                    if (fadeIn) { const actualFade = Math.min(fadeSamples, frameCount); for (let j = 0; j < actualFade; j++) newData[j] *= (j / actualFade); }
+                    if (fadeOut) { const actualFade = Math.min(fadeSamples, frameCount); for (let j = 0; j < actualFade; j++) newData[frameCount - 1 - j] *= (j / actualFade); }
                 }
 
-                // Encode to chosen format
                 let finalBlob;
-                if (targetFormat === 'mp3') {
-                    finalBlob = await audioBufferToMp3Async(newAudioBuffer);
-                } else {
-                    finalBlob = audioBufferToWav(newAudioBuffer);
-                }
+                if (targetFormat === 'mp3') finalBlob = await audioBufferToMp3Async(newAudioBuffer); else finalBlob = audioBufferToWav(newAudioBuffer);
 
-                downloadLink.href = URL.createObjectURL(finalBlob);
-                downloadLink.download = `Smart_Cut_Audio.${targetFormat}`;
+                downloadLink.href = URL.createObjectURL(finalBlob); downloadLink.download = `Smart_Cut_Audio.${targetFormat}`;
                 downloadLink.innerHTML = `<i class="fa-solid fa-download"></i> DOWNLOAD .${targetFormat.toUpperCase()}`;
-                
-                statusText.style.display = "none"; 
-                btnCut.style.display = "block";
-                downloadLink.style.display = "flex";
-                
+                statusText.style.display = "none"; btnCut.style.display = "block"; downloadLink.style.display = "flex";
             } catch (err) {
-                console.error(err);
-                alert("Error processing audio. File might be corrupted or unsupported.");
-                statusText.style.display = "none"; 
-                btnCut.style.display = "block";
+                console.error(err); alert("Error processing audio. File might be corrupted or unsupported.");
+                statusText.style.display = "none"; btnCut.style.display = "block";
             }
         });
     </script>

@@ -191,8 +191,12 @@
                     statsBox.style.display = "block"; statusText.style.display = "none"; btnCompress.style.display = "block"; btnCompress.innerHTML = '<i class="fa-solid fa-arrows-rotate"></i> COMPRESS ANOTHER';
                     
                     const url = URL.createObjectURL(finalBlob); downloadLink.href = url;
-                    const originalName = file.name.substring(0, file.name.lastIndexOf('.')), originalExt = file.name.substring(file.name.lastIndexOf('.'));
-                    downloadLink.download = `${originalName}_compressed${originalExt}`;
+                    
+                    // 🔥 RETRIEVES ORIGINAL FILE NAME & ADDS 'compressed_' PREFIX 🔥
+                    const originalName = file.name.substring(0, file.name.lastIndexOf('.')) || file.name;
+                    const originalExt = file.name.substring(file.name.lastIndexOf('.'));
+                    downloadLink.download = `compressed_${originalName}${originalExt}`;
+                    
                     downloadLink.innerHTML = `<i class="fa-solid fa-download"></i> DOWNLOAD COMPRESSED ${originalExt.toUpperCase()}`;
                     downloadLink.style.display = "flex";
                 } catch (error) {

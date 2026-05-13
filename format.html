@@ -101,7 +101,11 @@
                         const dataUrl = canvas.toDataURL(targetFormat, 1.0);
                         
                         downloadLink.href = dataUrl;
-                        downloadLink.download = `converted_image.${extension}`;
+                        
+                        // 🔥 RETRIEVES ORIGINAL FILE NAME & ADDS 'converted_' PREFIX 🔥
+                        const originalName = file.name.substring(0, file.name.lastIndexOf('.')) || file.name;
+                        downloadLink.download = `converted_${originalName}.${extension}`;
+                        
                         downloadLink.style.display = "flex";
                         btnConvert.innerHTML = '<i class="fa-solid fa-check"></i> CONVERSION COMPLETE';
                     }

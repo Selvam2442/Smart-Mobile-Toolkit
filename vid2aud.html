@@ -147,6 +147,7 @@
                 btnExtract.style.display = "none"; 
                 downloadLink.style.display = "none";
                 
+                const file = fileInput.files[0];
                 const targetFormat = formatSelect.value;
                 const reader = new FileReader();
 
@@ -164,7 +165,10 @@
                         
                         const url = URL.createObjectURL(finalBlob);
                         downloadLink.href = url;
-                        downloadLink.download = `extracted_audio.${targetFormat}`;
+
+                        // 🔥 RETRIEVES ORIGINAL FILE NAME & ADDS 'extracted_' PREFIX 🔥
+                        const originalName = file.name.substring(0, file.name.lastIndexOf('.')) || file.name;
+                        downloadLink.download = `extracted_${originalName}.${targetFormat}`;
                         
                         statusText.style.display = "none";
                         btnExtract.style.display = "block";
@@ -179,7 +183,7 @@
                         btnExtract.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> EXTRACT AUDIO';
                     }
                 };
-                reader.readAsArrayBuffer(fileInput.files[0]);
+                reader.readAsArrayBuffer(file);
             });
         });
     </script>

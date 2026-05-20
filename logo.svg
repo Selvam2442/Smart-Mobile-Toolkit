@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+    <defs>
+        <!-- Deep Dark Background Gradient -->
+        <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#14141e" />
+            <stop offset="100%" stop-color="#050508" />
+        </linearGradient>
+        
+        <!-- Cyberpunk Neon Gradient -->
+        <linearGradient id="glowGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#00f0ff" />
+            <stop offset="50%" stop-color="#5577ff" />
+            <stop offset="100%" stop-color="#aa00ff" />
+        </linearGradient>
+        
+        <!-- 3D Glassmorphism Shine Effect -->
+        <linearGradient id="glassShine" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#ffffff" stop-opacity="0.12" />
+            <stop offset="100%" stop-color="#ffffff" stop-opacity="0" />
+        </linearGradient>
+        
+        <!-- Double-Layered Neon Blur -->
+        <filter id="neonGlow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="15" result="blur" />
+            <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+            </feMerge>
+        </filter>
+        
+        <!-- App Icon Drop Shadow -->
+        <filter id="dropShadow" x="-20%" y="-20%" width="140%" height="140%">
+            <feDropShadow dx="0" dy="20" stdDeviation="25" flood-color="#000000" flood-opacity="0.8"/>
+        </filter>
+    </defs>
+
+    <!-- Base App Background with Heavy Shadow -->
+    <rect width="460" height="460" x="26" y="26" rx="110" fill="url(#bgGrad)" filter="url(#dropShadow)"/>
+
+    <!-- Glass Reflection Highlight (Top Half) -->
+    <path d="M 26 136 C 26 75.2 75.2 26 136 26 L 376 26 C 436.8 26 486 75.2 486 136 L 486 210 Q 256 320 26 210 Z" fill="url(#glassShine)"/>
+
+    <!-- Subtle Outer Border -->
+    <rect width="456" height="456" x="28" y="28" rx="108" fill="none" stroke="url(#glowGrad)" stroke-width="3" opacity="0.4"/>
+
+    <!-- Glowing Central Core -->
+    <g filter="url(#neonGlow)">
+        <!-- Tech Hexagon -->
+        <polygon points="256,120 376,189 376,327 256,396 136,327 136,189" fill="none" stroke="url(#glowGrad)" stroke-width="22" stroke-linejoin="round"/>
+        
+        <!-- White Glowing Nodes at the corners -->
+        <circle cx="136" cy="189" r="6" fill="#ffffff"/>
+        <circle cx="376" cy="327" r="6" fill="#ffffff"/>
+        
+        <!-- Infinite Utility 'S' Symbol -->
+        <path d="M 200 258 C 200 172, 256 172, 256 258 C 256 344, 312 344, 312 258" fill="none" stroke="#00f0ff" stroke-width="26" stroke-linecap="round"/>
+        
+        <!-- Core Data Points -->
+        <circle cx="200" cy="258" r="14" fill="#aa00ff"/>
+        <circle cx="312" cy="258" r="14" fill="#00f0ff"/>
+    </g>
+</svg>

@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Trimmer & GIF Maker - Toolkit</title>
+    <link rel="icon" type="image/svg+xml" href="logo.svg">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg glass-navbar fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="index.html" style="display: flex; align-items: center; gap: 10px;">
+                <img src="logo.svg" alt="Toolkit Logo" style="width: 35px; height: 35px; border-radius: 8px; box-shadow: 0 0 12px rgba(0, 240, 255, 0.5);">
+                Toolkit
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link" href="index.html"><i class="fa-solid fa-house"></i> Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="about.html"><i class="fa-solid fa-circle-info"></i> About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="contact.html"><i class="fa-solid fa-envelope"></i> Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="app-container">
+        <div class="tool-header">
+            <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
+            <h2 class="m-0">Video Trimmer</h2>
+            <button class="info-btn" data-bs-toggle="modal" data-bs-target="#infoModal"><i class="fa-solid fa-info"></i></button>
+        </div>
+        
+        <div class="tool-panel">
+            <div class="input-group" id="upload-group">
+                <label>Select Video File (MP4, WebM)</label>
+                <input type="file" id="video-upload" class="styled-input" accept="video/mp4, video/webm" style="padding: 10px;">
+            </div>
+
+            <div id="video-container" class="video-preview-container">
+                <video id="main-video" playsinline></video>
+            </div>
+
+            <div id="trimmer-controls" style="display: none;">
+                <div style="display: flex; justify-content: center; margin-bottom: 25px; margin-top: -35px; position: relative; z-index: 10;">
+                    <button id="btn-play-circle" style="width: 55px; height: 55px; border-radius: 50%; background: var(--primary-glow); border: none; color: #000; font-size: 1.3rem; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 5px 15px rgba(0,240,255,0.4); transition: 0.3s;">
+                        <i class="fa-solid fa-play" id="play-icon"></i>
+                    </button>
+                </div>
+
+                <div class="control-row">
+                    <span style="font-weight: 600; color: var(--text-muted);">Start Time:</span>
+                    <div class="time-adjust">
+                        <button class="btn-adjust" id="start-minus"><i class="fa-solid fa-minus"></i></button>
+                        <input type="number" id="start-input" class="styled-input" step="0.1" value="0.0" min="0">
+                        <button class="btn-adjust" id="start-plus"><i class="fa-solid fa-plus"></i></button>
+                    </div>
+                </div>
+
+                <div class="control-row">
+                    <span style="font-weight: 600; color: var(--text-muted);">End Time:</span>
+                    <div class="time-adjust">
+                        <button class="btn-adjust" id="end-minus"><i class="fa-solid fa-minus"></i></button>
+                        <input type="number" id="end-input" class="styled-input" step="0.1" value="0.0">
+                        <button class="btn-adjust" id="end-plus"><i class="fa-solid fa-plus"></i></button>
+                    </div>
+                </div>
+
+                <div class="input-group" style="margin-bottom: 25px;">
+                    <label>Output Configuration</label>
+                    <select id="format-select" class="styled-select">
+                        <option value="mp4" selected>MP4 Video (Keep High Definition)</option>
+                        <option value="webm">WebM Video (Highly Optimized Size)</option>
+                    </select>
+                </div>
+
+                <button id="btn-process" class="btn custom-btn w-100" style="padding: 15px; font-size: 1.1rem;"><i class="fa-solid fa-scissors"></i> EXPORT CLIPPED MEDIA</button>
+            </div>
+
+            <div id="status-panel" style="display: none; margin-top: 20px;">
+                <p id="status-text" style="color: var(--primary-glow); font-weight: 600; margin: 0;"><i class="fa-solid fa-spinner fa-spin"></i> Re-rendering Stream Frame Blocks...</p>
+                <div class="processing-bar-wrapper" id="progress-wrapper">
+                    <div class="processing-bar-fill" id="progress-fill"></div>
+                </div>
+            </div>
+            
+            <a id="download-link" class="btn custom-btn btn-secondary w-100 mt-3" style="display: none; text-decoration: none;"><i class="fa-solid fa-download"></i> DOWNLOAD EXPORTED FILE</a>
+        </div>
+    </div>
+
+    <div class="modal fade" id="infoModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fa-solid fa-video"></i> Smart Video Studio</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Trim, adjust, and partition video files instantly using zero-server pipeline processing.</p>
+                    <ul>
+                        <li><i class="fa-solid fa-clock"></i> <strong>Precision Scrubbing:</strong> Utilize the fine-tuning counters to modify file selection by 0.1s increments.</li>
+                        <li><i class="fa-solid fa-microchip"></i> <strong>Offline Matrix Processing:</strong> Video frame stream processing runs completely on-device. Your media files are fully secure and never uploaded anywhere.</li>
+                    </ul>
+                </div>
+                <div class="modal-footer"><button type="button" class="btn custom-btn btn-secondary w-100 m-0" data-bs-dismiss="modal">GOT IT</button></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const videoUpload = document.getElementById('video-upload');
+            const videoContainer = document.getElementById('video-container');
+            const video = document.getElementById('main-video');
+            const trimmerControls = document.getElementById('trimmer-controls');
+            
+            const startInput = document.getElementById('start-input');
+            const endInput = document.getElementById('end-input');
+            const btnPlayCircle = document.getElementById('btn-play-circle');
+            const playIcon = document.getElementById('play-icon');
+            const formatSelect = document.getElementById('format-select');
+            const btnProcess = document.getElementById('btn-process');
+            
+            const statusPanel = document.getElementById('status-panel');
+            const progressWrapper = document.getElementById('progress-wrapper');
+            const progressFill = document.getElementById('progress-fill');
+            const downloadLink = document.getElementById('download-link');
+
+            let sourceFile = null;
+            let currentVideoUrl = null;
+
+            videoUpload.addEventListener('change', (e) => {
+                sourceFile = e.target.files[0];
+                if (!sourceFile) return;
+
+                if (currentVideoUrl) URL.revokeObjectURL(currentVideoUrl);
+                currentVideoUrl = URL.createObjectURL(sourceFile);
+                
+                video.src = currentVideoUrl;
+                videoContainer.style.display = 'block';
+                trimmerControls.style.display = 'block';
+                downloadLink.style.display = 'none';
+                statusPanel.style.display = 'none';
+            });
+
+            video.addEventListener('loadedmetadata', () => {
+                startInput.value = "0.0";
+                endInput.value = video.duration.toFixed(1);
+                startInput.max = video.duration;
+                endInput.max = video.duration;
+            });
+
+            btnPlayCircle.addEventListener('click', () => {
+                if (video.paused) {
+                    const startTime = parseFloat(startInput.value);
+                    if (video.currentTime < startTime || video.currentTime >= parseFloat(endInput.value)) {
+                        video.currentTime = startTime;
+                    }
+                    video.play();
+                } else {
+                    video.pause();
+                }
+            });
+
+            video.addEventListener('play', () => playIcon.classList.replace('fa-play', 'fa-pause'));
+            video.addEventListener('pause', () => playIcon.classList.replace('fa-pause', 'fa-play'));
+
+            video.addEventListener('timeupdate', () => {
+                const maxEnd = parseFloat(endInput.value);
+                if (video.currentTime >= maxEnd) {
+                    video.pause();
+                    video.currentTime = parseFloat(startInput.value);
+                }
+            });
+
+            function validateInputRanges() {
+                let startVal = parseFloat(startInput.value);
+                let endVal = parseFloat(endInput.value);
+                if (startVal < 0) startVal = 0;
+                if (endVal > video.duration) endVal = video.duration;
+                if (startVal >= endVal - 0.2) startVal = Math.max(0, endVal - 0.2);
+                startInput.value = startVal.toFixed(1);
+                endInput.value = endVal.toFixed(1);
+                video.currentTime = startVal;
+            }
+
+            document.getElementById('start-minus').addEventListener('click', () => { startInput.value = Math.max(0, parseFloat(startInput.value) - 0.1).toFixed(1); validateInputRanges(); });
+            document.getElementById('start-plus').addEventListener('click', () => { startInput.value = (parseFloat(startInput.value) + 0.1).toFixed(1); validateInputRanges(); });
+            document.getElementById('end-minus').addEventListener('click', () => { endInput.value = Math.max(0, parseFloat(endInput.value) - 0.1).toFixed(1); validateInputRanges(); });
+            document.getElementById('end-plus').addEventListener('click', () => { endInput.value = (parseFloat(endInput.value) + 0.1).toFixed(1); validateInputRanges(); });
+            startInput.addEventListener('change', validateInputRanges);
+            endInput.addEventListener('change', validateInputRanges);
+
+            btnProcess.addEventListener('click', async () => {
+                if (!sourceFile) return;
+                
+                video.pause();
+                const startTrim = parseFloat(startInput.value);
+                const endTrim = parseFloat(endInput.value);
+                const trimDuration = endTrim - startTrim;
+
+                statusPanel.style.display = "block";
+                progressWrapper.style.display = "block";
+                btnProcess.style.display = "none";
+                downloadLink.style.display = "none";
+                progressFill.style.width = "0%";
+
+                let outputFormat = formatSelect.value;
+                let mimeType = outputFormat === 'webm' ? 'video/webm;codecs=vp8' : 'video/mp4;codecs=avc1';
+                if (!MediaRecorder.isTypeSupported(mimeType)) mimeType = 'video/webm'; 
+
+                const stream = video.captureStream ? video.captureStream() : video.mozCaptureStream();
+                const mediaRecorder = new MediaRecorder(stream, { mimeType: mimeType, videoBitsPerSecond: 3000000 });
+                const chunks = [];
+                
+                mediaRecorder.ondataavailable = (e) => { if (e.data && e.data.size > 0) chunks.push(e.data); };
+
+                mediaRecorder.onstop = () => {
+                    const finalBlob = new Blob(chunks, { type: mimeType });
+                    const blobUrl = URL.createObjectURL(finalBlob);
+                    
+                    downloadLink.href = blobUrl;
+                    const baseName = sourceFile.name.substring(0, sourceFile.name.lastIndexOf('.')) || "video";
+                    downloadLink.download = `trimmed_${baseName}.${outputFormat}`;
+                    
+                    downloadLink.innerHTML = `<i class="fa-solid fa-download"></i> DOWNLOAD CLIPPED .${outputFormat.toUpperCase()}`;
+                    statusPanel.style.display = "none"; btnProcess.style.display = "block"; downloadLink.style.display = "flex";
+                };
+
+                video.currentTime = startTrim;
+                video.addEventListener('seeked', function startCaptureLoop() {
+                    video.removeEventListener('seeked', startCaptureLoop);
+                    mediaRecorder.start();
+                    video.play();
+
+                    const interval = setInterval(() => {
+                        const currentProgress = video.currentTime - startTrim;
+                        const percentage = Math.min(100, (currentProgress / trimDuration) * 100);
+                        progressFill.style.width = `${percentage}%`;
+
+                        if (video.currentTime >= endTrim || video.paused) {
+                            clearInterval(interval);
+                            video.pause();
+                            if(mediaRecorder.state !== "inactive") mediaRecorder.stop();
+                        }
+                    }, 50);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

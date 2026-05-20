@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cipher Box - Toolkit</title>
+    <link rel="icon" type="image/svg+xml" href="logo.svg">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg glass-navbar fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="index.html" style="display: flex; align-items: center; gap: 10px;">
+                <img src="logo.svg" alt="Toolkit Logo" style="width: 35px; height: 35px; border-radius: 8px; box-shadow: 0 0 12px rgba(0, 240, 255, 0.5);">
+                Toolkit
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link" href="index.html"><i class="fa-solid fa-house"></i> Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="about.html"><i class="fa-solid fa-circle-info"></i> About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="contact.html"><i class="fa-solid fa-envelope"></i> Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="app-container">
+        <div class="tool-header">
+            <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
+            <h2 class="m-0">Secret Cipher</h2>
+            <button class="info-btn" data-bs-toggle="modal" data-bs-target="#infoModal" style="border-color: rgba(170, 0, 255, 0.3); color: var(--secondary-glow);"><i class="fa-solid fa-info"></i></button>
+        </div>
+        
+        <div class="tool-panel">
+            <div class="mode-tabs">
+                <button class="mode-tab active" data-target="panel-enc" style="color: #fff;">ENCRYPT</button>
+                <button class="mode-tab" data-target="panel-dec">DECRYPT</button>
+            </div>
+
+            <div id="panel-enc" class="action-panel active">
+                <div class="input-group">
+                    <label>Secret Message</label>
+                    <textarea id="enc-text" class="styled-input" rows="4" placeholder="Type your secret message here..."></textarea>
+                </div>
+                <div class="input-group">
+                    <label>Create a PIN / Password</label>
+                    <input type="password" id="enc-key" class="styled-input" placeholder="Enter a secure key...">
+                </div>
+                <button id="btn-encrypt" class="btn custom-btn btn-secondary w-100 mb-3"><i class="fa-solid fa-lock"></i> LOCK MESSAGE</button>
+                
+                <div id="enc-result-box" style="display: none;">
+                    <textarea id="enc-result" class="styled-input" rows="5" readonly style="color: var(--secondary-glow); font-family: monospace;"></textarea>
+                    <button id="btn-copy-enc" class="btn custom-btn w-100 mt-2"><i class="fa-solid fa-copy"></i> COPY GIBBERISH</button>
+                </div>
+            </div>
+
+            <div id="panel-dec" class="action-panel">
+                <div class="input-group">
+                    <label>Paste Cipher Gibberish</label>
+                    <textarea id="dec-text" class="styled-input" rows="4" placeholder="U2FsdGVkX1..."></textarea>
+                </div>
+                <div class="input-group">
+                    <label>Enter Unlock PIN</label>
+                    <input type="password" id="dec-key" class="styled-input" placeholder="Enter the secret key...">
+                </div>
+                <button id="btn-decrypt" class="btn custom-btn w-100 mb-3"><i class="fa-solid fa-unlock"></i> UNLOCK MESSAGE</button>
+                
+                <div id="dec-result-box" style="display: none;">
+                    <textarea id="dec-result" class="styled-input" rows="4" readonly style="color: #25D366; font-size: 1.1rem;"></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="infoModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" style="color: var(--secondary-glow) !important;"><i class="fa-solid fa-user-secret"></i> AES Cipher Box</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Scramble your messages into unreadable code using military-grade encryption.</p>
+                    <ul>
+                        <li><i class="fa-solid fa-lock"></i> <strong>Encrypt:</strong> Type a message, set a PIN, and send the generated gibberish to a friend.</li>
+                        <li><i class="fa-solid fa-unlock"></i> <strong>Decrypt:</strong> Your friend pastes the gibberish, types the PIN, and unlocks the real message!</li>
+                    </ul>
+                    <hr style="border-color: rgba(255,255,255,0.1); margin: 15px 0;">
+                    <p style="color: #25D366; font-size: 0.9rem; margin-bottom: 0;">
+                        <i class="fa-solid fa-shield-halved"></i> <strong>100% Offline:</strong> The complex cryptographic math happens instantly inside your browser.
+                    </p>
+                </div>
+                <div class="modal-footer"><button type="button" class="btn custom-btn btn-secondary w-100 m-0" data-bs-dismiss="modal">GOT IT</button></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const tabs = document.querySelectorAll('.mode-tab');
+            const panels = document.querySelectorAll('.action-panel');
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(t => { t.classList.remove('active'); t.style.color = 'var(--text-muted)'; });
+                    panels.forEach(p => p.classList.remove('active'));
+                    tab.classList.add('active');
+                    tab.style.color = '#fff';
+                    document.getElementById(tab.getAttribute('data-target')).classList.add('active');
+                });
+            });
+
+            // ENCRYPTION LOGIC
+            const btnEncrypt = document.getElementById('btn-encrypt');
+            const btnCopyEnc = document.getElementById('btn-copy-enc');
+            
+            btnEncrypt.addEventListener('click', () => {
+                const text = document.getElementById('enc-text').value;
+                const key = document.getElementById('enc-key').value;
+                
+                if (!text || !key) return alert("Please enter both a message and a PIN.");
+
+                // CryptoJS AES Encryption
+                const ciphertext = CryptoJS.AES.encrypt(text, key).toString();
+                
+                document.getElementById('enc-result').value = ciphertext;
+                document.getElementById('enc-result-box').style.display = "block";
+            });
+
+            btnCopyEnc.addEventListener('click', () => {
+                document.getElementById('enc-result').select();
+                document.execCommand('copy');
+                btnCopyEnc.innerHTML = '<i class="fa-solid fa-check"></i> COPIED!';
+                setTimeout(() => btnCopyEnc.innerHTML = '<i class="fa-solid fa-copy"></i> COPY GIBBERISH', 2000);
+            });
+
+            // DECRYPTION LOGIC
+            const btnDecrypt = document.getElementById('btn-decrypt');
+            
+            btnDecrypt.addEventListener('click', () => {
+                const ciphertext = document.getElementById('dec-text').value.trim();
+                const key = document.getElementById('dec-key').value;
+                
+                if (!ciphertext || !key) return alert("Please paste the gibberish and enter the PIN.");
+
+                try {
+                    // CryptoJS AES Decryption
+                    const bytes = CryptoJS.AES.decrypt(ciphertext, key);
+                    const originalText = bytes.toString(CryptoJS.enc.Utf8);
+                    
+                    if (!originalText) throw new Error("Bad password");
+
+                    document.getElementById('dec-result').value = originalText;
+                    document.getElementById('dec-result-box').style.display = "block";
+                } catch (e) {
+                    alert("Incorrect PIN or Invalid Cipher Data! Access Denied.");
+                    document.getElementById('dec-result-box').style.display = "none";
+                }
+            });
+        });
+    </script>
+</body>
+</html>

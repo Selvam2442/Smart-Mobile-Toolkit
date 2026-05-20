@@ -8,7 +8,6 @@
     --bg-color: #050508;
     --surface-color: rgba(20, 20, 30, 0.45);
     --surface-border: rgba(255, 255, 255, 0.08);
-    --surface-border-hover: rgba(255, 255, 255, 0.2);
     --primary-glow: #00f0ff;
     --secondary-glow: #aa00ff;
     --text-main: #ffffff;
@@ -48,7 +47,6 @@ body {
     100% { transform: translateY(0px) scale(1.15); }
 }
 
-/* --- CUSTOM SCROLLBAR --- */
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
@@ -65,13 +63,10 @@ body {
 .navbar-brand:hover { transform: scale(1.02); text-shadow: 0 0 15px rgba(0,240,255,0.4); }
 .nav-link { color: #e0e0e0 !important; font-weight: 600; font-size: 1.05rem; transition: all 0.3s ease; margin: 0 10px; text-transform: uppercase; letter-spacing: 1px; position: relative; }
 .nav-link i { margin-right: 6px; color: var(--text-muted); transition: 0.3s; }
-
-/* Navbar Link Underline Animation */
 .nav-link::after { content: ''; position: absolute; width: 0; height: 2px; bottom: -2px; left: 0; background-color: var(--primary-glow); transition: width 0.3s ease; box-shadow: 0 0 10px var(--primary-glow); }
 .nav-link:hover::after, .nav-link.active::after { width: 100%; }
 .nav-link:hover, .nav-link.active { color: var(--primary-glow) !important; text-shadow: 0 0 15px rgba(0,240,255,0.4); }
 .nav-link:hover i, .nav-link.active i { color: var(--primary-glow); }
-
 .navbar-toggler { border: 1px solid rgba(0,240,255,0.2) !important; outline: none !important; box-shadow: none !important; border-radius: 10px; padding: 8px 12px; }
 .navbar-toggler-icon { background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%280, 240, 255, 0.9%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2.5' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important; }
 .navbar-collapse { background: rgba(0,0,0,0.85); border-radius: 16px; margin-top: 15px; padding: 15px; backdrop-filter: blur(15px); text-align: right; border: 1px solid var(--surface-border); }
@@ -92,7 +87,6 @@ footer { text-align: center; padding: 25px; margin-top: auto; color: var(--text-
     display: flex; flex-direction: column; align-items: center; gap: 15px; position: relative; overflow: hidden;
     box-shadow: 0 10px 30px rgba(0,0,0,0.3);
 }
-/* Shine reflection on card */
 .card::before {
     content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
     background: linear-gradient(to right, transparent, rgba(255,255,255,0.05), transparent);
@@ -108,8 +102,7 @@ footer { text-align: center; padding: 25px; margin-top: auto; color: var(--text-
 }
 .card:hover::before { left: 150%; }
 .card:hover i { 
-    color: var(--primary-glow); 
-    filter: drop-shadow(0 0 15px var(--primary-glow)); 
+    color: var(--primary-glow); filter: drop-shadow(0 0 15px var(--primary-glow)); 
     animation: floatIcon 2s ease-in-out infinite; 
 }
 
@@ -118,14 +111,24 @@ footer { text-align: center; padding: 25px; margin-top: auto; color: var(--text-
 .category-header h3 { margin: 0; font-size: 1.2rem; font-weight: 800; color: #fff; text-transform: uppercase; letter-spacing: 2px; }
 .category-header i { color: var(--primary-glow); margin-right: 12px; filter: drop-shadow(0 0 8px rgba(0,240,255,0.5)); }
 
+/* --- PREMIUM ADVERTISEMENT CONTAINER --- */
+.ad-container {
+    width: 100%; min-height: 100px; margin: 30px 0; background: rgba(0, 0, 0, 0.3);
+    border: 1px dashed var(--surface-border); border-radius: 16px;
+    display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden;
+}
+.ad-container::before {
+    content: 'Advertisement'; position: absolute; color: rgba(255, 255, 255, 0.1);
+    font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px; font-weight: 800;
+}
+
 /* Tool Headers & Panels */
 .tool-header { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; }
 .tool-header h2 { margin: 0; font-weight: 800; font-size: 1.6rem; color: #fff; letter-spacing: 1px;}
 .back-btn, .info-btn {
     background: var(--surface-color); border: 1px solid var(--surface-border); color: var(--text-main);
     width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-    text-decoration: none; font-size: 1.3rem; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: pointer; outline: none;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    text-decoration: none; font-size: 1.3rem; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: pointer; outline: none; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
 }
 .info-btn { margin-left: auto; color: var(--primary-glow); border-color: rgba(0,240,255,0.3); }
 .back-btn:hover { background: rgba(0,0,0,0.6); border-color: var(--primary-glow); color: var(--primary-glow); box-shadow: 0 0 20px rgba(0, 240, 255, 0.4); transform: translateX(-5px); }
@@ -133,12 +136,11 @@ footer { text-align: center; padding: 25px; margin-top: auto; color: var(--text-
 
 .tool-panel { 
     background: linear-gradient(145deg, rgba(20, 20, 30, 0.5), rgba(10, 10, 15, 0.8)); 
-    backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
-    border: 1px solid var(--surface-border); border-radius: 28px; padding: 35px 25px; text-align: center; 
-    box-shadow: 0 25px 50px rgba(0,0,0,0.6); 
+    backdrop-filter: blur(25px); border: 1px solid var(--surface-border); border-radius: 28px; 
+    padding: 35px 25px; text-align: center; box-shadow: 0 25px 50px rgba(0,0,0,0.6); 
 }
 
-/* Premium Inputs */
+/* Inputs & Buttons */
 .input-group { margin-bottom: 22px; text-align: left; width: 100%; }
 .input-group label { display: block; margin-bottom: 10px; font-weight: 600; color: #bbb; font-size: 0.95rem; letter-spacing: 0.5px;}
 .styled-input, .styled-select {
@@ -146,12 +148,8 @@ footer { text-align: center; padding: 25px; margin-top: auto; color: var(--text-
     border: 1px solid var(--surface-border); border-radius: 12px; outline: none; font-size: 1rem; transition: 0.3s;
     box-shadow: 0 4px 10px rgba(0,0,0,0.2) inset;
 }
-.styled-input:focus, .styled-select:focus { 
-    border-color: var(--primary-glow); background: rgba(0,0,0,0.6);
-    box-shadow: 0 0 15px rgba(0, 240, 255, 0.25) inset, 0 0 10px rgba(0, 240, 255, 0.1); 
-}
+.styled-input:focus, .styled-select:focus { border-color: var(--primary-glow); background: rgba(0,0,0,0.6); box-shadow: 0 0 15px rgba(0, 240, 255, 0.25) inset, 0 0 10px rgba(0, 240, 255, 0.1); }
 
-/* Premium Animated Buttons */
 .btn.custom-btn {
     background: rgba(0, 240, 255, 0.08); border: 1px solid var(--primary-glow); color: var(--primary-glow);
     padding: 14px 28px; border-radius: 14px; font-size: 1rem; font-weight: 800; cursor: pointer;
@@ -165,22 +163,12 @@ footer { text-align: center; padding: 25px; margin-top: auto; color: var(--text-
 }
 .btn.custom-btn:hover { background: var(--primary-glow); color: #000; box-shadow: 0 10px 25px rgba(0, 240, 255, 0.5); transform: translateY(-3px); }
 .btn.custom-btn:hover::after { left: 150%; }
-.btn.custom-btn:active { transform: translateY(1px); }
-
 .btn.custom-btn.btn-secondary { border-color: var(--secondary-glow); color: var(--secondary-glow); background: rgba(170, 0, 255, 0.08); }
 .btn.custom-btn.btn-secondary:hover { background: var(--secondary-glow); box-shadow: 0 10px 25px rgba(170, 0, 255, 0.5); color: #fff;}
 
-/* Brand Specific Buttons (Contact) */
-.btn-whatsapp { border-color: #25D366 !important; color: #25D366 !important; background: rgba(37, 211, 102, 0.08) !important;}
-.btn-whatsapp:hover { background: #25D366 !important; color: #000 !important; box-shadow: 0 10px 25px rgba(37, 211, 102, 0.5) !important; }
-.btn-insta { border-color: #E1306C !important; color: #E1306C !important; background: rgba(225, 48, 108, 0.08) !important;}
-.btn-insta:hover { background: #E1306C !important; color: #fff !important; box-shadow: 0 10px 25px rgba(225, 48, 108, 0.5) !important; }
-.btn-github { border-color: #ffffff !important; color: #ffffff !important; background: rgba(255, 255, 255, 0.05) !important;}
-.btn-github:hover { background: #ffffff !important; color: #000 !important; box-shadow: 0 10px 25px rgba(255, 255, 255, 0.4) !important; }
-
-/* Modal Perfection */
+/* Modals */
 .modal-content { 
-    background: rgba(15, 15, 20, 0.95) !important; backdrop-filter: blur(30px) !important; -webkit-backdrop-filter: blur(30px) !important;
+    background: rgba(15, 15, 20, 0.95) !important; backdrop-filter: blur(30px) !important; 
     border: 1px solid rgba(0, 240, 255, 0.3) !important; border-radius: 24px !important; 
     box-shadow: 0 25px 60px rgba(0,0,0,0.9), 0 0 30px rgba(0, 240, 255, 0.05) inset !important; color: #ffffff !important; 
 }
@@ -190,43 +178,22 @@ footer { text-align: center; padding: 25px; margin-top: auto; color: var(--text-
 .modal-body { text-align: left; padding: 30px 25px !important; line-height: 1.6;}
 .modal-body ul { list-style: none; padding: 20px !important; margin-top: 20px; background: rgba(0,0,0,0.5) !important; border-radius: 16px; border: 1px solid rgba(255,255,255,0.05) !important; }
 .modal-body ul li { margin-bottom: 15px; display: flex; gap: 12px; align-items: flex-start; }
-.modal-body ul li:last-child { margin-bottom: 0; }
 .modal-body ul li i { color: var(--secondary-glow) !important; font-size: 1.2rem; margin-top: 3px; filter: drop-shadow(0 0 5px rgba(170,0,255,0.4));}
 .modal-footer { border-top: 1px solid rgba(255, 255, 255, 0.08) !important; padding: 20px 25px !important; }
 
-/* ==========================================================================
-   TOOL-SPECIFIC ADVANCED STYLES
-   ========================================================================== */
-
-/* UI Tabs (PDF, QR, Cipher) */
+/* Miscellaneous specific tool styles (Tabs, Sliders, Progress Bars, QR) */
 .mode-tabs { display: flex; gap: 12px; margin-bottom: 30px; background: rgba(0,0,0,0.4); padding: 8px; border-radius: 16px; border: 1px solid var(--surface-border); box-shadow: 0 5px 15px rgba(0,0,0,0.3) inset;}
 .mode-tab { flex: 1; background: transparent; border: none; color: var(--text-muted); padding: 12px; font-weight: 700; font-size: 0.95rem; letter-spacing: 1px; border-radius: 10px; transition: 0.3s; cursor: pointer; }
 .mode-tab.active { background: var(--primary-glow); color: #000; box-shadow: 0 0 15px rgba(0,240,255,0.4); }
 .action-panel { display: none; text-align: left; animation: fadeIn 0.4s ease-out;}
 .action-panel.active { display: block; }
-
-/* Media Containers (Trimmer, Cutter, Studio, OCR) */
-.video-preview-container, .canvas-container, #waveform-container {
-    width: 100%; background: rgba(0, 0, 0, 0.6); border: 1px solid var(--surface-border);
-    border-radius: 16px; padding: 15px; margin-bottom: 25px; display: none; box-shadow: 0 10px 25px rgba(0,0,0,0.6) inset; text-align: center;
-}
+.video-preview-container, .canvas-container, #waveform-container { width: 100%; background: rgba(0, 0, 0, 0.6); border: 1px solid var(--surface-border); border-radius: 16px; padding: 15px; margin-bottom: 25px; display: none; box-shadow: 0 10px 25px rgba(0,0,0,0.6) inset; text-align: center; }
 #main-video, #image-canvas, #image-preview { max-width: 100%; max-height: 380px; border-radius: 10px; background: #000; object-fit: contain; box-shadow: 0 5px 15px rgba(0,0,0,0.5);}
-
-/* Waveform Pro Drag Handles */
-#waveform-container { --region-handle-color: var(--primary-glow); --region-handle-bg: rgba(0, 240, 255, 0.15); }
-#waveform-container.remove-mode { --region-handle-color: var(--danger-color); --region-handle-bg: rgba(255, 68, 68, 0.15); }
-#waveform ::part(region-handle-left), #waveform ::part(region-handle-right) { width: 35px !important; background-color: var(--region-handle-bg) !important; transition: background-color 0.3s ease; backdrop-filter: blur(2px);}
-#waveform ::part(region-handle-left) { border-left: 4px solid var(--region-handle-color) !important; border-top-left-radius: 8px; border-bottom-left-radius: 8px; }
-#waveform ::part(region-handle-right) { border-right: 4px solid var(--region-handle-color) !important; border-top-right-radius: 8px; border-bottom-right-radius: 8px; }
-
-/* Time Fine-Tuning Inputs */
 .time-adjust { display: flex; align-items: center; gap: 10px; }
 .btn-adjust { background: rgba(255,255,255,0.05); border: 1px solid var(--surface-border); color: #fff; width: 42px; height: 42px; border-radius: 10px; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; font-size: 1.1rem;}
 .btn-adjust:hover { background: var(--primary-glow); color: #000; border-color: var(--primary-glow); box-shadow: 0 0 10px rgba(0,240,255,0.3);}
 .time-adjust input { width: 100px; text-align: center; font-family: monospace; font-size: 1.2rem; font-weight: 600; margin: 0; padding: 10px;}
 .control-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; background: rgba(0,0,0,0.4); padding: 15px; border-radius: 14px; border: 1px solid var(--surface-border); box-shadow: 0 5px 15px rgba(0,0,0,0.2) inset;}
-
-/* Toggle Switches */
 .switch { position: relative; display: inline-block; width: 54px; height: 28px; margin: 0; }
 .switch input { opacity: 0; width: 0; height: 0; }
 .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(255,255,255,0.1); transition: .4s; border-radius: 34px; border: 1px solid var(--surface-border); }
@@ -235,8 +202,6 @@ input:checked + .slider { background-color: rgba(0, 240, 255, 0.15); border-colo
 input:checked + .slider:before { transform: translateX(26px); background-color: var(--primary-glow); box-shadow: 0 0 12px var(--primary-glow); }
 input.remove-toggle:checked + .slider { background-color: rgba(255, 68, 68, 0.15); border-color: var(--danger-color); }
 input.remove-toggle:checked + .slider:before { background-color: var(--danger-color); box-shadow: 0 0 12px var(--danger-color); }
-
-/* Range Sliders & Buttons (Photo Studio) */
 .slider-group { margin-bottom: 20px; text-align: left; }
 .slider-group label { display: flex; justify-content: space-between; color: #ddd; font-size: 0.95rem; font-weight: 600; margin-bottom: 8px; }
 .slider-group label span { color: var(--primary-glow); font-family: monospace; font-size: 1.05rem;}
@@ -247,12 +212,8 @@ input[type=range]::-webkit-slider-thumb { height: 22px; width: 22px; border-radi
 .filter-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 25px; }
 .filter-btn { background: rgba(0,0,0,0.5); border: 1px solid var(--surface-border); color: #ccc; padding: 12px 8px; border-radius: 12px; font-size: 0.9rem; font-weight: 600; transition: 0.3s; cursor: pointer; }
 .filter-btn:hover, .filter-btn.active { background: var(--primary-glow); color: #000; border-color: var(--primary-glow); box-shadow: 0 5px 15px rgba(0,240,255,0.4); transform: translateY(-2px);}
-
-/* Progress Bars (Trimmer, OCR) */
 .processing-bar-wrapper { width: 100%; background: rgba(0,0,0,0.5); height: 8px; border-radius: 4px; overflow: hidden; margin-top: 15px; display: none; border: 1px solid var(--surface-border); box-shadow: 0 2px 5px rgba(0,0,0,0.5) inset;}
 .processing-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--primary-glow), var(--secondary-glow)); transition: width 0.1s linear; box-shadow: 0 0 10px var(--primary-glow);}
-
-/* QR UI Specifics */
 #qrcode-canvas { background: #fff; padding: 20px; border-radius: 16px; display: inline-block; margin: 25px 0; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 4px solid var(--primary-glow);}
 .result-box { display: none; background: rgba(0,240,255,0.05); padding: 20px; border-radius: 14px; margin-top: 20px; border: 1px solid rgba(0,240,255,0.3); font-family: monospace; word-break: break-all; text-align: left; box-shadow: 0 5px 15px rgba(0,0,0,0.3) inset;}
 

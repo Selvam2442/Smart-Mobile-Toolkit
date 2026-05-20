@@ -139,12 +139,14 @@
                 });
             });
 
+            // 🔥 FIX: Direct Canvas Data Extraction to prevent page download bug 🔥
             document.getElementById('btn-save-qr').addEventListener('click', () => {
-                const imgElement = qrTargetBox.querySelector('img');
-                if (!imgElement) return alert("Generate code asset first.");
+                const canvas = qrTargetBox.querySelector('canvas');
+                if (!canvas) return alert("Generate code asset first.");
 
+                const dataUrl = canvas.toDataURL("image/png");
                 const link = document.createElement('a');
-                link.href = imgElement.src;
+                link.href = dataUrl;
                 link.download = `qr_generated.png`;
                 link.click();
             });
@@ -183,7 +185,7 @@
                     })
                     .catch(err => {
                         statusText.style.display = "none";
-                        alert("Could not detect a QR Code or Barcode.");
+                        alert("Could not detect a valid QR Code or Barcode.");
                     });
             }
 

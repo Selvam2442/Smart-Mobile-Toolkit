@@ -8,6 +8,27 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .event-card {
+            background: rgba(0,0,0,0.5); border: 1px solid var(--surface-border);
+            border-radius: 16px; padding: 20px; margin-bottom: 20px; text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        .event-card h3 { color: #fff; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 20px; text-shadow: 0 0 10px rgba(255,255,255,0.1); }
+        .clock-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
+        .time-box { padding: 10px; border-radius: 12px; }
+        .time-box h2 { margin: 0; font-size: 1.8rem; font-weight: 800; }
+        .time-box span { font-size: 0.7rem; text-transform: uppercase; font-weight: 600; color: var(--text-muted); }
+        
+        .box-days { border: 1px solid var(--primary-glow); box-shadow: 0 0 15px rgba(0,240,255,0.1) inset; }
+        .box-days h2 { color: var(--primary-glow); }
+        .box-hours { border: 1px solid var(--secondary-glow); box-shadow: 0 0 15px rgba(170,0,255,0.1) inset; }
+        .box-hours h2 { color: var(--secondary-glow); }
+        .box-mins { border: 1px solid var(--primary-glow); box-shadow: 0 0 15px rgba(0,240,255,0.1) inset; }
+        .box-mins h2 { color: var(--primary-glow); }
+        .box-secs { border: 1px solid var(--secondary-glow); box-shadow: 0 0 15px rgba(170,0,255,0.1) inset; }
+        .box-secs h2 { color: var(--secondary-glow); }
+    </style>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg glass-navbar fixed-top">
@@ -32,15 +53,15 @@
     <div class="app-container">
         <div class="tool-header">
             <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
-            <h2 class="m-0">Live Countdown</h2>
+            <h2 class="m-0">Live Countdowns</h2>
             <button class="info-btn" data-bs-toggle="modal" data-bs-target="#infoModal" style="border-color: rgba(170, 0, 255, 0.3); color: var(--secondary-glow);"><i class="fa-solid fa-info"></i></button>
         </div>
         
         <div class="tool-panel">
             
-            <div id="setup-panel">
+            <div id="setup-panel" style="margin-bottom: 40px; padding-bottom: 30px; border-bottom: 2px solid rgba(255,255,255,0.05);">
                 <div class="input-group">
-                    <label>What are we waiting for?</label>
+                    <label>Add a New Event</label>
                     <input type="text" id="event-name" class="styled-input" placeholder="e.g., BCA Semester Exams...">
                 </div>
                 <div class="input-group">
@@ -53,37 +74,11 @@
                     <label class="switch"><input type="checkbox" id="notify-toggle"><span class="slider"></span></label>
                 </div>
 
-                <button id="btn-start" class="btn custom-btn w-100"><i class="fa-solid fa-clock"></i> START CLOCK</button>
+                <button id="btn-start" class="btn custom-btn w-100"><i class="fa-solid fa-plus"></i> ADD COUNTDOWN</button>
             </div>
 
-            <div id="clock-panel" style="display: none; text-align: center;">
-                <h3 id="display-name" style="color: #fff; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 25px; text-shadow: 0 0 10px rgba(255,255,255,0.2);"></h3>
-                
-                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 30px;">
-                    <div style="background: rgba(0,0,0,0.5); padding: 15px 10px; border-radius: 12px; border: 1px solid var(--primary-glow); box-shadow: 0 0 15px rgba(0,240,255,0.15) inset;">
-                        <h2 id="t-days" style="color: var(--primary-glow); margin: 0; font-size: 2rem; font-weight: 800;">00</h2>
-                        <span style="color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; font-weight: 600;">Days</span>
-                    </div>
-                    <div style="background: rgba(0,0,0,0.5); padding: 15px 10px; border-radius: 12px; border: 1px solid var(--secondary-glow); box-shadow: 0 0 15px rgba(170,0,255,0.15) inset;">
-                        <h2 id="t-hours" style="color: var(--secondary-glow); margin: 0; font-size: 2rem; font-weight: 800;">00</h2>
-                        <span style="color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; font-weight: 600;">Hours</span>
-                    </div>
-                    <div style="background: rgba(0,0,0,0.5); padding: 15px 10px; border-radius: 12px; border: 1px solid var(--primary-glow); box-shadow: 0 0 15px rgba(0,240,255,0.15) inset;">
-                        <h2 id="t-mins" style="color: var(--primary-glow); margin: 0; font-size: 2rem; font-weight: 800;">00</h2>
-                        <span style="color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; font-weight: 600;">Mins</span>
-                    </div>
-                    <div style="background: rgba(0,0,0,0.5); padding: 15px 10px; border-radius: 12px; border: 1px solid var(--secondary-glow); box-shadow: 0 0 15px rgba(170,0,255,0.15) inset;">
-                        <h2 id="t-secs" style="color: var(--secondary-glow); margin: 0; font-size: 2rem; font-weight: 800;">00</h2>
-                        <span style="color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; font-weight: 600;">Secs</span>
-                    </div>
+            <div id="events-container">
                 </div>
-
-                <p id="time-past-msg" style="color: #25D366; display: none; font-weight: 800; font-size: 1.2rem; margin-bottom: 20px;"><i class="fa-solid fa-party-horn"></i> The event is here!</p>
-
-                <button id="btn-delete" class="btn custom-btn w-100" style="border-color: var(--danger-color); color: var(--danger-color); background: rgba(255, 68, 68, 0.08);">
-                    <i class="fa-solid fa-trash"></i> DELETE EVENT
-                </button>
-            </div>
 
         </div>
     </div>
@@ -99,9 +94,9 @@
                     <p>Track the exact time left until your most important events.</p>
                     <hr style="border-color: rgba(255,255,255,0.1); margin: 15px 0;">
                     <ul style="padding-left: 0;">
-                        <li><i class="fa-solid fa-calendar-xmark"></i> <strong>Time Guard:</strong> You cannot select a date in the past.</li>
-                        <li><i class="fa-solid fa-bell"></i> <strong>Push Alerts:</strong> Enable notifications to get a browser alert the exact second your countdown hits zero!</li>
-                        <li><i class="fa-solid fa-trash"></i> <strong>Persistent Data:</strong> Ended events will stay on your screen until you explicitly delete them.</li>
+                        <li><i class="fa-solid fa-layer-group"></i> <strong>Multiple Events:</strong> You can now track as many events as you want simultaneously!</li>
+                        <li><i class="fa-solid fa-bell"></i> <strong>Push Alerts:</strong> Enable notifications to get an alert the exact second a countdown hits zero.</li>
+                        <li><i class="fa-solid fa-trash"></i> <strong>Persistent Data:</strong> Events stay forever until you delete them.</li>
                     </ul>
                 </div>
                 <div class="modal-footer"><button type="button" class="btn custom-btn btn-secondary w-100 m-0" data-bs-dismiss="modal">GOT IT</button></div>
@@ -112,31 +107,25 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            const setupPanel = document.getElementById('setup-panel');
-            const clockPanel = document.getElementById('clock-panel');
-            
             const eventNameInput = document.getElementById('event-name');
             const eventDateInput = document.getElementById('event-date');
             const notifyToggle = document.getElementById('notify-toggle');
             const btnStart = document.getElementById('btn-start');
-            const btnDelete = document.getElementById('btn-delete');
-            
-            const displayName = document.getElementById('display-name');
-            const elDays = document.getElementById('t-days');
-            const elHours = document.getElementById('t-hours');
-            const elMins = document.getElementById('t-mins');
-            const elSecs = document.getElementById('t-secs');
-            const pastMsg = document.getElementById('time-past-msg');
+            const eventsContainer = document.getElementById('events-container');
 
-            let timerInterval;
-            let notificationFired = false;
-
-            // Prevent selecting past dates by dynamically setting the 'min' attribute
+            // Set minimum date to right now to prevent past dates
             const now = new Date();
             now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
             eventDateInput.min = now.toISOString().slice(0, 16);
 
-            // FIX: Robust Notification Permission Request
+            // Load saved events from Local Storage
+            let eventsArray = JSON.parse(localStorage.getItem('toolkit_events_v2')) || [];
+
+            function saveEvents() {
+                localStorage.setItem('toolkit_events_v2', JSON.stringify(eventsArray));
+            }
+
+            // Request Notification Permission
             notifyToggle.addEventListener('change', async () => {
                 if (notifyToggle.checked) {
                     if (!("Notification" in window)) {
@@ -144,86 +133,99 @@
                         notifyToggle.checked = false;
                         return;
                     }
-                    if (Notification.permission === "granted") {
-                        // Permission already granted, proceed
-                    } else if (Notification.permission !== "denied") {
+                    if (Notification.permission !== "granted" && Notification.permission !== "denied") {
                         const permission = await Notification.requestPermission();
                         if (permission !== "granted") {
                             notifyToggle.checked = false;
                             alert("Notification permission denied. We cannot send you an alert.");
                         }
-                    } else {
-                        // User previously blocked notifications for this site
+                    } else if (Notification.permission === "denied") {
                         notifyToggle.checked = false;
-                        alert("Notifications are blocked by your browser settings. Please allow them for this site to use this feature.");
+                        alert("Notifications are blocked by your browser settings.");
                     }
                 }
             });
 
-            function formatTime(time) {
-                return time < 10 ? `0${time}` : time;
-            }
+            function formatTime(time) { return time < 10 ? `0${time}` : time; }
 
-            function updateClock(targetDate, eventName, wantsNotification) {
-                const currentTime = new Date().getTime();
-                const distance = targetDate - currentTime;
-
-                if (distance <= 0) {
-                    elDays.innerText = "00";
-                    elHours.innerText = "00";
-                    elMins.innerText = "00";
-                    elSecs.innerText = "00";
-                    pastMsg.style.display = "block";
-                    
-                    // Trigger Native Push Notification Once
-                    if (wantsNotification && !notificationFired && Notification.permission === "granted") {
-                        try {
-                            new Notification("🎉 It's Time!", {
-                                body: `${eventName} is happening right now!`,
-                                icon: "logo.svg"
-                            });
-                        } catch (e) {
-                            console.log("Browser restricted the notification creation.", e);
-                        }
-                        notificationFired = true;
-                    }
-                    clearInterval(timerInterval);
+            // Render the HTML for all events
+            function renderEvents() {
+                eventsContainer.innerHTML = '';
+                
+                if (eventsArray.length === 0) {
+                    eventsContainer.innerHTML = '<p style="color: var(--text-muted); font-size: 0.9rem;">No active countdowns. Add one above!</p>';
                     return;
                 }
 
-                pastMsg.style.display = "none";
-                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-                elDays.innerText = formatTime(days);
-                elHours.innerText = formatTime(hours);
-                elMins.innerText = formatTime(minutes);
-                elSecs.innerText = formatTime(seconds);
-            }
-
-            function startTimer(name, dateString, wantsNotification) {
-                const targetDate = new Date(dateString).getTime();
-                displayName.innerText = name;
-                notificationFired = false;
+                eventsArray.forEach((ev, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'event-card';
+                    card.innerHTML = `
+                        <h3>${ev.name}</h3>
+                        <div class="clock-grid">
+                            <div class="time-box box-days"><h2 id="d-${index}">00</h2><span>Days</span></div>
+                            <div class="time-box box-hours"><h2 id="h-${index}">00</h2><span>Hours</span></div>
+                            <div class="time-box box-mins"><h2 id="m-${index}">00</h2><span>Mins</span></div>
+                            <div class="time-box box-secs"><h2 id="s-${index}">00</h2><span>Secs</span></div>
+                        </div>
+                        <p id="msg-${index}" style="color: #25D366; display: none; font-weight: 800; font-size: 1.1rem; margin-bottom: 15px;"><i class="fa-solid fa-party-horn"></i> The event is here!</p>
+                        <button onclick="deleteEvent(${index})" class="btn custom-btn w-100" style="border-color: var(--danger-color); color: var(--danger-color); background: rgba(255, 68, 68, 0.08); padding: 10px;">
+                            <i class="fa-solid fa-trash"></i> DELETE
+                        </button>
+                    `;
+                    eventsContainer.appendChild(card);
+                });
                 
-                setupPanel.style.display = "none";
-                clockPanel.style.display = "block";
-                
-                updateClock(targetDate, name, wantsNotification); 
-                // Only set interval if time is in the future
-                if (targetDate - new Date().getTime() > 0) {
-                    timerInterval = setInterval(() => updateClock(targetDate, name, wantsNotification), 1000);
-                }
+                updateAllClocks(); // Run immediately so there's no 1-second delay
             }
 
-            // Restore saved session if it exists
-            const savedData = JSON.parse(localStorage.getItem('toolkit_countdown'));
-            if (savedData && savedData.name && savedData.date) {
-                startTimer(savedData.name, savedData.date, savedData.notify);
+            // The main engine that updates every clock every second
+            function updateAllClocks() {
+                const currentTime = new Date().getTime();
+
+                eventsArray.forEach((ev, index) => {
+                    const targetDate = new Date(ev.date).getTime();
+                    const distance = targetDate - currentTime;
+                    
+                    const elD = document.getElementById(`d-${index}`);
+                    const elH = document.getElementById(`h-${index}`);
+                    const elM = document.getElementById(`m-${index}`);
+                    const elS = document.getElementById(`s-${index}`);
+                    const elMsg = document.getElementById(`msg-${index}`);
+
+                    if (!elD) return; // safety check
+
+                    if (distance <= 0) {
+                        elD.innerText = "00"; elH.innerText = "00"; elM.innerText = "00"; elS.innerText = "00";
+                        elMsg.style.display = "block";
+                        
+                        // Fire notification if requested and not yet fired
+                        if (ev.notify && !ev.notified && Notification.permission === "granted") {
+                            try {
+                                new Notification("🎉 It's Time!", { body: `${ev.name} is happening right now!`, icon: "logo.svg" });
+                            } catch (e) { console.log(e); }
+                            
+                            ev.notified = true; // Mark as notified
+                            saveEvents();       // Save state to prevent spam
+                        }
+                    } else {
+                        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                        elD.innerText = formatTime(days);
+                        elH.innerText = formatTime(hours);
+                        elM.innerText = formatTime(minutes);
+                        elS.innerText = formatTime(seconds);
+                    }
+                });
             }
 
+            // Start the global timer interval
+            setInterval(updateAllClocks, 1000);
+
+            // Add new event
             btnStart.addEventListener('click', () => {
                 const name = eventNameInput.value.trim();
                 const date = eventDateInput.value;
@@ -231,31 +233,31 @@
 
                 if (!name || !date) return alert("Please enter an event name and select a date/time.");
 
-                const targetTime = new Date(date).getTime();
-                if (targetTime <= new Date().getTime()) {
+                if (new Date(date).getTime() <= new Date().getTime()) {
                     return alert("Please select a time in the future.");
                 }
 
-                // Save to local storage so it persists if they refresh
-                localStorage.setItem('toolkit_countdown', JSON.stringify({ name: name, date: date, notify: wantsNotify }));
-                startTimer(name, date, wantsNotify);
+                eventsArray.push({ name: name, date: date, notify: wantsNotify, notified: false });
+                saveEvents();
+                renderEvents();
+
+                // Clear form
+                eventNameInput.value = '';
+                eventDateInput.value = '';
+                notifyToggle.checked = false;
             });
 
-            // Handle explicitly deleting the event
-            btnDelete.addEventListener('click', () => {
+            // Global delete function
+            window.deleteEvent = function(index) {
                 if (confirm("Are you sure you want to delete this event?")) {
-                    clearInterval(timerInterval);
-                    localStorage.removeItem('toolkit_countdown');
-                    
-                    eventNameInput.value = '';
-                    eventDateInput.value = '';
-                    notifyToggle.checked = false;
-                    notificationFired = false;
-                    
-                    clockPanel.style.display = "none";
-                    setupPanel.style.display = "block";
+                    eventsArray.splice(index, 1);
+                    saveEvents();
+                    renderEvents();
                 }
-            });
+            };
+
+            // Initial render
+            renderEvents();
         });
     </script>
 </body>

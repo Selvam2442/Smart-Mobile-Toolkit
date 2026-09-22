@@ -1,0 +1,28 @@
+{
+  "name": "smart-mobile-toolkit",
+  "version": "1.0.0",
+  "description": "A modern, lightweight, and responsive web-based utility application designed specifically for mobile devices",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"No tests configured\" && exit 0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Selvam2442/Smart-Mobile-Toolkit.git"
+  },
+  "keywords": [
+    "toolkit",
+    "utilities",
+    "mobile",
+    "web-app"
+  ],
+  "author": "Antony",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Selvam2442/Smart-Mobile-Toolkit/issues"
+  },
+  "homepage": "https://github.com/Selvam2442/Smart-Mobile-Toolkit#readme",
+  "dependencies": {
+    "@vercel/analytics": "^1.4.1"
+  }
+}

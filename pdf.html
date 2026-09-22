@@ -1,183 +1,25 @@
 <!DOCTYPE html>
-<html lang="en" data-bs-theme="dark">
-<head>
-    <meta name="google-adsense-account" content="ca-pub-8050432929862649">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PDF Manager - Toolkit</title>
-    <link rel="icon" type="image/svg+xml" href="logo.svg">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
-</head>
-<body>
-    <nav class="navbar navbar-expand-lg glass-navbar fixed-top">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="index.html" style="display: flex; align-items: center; gap: 10px;">
-                <img src="logo.svg" alt="Toolkit Logo" style="width: 35px; height: 35px; border-radius: 8px; box-shadow: 0 0 12px rgba(0, 240, 255, 0.5);">
-                Toolkit
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-                <ul class="navbar-nav">
-                    <li class="nav-item"><a class="nav-link" href="index.html"><i class="fa-solid fa-house"></i> Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="about.html"><i class="fa-solid fa-circle-info"></i> About</a></li>
-                    <li class="nav-item"><a class="nav-link" href="contact.html"><i class="fa-solid fa-envelope"></i> Contact</a></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
-    <div class="app-container">
-        <div class="tool-header">
-            <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
-            <h2 class="m-0">PDF Manager</h2>
-            <button class="info-btn" data-bs-toggle="modal" data-bs-target="#infoModal"><i class="fa-solid fa-info"></i></button>
-        </div>
-        
-        <div class="tool-panel">
-            <div class="mode-tabs">
-                <button class="mode-tab active" data-target="panel-merge">MERGE PDFs</button>
-                <button class="mode-tab" data-target="panel-split">SPLIT PDF</button>
-            </div>
-
-            <div id="panel-merge" class="action-panel active">
-                <div class="input-group">
-                    <label>Select Multiple PDF Files</label>
-                    <input type="file" id="merge-files" class="styled-input" accept="application/pdf" multiple style="padding: 10px;">
-                </div>
-                <button id="btn-merge" class="btn custom-btn w-100 mt-2"><i class="fa-solid fa-compress"></i> MERGE DOCUMENTS</button>
-            </div>
-
-            <div id="panel-split" class="action-panel">
-                <div class="input-group">
-                    <label>Select a PDF File</label>
-                    <input type="file" id="split-file" class="styled-input" accept="application/pdf" style="padding: 10px;">
-                </div>
-                <div style="display: flex; gap: 15px; margin-bottom: 20px;">
-                    <div class="input-group" style="flex: 1; margin: 0;">
-                        <label>Start Page</label>
-                        <input type="number" id="split-start" class="styled-input" min="1" value="1">
-                    </div>
-                    <div class="input-group" style="flex: 1; margin: 0;">
-                        <label>End Page</label>
-                        <input type="number" id="split-end" class="styled-input" min="1" value="2">
-                    </div>
-                </div>
-                <button id="btn-split" class="btn custom-btn btn-secondary w-100"><i class="fa-solid fa-scissors"></i> SPLIT PAGES</button>
-            </div>
-
-            <p id="status-text" style="color: var(--primary-glow); font-weight: 600; display: none; margin-top: 20px;"><i class="fa-solid fa-spinner fa-spin"></i> Processing document data offline...</p>
-            <a id="download-link" class="btn custom-btn w-100 mt-3" style="display: none; text-decoration: none;"><i class="fa-solid fa-download"></i> DOWNLOAD EXPORTED PDF</a>
-        </div>
-    </div>
-
-    <div class="modal fade" id="infoModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title"><i class="fa-solid fa-file-pdf"></i> PDF Management Suite</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p>Combine or partition documents instantly with our fast client-side engine.</p>
-                    <ul>
-                        <li><i class="fa-solid fa-object-group"></i> <strong>Merging:</strong> Upload two or more PDFs to bind them into a single file sequentially.</li>
-                        <li><i class="fa-solid fa-scissors"></i> <strong>Splitting:</strong> Extract a localized block of pages into a new compact document.</li>
-                    </ul>
-                </div>
-                <div class="modal-footer"><button type="button" class="btn custom-btn btn-secondary w-100 m-0" data-bs-dismiss="modal">GOT IT</button></div>
-            </div>
-        </div>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const tabs = document.querySelectorAll('.mode-tab');
-            const panels = document.querySelectorAll('.action-panel');
-            const statusText = document.getElementById('status-text');
-            const downloadLink = document.getElementById('download-link');
-
-            tabs.forEach(tab => {
-                tab.addEventListener('click', () => {
-                    tabs.forEach(t => t.classList.remove('active'));
-                    panels.forEach(p => p.classList.remove('active'));
-                    tab.classList.add('active');
-                    document.getElementById(tab.getAttribute('data-target')).classList.add('active');
-                    downloadLink.style.display = "none";
-                });
-            });
-
-            document.getElementById('btn-merge').addEventListener('click', async () => {
-                const files = document.getElementById('merge-files').files;
-                if (files.length < 2) return alert("Please select at least 2 PDF files to merge.");
-
-                statusText.style.display = "block"; downloadLink.style.display = "none";
-
-                try {
-                    const mergedPdf = await PDFLib.PDFDocument.create();
-                    for (let file of files) {
-                        const bytes = await file.arrayBuffer();
-                        const pdf = await PDFLib.PDFDocument.load(bytes);
-                        const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
-                        copiedPages.forEach((page) => mergedPdf.addPage(page));
-                    }
-                    const finalBytes = await mergedPdf.save();
-                    const blob = new Blob([finalBytes], { type: "application/pdf" });
-                    
-                    downloadLink.href = URL.createObjectURL(blob);
-                    const referenceName = files[0].name.substring(0, files[0].name.lastIndexOf('.')) || "document";
-                    downloadLink.download = `merged_${referenceName}.pdf`;
-                    
-                    statusText.style.display = "none"; downloadLink.style.display = "flex";
-                } catch (err) {
-                    console.error(err); alert("Error merging PDFs.");
-                    statusText.style.display = "none";
-                }
-            });
-
-            document.getElementById('btn-split').addEventListener('click', async () => {
-                const fileInput = document.getElementById('split-file').files[0];
-                const startPage = parseInt(document.getElementById('split-start').value);
-                const endPage = parseInt(document.getElementById('split-end').value);
-
-                if (!fileInput) return alert("Please select a PDF file first.");
-                if (startPage < 1 || startPage > endPage) return alert("Invalid page parameters chosen.");
-
-                statusText.style.display = "block"; downloadLink.style.display = "none";
-
-                try {
-                    const bytes = await fileInput.arrayBuffer();
-                    const originalPdf = await PDFLib.PDFDocument.load(bytes);
-                    const totalPages = originalPdf.getPageCount();
-
-                    if (endPage > totalPages) return alert(`The document only contains ${totalPages} pages.`);
-
-                    const subPdf = await PDFLib.PDFDocument.create();
-                    const indices = [];
-                    for(let i = startPage - 1; i < endPage; i++) indices.push(i);
-
-                    const extractedPages = await subPdf.copyPages(originalPdf, indices);
-                    extractedPages.forEach((page) => subPdf.addPage(page));
-
-                    const finalBytes = await subPdf.save();
-                    const blob = new Blob([finalBytes], { type: "application/pdf" });
-
-                    downloadLink.href = URL.createObjectURL(blob);
-                    const originalName = fileInput.name.substring(0, fileInput.name.lastIndexOf('.')) || "document";
-                    downloadLink.download = `split_${originalName}.pdf`;
-                    
-                    statusText.style.display = "none"; downloadLink.style.display = "flex";
-                } catch (err) {
-                    console.error(err); alert("Error processing structural splits.");
-                    statusText.style.display = "none";
-                }
-            });
-        });
-    </script>
-</body>
-</html>
+<html lang="en" data-bs-theme="dark"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>PDF Manager - Toolkit</title><link rel="icon" type="image/svg+xml" href="logo.svg">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"><link rel="stylesheet" href="style.css"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script></head>
+<body><nav class="navbar navbar-expand-lg glass-navbar fixed-top"><div class="container-fluid"><a class="navbar-brand" href="index.html"><img src="logo.svg" alt="Toolkit Logo" style="width:35px;height:35px"> Toolkit</a></div></nav>
+<main class="app-container"><div class="tool-header"><a href="index.html" class="back-btn" aria-label="Back"><i class="fa-solid fa-arrow-left"></i></a><div><h2 class="m-0">PDF Workspace</h2><small class="tool-subtitle">Preview, merge, extract, rotate, delete and insert pages</small></div></div>
+<section class="tool-panel"><div class="privacy-note"><i class="fa-solid fa-shield-halved"></i> Your documents stay on this device.</div>
+<div class="mode-tabs"><button class="mode-tab active" data-target="preview">PREVIEW</button><button class="mode-tab" data-target="merge">MERGE</button><button class="mode-tab" data-target="split">EXTRACT</button><button class="mode-tab" data-target="rotate">ROTATE</button><button class="mode-tab" data-target="delete">DELETE</button><button class="mode-tab" data-target="insert">INSERT</button></div>
+<div id="preview" class="action-panel active"><label class="upload-zone" for="previewFile"><i class="fa-solid fa-file-pdf"></i><strong>Select a PDF to preview</strong><span>See every page before editing</span></label><input id="previewFile" type="file" accept="application/pdf" hidden><p id="meta" class="file-meta"></p><div id="pages" class="pdf-preview"></div></div>
+<div id="merge" class="action-panel"><div class="input-group"><label>Select two or more PDF files</label><input id="mergeFiles" type="file" class="styled-input" accept="application/pdf" multiple></div><button id="mergeBtn" class="btn custom-btn w-100"><i class="fa-solid fa-object-group"></i> Merge documents</button></div>
+<div id="split" class="action-panel"><div class="input-group"><label>Select a PDF</label><input id="splitFile" type="file" class="styled-input" accept="application/pdf"></div><div class="settings-grid"><div class="input-group"><label>First page</label><input id="first" class="styled-input" type="number" min="1" value="1"></div><div class="input-group"><label>Last page</label><input id="last" class="styled-input" type="number" min="1" value="1"></div></div><button id="splitBtn" class="btn custom-btn btn-secondary w-100"><i class="fa-solid fa-scissors"></i> Extract pages</button></div>
+<div id="rotate" class="action-panel"><div class="input-group"><label>Select a PDF</label><input id="rotateFile" type="file" class="styled-input" accept="application/pdf"></div><div class="settings-grid"><div class="input-group"><label>Pages</label><input id="rotatePages" class="styled-input" value="all" placeholder="all or 1,3-5"></div><div class="input-group"><label>Rotation</label><select id="angle" class="styled-select"><option value="90">90° clockwise</option><option value="180">180°</option><option value="270">90° counter-clockwise</option></select></div></div><button id="rotateBtn" class="btn custom-btn w-100"><i class="fa-solid fa-rotate-right"></i> Rotate pages</button></div>
+<div id="delete" class="action-panel"><div class="input-group"><label>Select a PDF</label><input id="deleteFile" type="file" class="styled-input" accept="application/pdf"></div><div class="input-group"><label>Pages to delete</label><input id="deletePages" class="styled-input" placeholder="Example: 2,4-6"></div><button id="deleteBtn" class="btn custom-btn btn-secondary w-100"><i class="fa-solid fa-trash"></i> Delete selected pages</button></div>
+<div id="insert" class="action-panel"><div class="input-group"><label>Main PDF</label><input id="mainFile" type="file" class="styled-input" accept="application/pdf"></div><div class="input-group"><label>PDF pages to insert</label><input id="insertFile" type="file" class="styled-input" accept="application/pdf"></div><div class="input-group"><label>Insert after page</label><input id="insertAfter" class="styled-input" type="number" min="0" value="0"><small class="tool-subtitle">Use 0 to insert at the beginning.</small></div><button id="insertBtn" class="btn custom-btn w-100"><i class="fa-solid fa-file-circle-plus"></i> Insert PDF pages</button></div>
+<p id="status" class="status-text" hidden></p><a id="download" class="btn custom-btn w-100 mt-3" hidden><i class="fa-solid fa-download"></i> Download exported PDF</a></section></main>
+<script>pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';const $=x=>document.getElementById(x), status=$('status'),download=$('download');let outUrl;function busy(t){status.hidden=false;status.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> '+t;download.hidden=true}function save(bytes,name){status.hidden=true;if(outUrl)URL.revokeObjectURL(outUrl);outUrl=URL.createObjectURL(new Blob([bytes],{type:'application/pdf'}));download.href=outUrl;download.download=name;download.hidden=false}function base(f){return f.name.replace(/\.[^.]+$/,'')}
+document.querySelectorAll('.mode-tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.mode-tab').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.action-panel').forEach(x=>x.classList.remove('active'));b.classList.add('active');$(b.dataset.target).classList.add('active')});
+$('previewFile').onchange=async e=>{const f=e.target.files[0];if(!f)return;const box=$('pages');box.innerHTML='';$('meta').textContent='Loading preview…';try{const pdf=await pdfjsLib.getDocument({data:await f.arrayBuffer()}).promise;$('meta').textContent=`${f.name} · ${pdf.numPages} pages · ${(f.size/1048576).toFixed(2)} MB`;for(let n=1;n<=pdf.numPages;n++){const pg=await pdf.getPage(n),v=pg.getViewport({scale:.42}),c=document.createElement('canvas');c.width=v.width;c.height=v.height;await pg.render({canvasContext:c.getContext('2d'),viewport:v}).promise;const fig=document.createElement('figure');fig.className='pdf-page';fig.append(c,Object.assign(document.createElement('figcaption'),{textContent:'Page '+n}));box.append(fig)}}catch(e){$('meta').textContent='Could not preview this PDF.'}};
+$('mergeBtn').onclick=async()=>{const fs=[...$('mergeFiles').files];if(fs.length<2)return alert('Select at least two PDFs.');busy('Merging your PDFs…');try{const result=await PDFLib.PDFDocument.create();for(const f of fs){const source=await PDFLib.PDFDocument.load(await f.arrayBuffer());(await result.copyPages(source,source.getPageIndices())).forEach(p=>result.addPage(p))}save(await result.save(),`merged_${base(fs[0])}.pdf`)}catch(e){status.hidden=true;alert('Could not merge these PDFs. Password-protected files are not supported.')}};
+$('splitBtn').onclick=async()=>{const f=$('splitFile').files[0],a=+$('first').value,b=+$('last').value;if(!f)return alert('Select a PDF first.');busy('Extracting selected pages…');try{const source=await PDFLib.PDFDocument.load(await f.arrayBuffer()),total=source.getPageCount();if(a<1||b<a||b>total)throw Error(`Choose pages between 1 and ${total}.`);const result=await PDFLib.PDFDocument.create(),indices=Array.from({length:b-a+1},(_,i)=>a+i-1);(await result.copyPages(source,indices)).forEach(p=>result.addPage(p));save(await result.save(),`pages_${a}-${b}_${base(f)}.pdf`)}catch(e){status.hidden=true;alert(e.message)}};
+function list(text,n){if(text.trim().toLowerCase()==='all')return [...Array(n).keys()];let s=new Set;text.split(',').forEach(q=>{let[a,b]=q.trim().split('-').map(Number);for(let i=a;i<=(b||a);i++)if(i>=1&&i<=n)s.add(i-1)});return [...s]}
+$('rotateBtn').onclick=async()=>{const f=$('rotateFile').files[0];if(!f)return alert('Select a PDF first.');busy('Rotating selected pages…');try{const pdf=await PDFLib.PDFDocument.load(await f.arrayBuffer()),items=list($('rotatePages').value,pdf.getPageCount());if(!items.length)throw Error('Use all or page numbers such as 1,3-5.');items.forEach(i=>{let p=pdf.getPage(i);p.setRotation(PDFLib.degrees((p.getRotation().angle+(+$('angle').value))%360))});save(await pdf.save(),`rotated_${base(f)}.pdf`)}catch(e){status.hidden=true;alert(e.message)}};
+$('deleteBtn').onclick=async()=>{const f=$('deleteFile').files[0];if(!f)return alert('Select a PDF first.');busy('Deleting selected pages…');try{const pdf=await PDFLib.PDFDocument.load(await f.arrayBuffer()),items=list($('deletePages').value,pdf.getPageCount()).sort((a,b)=>b-a);if(!items.length)throw Error('Enter pages to delete, such as 2,4-6.');if(items.length===pdf.getPageCount())throw Error('A PDF must keep at least one page.');items.forEach(i=>pdf.removePage(i));save(await pdf.save(),`edited_${base(f)}.pdf`)}catch(e){status.hidden=true;alert(e.message)}};
+$('insertBtn').onclick=async()=>{const main=$('mainFile').files[0],extra=$('insertFile').files[0],after=+$('insertAfter').value;if(!main||!extra)return alert('Select both PDF files.');busy('Inserting PDF pages…');try{const pdf=await PDFLib.PDFDocument.load(await main.arrayBuffer()),addition=await PDFLib.PDFDocument.load(await extra.arrayBuffer());if(after<0||after>pdf.getPageCount())throw Error(`Use a page number from 0 to ${pdf.getPageCount()}.`);const copied=await pdf.copyPages(addition,addition.getPageIndices());copied.forEach((p,i)=>pdf.insertPage(after+i,p));save(await pdf.save(),`updated_${base(main)}.pdf`)}catch(e){status.hidden=true;alert(e.message)}};</script></body></html>

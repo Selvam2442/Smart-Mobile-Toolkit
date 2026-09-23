@@ -3,14 +3,78 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Image Converter | Smart Mobile Toolkit</title>
+    <title>Image Converter & Cropper | Smart Mobile Toolkit</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* Responsive Cropper Frame */
+        .cropper-frame {
+            width: 100%;
+            height: 50vh;
+            min-height: 320px;
+            max-height: 520px;
+            background: #000;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid var(--surface-border);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6) inset;
+            position: relative;
+            margin-bottom: 16px;
+        }
+
+        .cropper-frame img {
+            display: block;
+            max-width: 100%;
+        }
+
+        /* Cropper UI Enhancements */
+        .cropper-view-box {
+            outline: 2px solid var(--primary-glow);
+            outline-color: rgba(0, 240, 255, 0.9);
+        }
+
+        .cropper-line, .cropper-point {
+            background-color: var(--primary-glow);
+        }
+
+        .cropper-point.point-se {
+            width: 14px;
+            height: 14px;
+        }
+
+        /* Toolbar Actions */
+        .crop-toolbar {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn-tool {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid var(--surface-border);
+            color: #fff;
+            padding: 8px 14px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-tool:hover, .btn-tool:active {
+            background: rgba(0, 240, 255, 0.15);
+            border-color: var(--primary-glow);
+            color: var(--primary-glow);
+        }
+    </style>
 </head>
 <body>
-    <!-- Premium Glass Navbar -->
     <nav class="navbar navbar-expand-lg glass-navbar fixed-top">
         <div class="container-fluid">
             <a class="navbar-brand" href="index.html">
@@ -29,54 +93,63 @@
     </nav>
 
     <main class="app-container">
-        <!-- Tool Header -->
         <div class="tool-header">
             <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
             <div>
-                <h2>Image Converter</h2>
-                <span class="tool-subtitle">Crop, resize, and optimize formats offline</span>
+                <h2>Image Converter & Cropper</h2>
+                <span class="tool-subtitle">Crop, resize pixels, and compress formats</span>
             </div>
             <button class="info-btn" data-bs-toggle="modal" data-bs-target="#infoModal"><i class="fa-solid fa-info"></i></button>
         </div>
 
-        <!-- Main Panel -->
         <div class="tool-panel">
             <div class="privacy-note">
-                <i class="fa-solid fa-shield-halved"></i> Private by design — your image stays in this browser.
+                <i class="fa-solid fa-shield-halved"></i> Private by design — images are cropped and processed in your browser.
             </div>
 
             <!-- Upload Zone -->
             <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
                 <i class="fa-solid fa-cloud-arrow-up"></i>
-                <h4 class="fw-bold text-white mb-1">Choose an image</h4>
-                <p class="text-secondary small mb-0">JPG, PNG, WebP, BMP</p>
+                <h4 class="fw-bold text-white mb-1">Select an Image</h4>
+                <p class="text-secondary small mb-0">Supports JPG, PNG, WEBP, BMP</p>
                 <input type="file" id="fileInput" accept="image/*" hidden>
             </div>
 
-            <!-- Editor Action Panel -->
+            <!-- Workspace -->
             <div class="action-panel" id="editorPanel">
-                <div class="canvas-container" style="display: block;">
+                <!-- Constrained Viewport -->
+                <div class="cropper-frame">
                     <img id="image" src="">
                 </div>
 
-                <div class="mode-tabs">
-                    <button class="mode-tab active" onclick="setRatio(NaN, this)">Free Crop</button>
-                    <button class="mode-tab" onclick="setRatio(1/1, this)">Square</button>
-                    <button class="mode-tab" onclick="setRatio(213/213, this, 213, 213)">PAN Card</button>
-                    <button class="mode-tab" onclick="setRatio(3.5/4.5, this, 350, 450)">Passport</button>
+                <!-- Auxiliary Controls -->
+                <div class="crop-toolbar">
+                    <button class="btn-tool" type="button" onclick="cropper.zoom(0.1)"><i class="fa-solid fa-magnifying-glass-plus"></i> Zoom In</button>
+                    <button class="btn-tool" type="button" onclick="cropper.zoom(-0.1)"><i class="fa-solid fa-magnifying-glass-minus"></i> Zoom Out</button>
+                    <button class="btn-tool" type="button" onclick="cropper.rotate(90)"><i class="fa-solid fa-rotate-right"></i> Rotate</button>
+                    <button class="btn-tool" type="button" onclick="cropper.reset()"><i class="fa-solid fa-arrows-rotate"></i> Reset</button>
                 </div>
 
+                <!-- Preset Selection -->
+                <div class="mode-tabs">
+                    <button class="mode-tab active" type="button" onclick="applyPreset(NaN, this, '', '')">Free Crop</button>
+                    <button class="mode-tab" type="button" onclick="applyPreset(1, this, '', '')">Square (1:1)</button>
+                    <button class="mode-tab" type="button" onclick="applyPreset(1, this, 213, 213)">PAN Card</button>
+                    <button class="mode-tab" type="button" onclick="applyPreset(3.5/4.5, this, 350, 450)">Passport</button>
+                </div>
+
+                <!-- Export Settings -->
                 <div class="settings-grid mb-4">
                     <div class="input-group">
-                        <label>Width (px)</label>
-                        <input type="number" id="outWidth" class="styled-input">
+                        <label>Output Width (px)</label>
+                        <input type="number" id="outWidth" class="styled-input" placeholder="Original / Custom">
                     </div>
                     <div class="input-group">
-                        <label>Height (px)</label>
-                        <input type="number" id="outHeight" class="styled-input">
+                        <label>Output Height (px)</label>
+                        <input type="number" id="outHeight" class="styled-input" placeholder="Original / Custom">
                     </div>
                     <div class="input-group">
-                        <label>Output Format</label>
+                        <label>Target Format</label>
                         <select id="outFormat" class="styled-select">
                             <option value="image/jpeg">JPEG (.jpg)</option>
                             <option value="image/png">PNG (.png)</option>
@@ -84,12 +157,15 @@
                         </select>
                     </div>
                     <div class="slider-group mt-3">
-                        <label>Quality <span><span id="qVal">80</span>%</span></label>
-                        <input type="range" id="outQuality" min="0.1" max="1" step="0.1" value="0.8" oninput="document.getElementById('qVal').innerText=Math.round(this.value*100)">
+                        <label>Quality <span><span id="qVal">85</span>%</span></label>
+                        <input type="range" id="outQuality" min="0.1" max="1" step="0.05" value="0.85" oninput="document.getElementById('qVal').innerText=Math.round(this.value*100)">
                     </div>
                 </div>
-                
-                <button id="processBtn" class="btn custom-btn w-100"><i class="fa-solid fa-download"></i> Process & Download</button>
+
+                <div class="button-row">
+                    <button class="btn custom-btn btn-secondary" type="button" onclick="changeImage()"><i class="fa-solid fa-image"></i> Change Image</button>
+                    <button id="processBtn" class="btn custom-btn" type="button"><i class="fa-solid fa-download"></i> Process & Save</button>
+                </div>
             </div>
         </div>
     </main>
@@ -99,15 +175,15 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title"><i class="fa-solid fa-circle-info"></i> Tool Info</h5>
+                    <h5 class="modal-title"><i class="fa-solid fa-circle-info"></i> Tool Features</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <p>Resize, crop, and convert image formats locally on your device.</p>
+                    <p>Crop, scale, and adjust your photos to exact application standards.</p>
                     <ul>
-                        <li><i class="fa-solid fa-check"></i> Precise px control for PAN/Passport.</li>
-                        <li><i class="fa-solid fa-check"></i> Quality reduction for fast uploads.</li>
-                        <li><i class="fa-solid fa-check"></i> 100% Offline and secure.</li>
+                        <li><i class="fa-solid fa-check"></i> Standard presets for PAN cards (213 × 213) and Passport photos.</li>
+                        <li><i class="fa-solid fa-check"></i> Fine-tuned quality slider to meet file size requirements.</li>
+                        <li><i class="fa-solid fa-check"></i> Completely offline client-side rendering.</li>
                     </ul>
                 </div>
             </div>
@@ -115,47 +191,100 @@
     </div>
 
     <footer><p><i class="fa-solid fa-code"></i> Created by Antony</p></footer>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
     <script>
-        let cropper;
-        const image = document.getElementById('image');
-        
-        document.getElementById('fileInput').addEventListener('change', function(e) {
-            if (e.target.files && e.target.files.length > 0) {
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    image.src = event.target.result;
-                    document.getElementById('uploadZone').style.display = 'none';
-                    document.getElementById('editorPanel').classList.add('active');
-                    if (cropper) cropper.destroy();
-                    cropper = new Cropper(image, { viewMode: 1, background: false, responsive: true });
-                };
-                reader.readAsDataURL(e.target.files[0]);
-            }
+        let cropper = null;
+        const imageElement = document.getElementById('image');
+        const fileInput = document.getElementById('fileInput');
+
+        fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                imageElement.src = event.target.result;
+                document.getElementById('uploadZone').style.display = 'none';
+                document.getElementById('editorPanel').classList.add('active');
+
+                if (cropper) {
+                    cropper.destroy();
+                }
+
+                // Initialize Cropper with optimal touch and desktop parameters
+                cropper = new Cropper(imageElement, {
+                    viewMode: 1,
+                    dragMode: 'move',
+                    autoCropArea: 0.92,
+                    restore: false,
+                    guides: true,
+                    center: true,
+                    highlight: true,
+                    cropBoxMovable: true,
+                    cropBoxResizable: true,
+                    toggleDragModeOnDblclick: false,
+                    responsive: true,
+                    checkOrientation: false
+                });
+            };
+            reader.readAsDataURL(file);
         });
 
-        function setRatio(ratio, btn, w = '', h = '') {
-            document.querySelectorAll('.mode-tab').forEach(b => b.classList.remove('active'));
+        function applyPreset(aspectRatio, btn, width, height) {
+            if (!cropper) return;
+
+            document.querySelectorAll('.mode-tab').forEach(el => el.classList.remove('active'));
             btn.classList.add('active');
-            cropper.setAspectRatio(ratio);
-            document.getElementById('outWidth').value = w;
-            document.getElementById('outHeight').value = h;
+
+            cropper.setAspectRatio(aspectRatio);
+
+            document.getElementById('outWidth').value = width;
+            document.getElementById('outHeight').value = height;
         }
 
-        document.getElementById('processBtn').addEventListener('click', () => {
-            if(!cropper) return;
-            const w = parseInt(document.getElementById('outWidth').value) || undefined;
-            const h = parseInt(document.getElementById('outHeight').value) || undefined;
+        function changeImage() {
+            fileInput.value = '';
+            document.getElementById('uploadZone').style.display = 'flex';
+            document.getElementById('editorPanel').classList.remove('active');
+            if (cropper) {
+                cropper.destroy();
+                cropper = null;
+            }
+        }
+
+        document.getElementById('processBtn').addEventListener('click', function() {
+            if (!cropper) return;
+
+            const widthVal = parseInt(document.getElementById('outWidth').value, 10) || undefined;
+            const heightVal = parseInt(document.getElementById('outHeight').value, 10) || undefined;
             const format = document.getElementById('outFormat').value;
             const quality = parseFloat(document.getElementById('outQuality').value);
 
-            cropper.getCroppedCanvas({ width: w, height: h, imageSmoothingQuality: 'high' }).toBlob((blob) => {
+            const canvasOptions = {
+                imageSmoothingEnabled: true,
+                imageSmoothingQuality: 'high'
+            };
+
+            if (widthVal) canvasOptions.width = widthVal;
+            if (heightVal) canvasOptions.height = heightVal;
+
+            const croppedCanvas = cropper.getCroppedCanvas(canvasOptions);
+
+            croppedCanvas.toBlob(function(blob) {
+                if (!blob) return;
+
                 const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `toolkit_image_${Date.now()}.${format.split('/')[1]}`;
-                a.click();
+                const link = document.createElement('a');
+                const extension = format.split('/')[1] === 'jpeg' ? 'jpg' : format.split('/')[1];
+
+                link.href = url;
+                link.download = `toolkit_crop_${Date.now()}.${extension}`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
             }, format, quality);
         });
     </script>

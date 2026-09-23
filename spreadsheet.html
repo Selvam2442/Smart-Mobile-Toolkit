@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Data Doc Converter | Smart Mobile Toolkit</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Smart Format Selection Grid */
+        .format-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 10px; margin-bottom: 20px; }
+        .format-card { background: rgba(0, 0, 0, 0.4); border: 1px solid var(--surface-border); border-radius: 12px; padding: 15px 10px; text-align: center; cursor: pointer; transition: 0.3s; color: var(--text-muted); }
+        .format-card i { font-size: 1.8rem; margin-bottom: 8px; display: block; transition: 0.3s; }
+        .format-card span { font-size: 0.8rem; font-weight: 600; display: block; }
+        .format-card:hover { background: rgba(255,255,255,0.05); }
+        .format-card.active { background: rgba(0, 240, 255, 0.1); border-color: var(--primary-glow); color: #fff; transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,240,255,0.2); }
+        .format-card.active i { color: var(--primary-glow); filter: drop-shadow(0 0 8px rgba(0,240,255,0.5)); }
+
+        /* Data Preview Table */
+        .preview-container { max-height: 180px; overflow: auto; background: rgba(0,0,0,0.5); border: 1px solid var(--surface-border); border-radius: 12px; margin-bottom: 20px; }
+        .preview-table { width: 100%; color: #ddd; font-size: 0.8rem; text-align: left; border-collapse: collapse; }
+        .preview-table th { background: rgba(0, 240, 255, 0.15); color: var(--primary-glow); padding: 8px; position: sticky; top: 0; z-index: 1; }
+        .preview-table td { padding: 6px 8px; border-bottom: 1px solid rgba(255,255,255,0.05); max-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg glass-navbar fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="index.html">
+                <img src="logo.svg" alt="Logo" style="width: 35px; height: 35px; border-radius: 8px;"> Toolkit
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link" href="index.html"><i class="fa-solid fa-house"></i> Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="about.html"><i class="fa-solid fa-circle-info"></i> About</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="app-container">
+        <div class="tool-header">
+            <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
+            <div>
+                <h2>Data Doc Converter</h2>
+                <span class="tool-subtitle">Offline Excel, CSV, JSON and PDF Tables</span>
+            </div>
+            <button class="info-btn" data-bs-toggle="modal" data-bs-target="#infoModal"><i class="fa-solid fa-info"></i></button>
+        </div>
+
+        <div class="tool-panel">
+            <div class="privacy-note">
+                <i class="fa-solid fa-shield-halved"></i> Private by design — your spreadsheets are processed locally.
+            </div>
+
+            <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
+                <i class="fa-solid fa-file-excel"></i>
+                <h4 class="fw-bold text-white mb-1">Select Document</h4>
+                <p class="text-secondary small mb-0">Supports .XLSX, .XLS, .CSV, .TXT, .JSON</p>
+                <input type="file" id="fileInput" accept=".xlsx, .xls, .csv, .txt, .json" hidden>
+            </div>
+
+            <div class="action-panel" id="editorPanel">
+                <div class="control-row mb-3 text-center">
+                    <i class="fa-solid fa-file-circle-check fs-2 text-success mb-2 w-100"></i>
+                    <span id="fileNameDisplay" class="fw-bold text-info w-100 d-block" style="word-break: break-all;">filename.xlsx</span>
+                </div>
+
+                <!-- Live Data Preview -->
+                <div class="preview-container" id="previewContainer">
+                    <table class="preview-table" id="previewTable"></table>
+                </div>
+
+                <label class="text-muted small fw-bold mb-2 d-block text-center">SELECT TARGET FORMAT</label>
+                <div class="format-grid" id="formatGrid">
+                    <!-- Cards injected by JS -->
+                </div>
+                
+                <div class="button-row mt-3">
+                    <button class="btn custom-btn btn-secondary" type="button" onclick="resetTool()"><i class="fa-solid fa-xmark"></i> Cancel</button>
+                    <button id="processBtn" class="btn custom-btn" type="button" disabled><i class="fa-solid fa-download"></i> Convert File</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Info Modal -->
+    <div class="modal fade" id="infoModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fa-solid fa-circle-info"></i> Tool Features</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Convert structural data documents securely without an internet connection.</p>
+                    <ul>
+                        <li><i class="fa-solid fa-check text-success"></i> <strong>Live Preview:</strong> Instantly view your data before converting.</li>
+                        <li><i class="fa-solid fa-check text-success"></i> <strong>PDF Tables:</strong> Turn raw CSV/JSON data into perfectly drawn PDF tables.</li>
+                        <li><i class="fa-solid fa-check text-success"></i> <strong>No Server Needed:</strong> Files are parsed entirely in your device's memory.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer><p><i class="fa-solid fa-code"></i> Created by Antony</p></footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- SheetJS for local spreadsheet parsing -->
+    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+    
+    <!-- jsPDF & AutoTable for PDF Generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.1/jspdf.plugin.autotable.min.js"></script>
+    
+    <script>
+        let currentFile = null;
+        let fileDataArray = null;
+        let fileExt = '';
+        let selectedFormat = null;
+        let activeWorksheet = null; // Cache the sheet data for quick export
+
+        const allFormats = [
+            { val: 'xlsx', text: 'Excel', icon: 'fa-file-excel' },
+            { val: 'csv', text: 'CSV', icon: 'fa-file-csv' },
+            { val: 'json', text: 'JSON', icon: 'fa-file-code' },
+            { val: 'html', text: 'HTML', icon: 'fa-table' },
+            { val: 'txt', text: 'TXT', icon: 'fa-file-lines' },
+            { val: 'pdf', text: 'PDF Table', icon: 'fa-file-pdf' }
+        ];
+
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            currentFile = file;
+            fileExt = file.name.split('.').pop().toLowerCase();
+            document.getElementById('fileNameDisplay').innerText = file.name;
+            
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                fileDataArray = new Uint8Array(event.target.result);
+                document.getElementById('uploadZone').style.display = 'none';
+                document.getElementById('editorPanel').classList.add('active');
+                
+                // Build Dynamic Grid
+                const grid = document.getElementById('formatGrid');
+                grid.innerHTML = '';
+                selectedFormat = null;
+                document.getElementById('processBtn').disabled = true;
+
+                allFormats.filter(opt => opt.val !== fileExt).forEach(opt => {
+                    grid.innerHTML += `
+                        <div class="format-card" data-val="${opt.val}" onclick="selectFormat(this, '${opt.val}')">
+                            <i class="fa-solid ${opt.icon}"></i>
+                            <span>${opt.text}</span>
+                        </div>
+                    `;
+                });
+
+                // Generate Live Preview
+                generatePreview();
+            };
+            reader.readAsArrayBuffer(file);
+        });
+
+        function generatePreview() {
+            try {
+                let workbook;
+                if (fileExt === 'json') {
+                    const text = new TextDecoder().decode(fileDataArray);
+                    const jsonData = JSON.parse(text);
+                    activeWorksheet = XLSX.utils.json_to_sheet(Array.isArray(jsonData) ? jsonData : [jsonData]);
+                } else {
+                    workbook = XLSX.read(fileDataArray, {type: 'array'});
+                    activeWorksheet = workbook.Sheets[workbook.SheetNames[0]];
+                }
+
+                // Convert top 6 rows to an array to build the preview table
+                const jsonArr = XLSX.utils.sheet_to_json(activeWorksheet, {header: 1, blankrows: false});
+                const table = document.getElementById('previewTable');
+                table.innerHTML = '';
+
+                if (jsonArr.length > 0) {
+                    let html = '<thead><tr>';
+                    // Header Row
+                    jsonArr[0].forEach(cell => { html += `<th>${cell || ''}</th>`; });
+                    html += '</tr></thead><tbody>';
+                    
+                    // Data Rows (Max 5 for preview)
+                    const rowLimit = Math.min(jsonArr.length, 6);
+                    for (let i = 1; i < rowLimit; i++) {
+                        html += '<tr>';
+                        // Match column count to header
+                        for(let j = 0; j < jsonArr[0].length; j++) {
+                            html += `<td>${jsonArr[i][j] !== undefined ? jsonArr[i][j] : ''}</td>`;
+                        }
+                        html += '</tr>';
+                    }
+                    html += '</tbody>';
+                    table.innerHTML = html;
+                } else {
+                    table.innerHTML = '<tr><td class="text-center p-3 text-muted">No data found in file</td></tr>';
+                }
+            } catch (error) {
+                document.getElementById('previewTable').innerHTML = '<tr><td class="text-center p-3 text-danger">Unable to preview file data</td></tr>';
+                console.error(error);
+            }
+        }
+
+        window.selectFormat = function(element, format) {
+            document.querySelectorAll('.format-card').forEach(card => card.classList.remove('active'));
+            element.classList.add('active');
+            selectedFormat = format;
+            document.getElementById('processBtn').disabled = false;
+        };
+
+        function resetTool() {
+            document.getElementById('fileInput').value = '';
+            currentFile = null;
+            fileDataArray = null;
+            activeWorksheet = null;
+            document.getElementById('uploadZone').style.display = 'flex';
+            document.getElementById('editorPanel').classList.remove('active');
+        }
+
+        document.getElementById('processBtn').addEventListener('click', function() {
+            if (!activeWorksheet || !selectedFormat) return;
+            
+            const btn = document.getElementById('processBtn');
+            btn.innerHTML = '<i class="fa-solid fa-gear fa-spin"></i> Converting...';
+            
+            setTimeout(() => {
+                try {
+                    let originalName = currentFile.name.substring(0, currentFile.name.lastIndexOf('.')) || currentFile.name;
+                    let newFileName = `Toolkit_${originalName}.${selectedFormat}`;
+
+                    if (selectedFormat === 'xlsx') {
+                        const newWb = XLSX.utils.book_new();
+                        XLSX.utils.book_append_sheet(newWb, activeWorksheet, "Data");
+                        XLSX.writeFile(newWb, newFileName);
+                    } else if (selectedFormat === 'csv') {
+                        downloadTextFile(XLSX.utils.sheet_to_csv(activeWorksheet), newFileName, 'text/csv');
+                    } else if (selectedFormat === 'html') {
+                        downloadTextFile(XLSX.utils.sheet_to_html(activeWorksheet), newFileName, 'text/html');
+                    } else if (selectedFormat === 'txt') {
+                        downloadTextFile(XLSX.utils.sheet_to_txt(activeWorksheet), newFileName, 'text/plain');
+                    } else if (selectedFormat === 'json') {
+                        const jsonOutput = XLSX.utils.sheet_to_json(activeWorksheet);
+                        downloadTextFile(JSON.stringify(jsonOutput, null, 2), newFileName, 'application/json');
+                    } else if (selectedFormat === 'pdf') {
+                        const jsonArr = XLSX.utils.sheet_to_json(activeWorksheet, {header: 1}); 
+                        if (jsonArr.length === 0) throw new Error("Spreadsheet is empty");
+                        
+                        const { jsPDF } = window.jspdf;
+                        const doc = new jsPDF();
+                        
+                        doc.autoTable({
+                            head: [jsonArr[0]],
+                            body: jsonArr.slice(1),
+                            theme: 'grid',
+                            headStyles: { fillColor: [0, 240, 255], textColor: [0, 0, 0] },
+                            styles: { fontSize: 8, overflow: 'linebreak' }
+                        });
+                        doc.save(`Toolkit_${originalName}_Table.pdf`);
+                    }
+                } catch (error) {
+                    alert("Error converting file. Ensure it contains valid structural data.");
+                    console.error(error);
+                } finally {
+                    btn.innerHTML = '<i class="fa-solid fa-download"></i> Convert File';
+                }
+            }, 100); 
+        });
+
+        function downloadTextFile(content, fileName, mimeType) {
+            const blob = new Blob([content], { type: mimeType });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>

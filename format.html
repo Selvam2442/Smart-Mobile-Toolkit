@@ -1,41 +1,111 @@
 <!DOCTYPE html>
 <html lang="en" data-bs-theme="dark">
 <head>
-    <meta name="google-adsense-account" content="ca-pub-8050432929862649">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Format Converter - Toolkit</title>
-    <!-- Bootstrap 5 CSS -->
+    <title>Pro Image Resizer & Cropper | Smart Mobile Toolkit</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .img-container { max-height: 400px; width: 100%; margin-bottom: 20px; background: #111; border-radius: 8px; overflow: hidden; }
+        img { display: block; max-width: 100%; }
+        .controls-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+    </style>
 </head>
-<body><main class="app-container">
-  <div class="tool-header"><a href="index.html" class="back-btn" aria-label="Back to home"><i class="fa-solid fa-arrow-left"></i></a><div><h2 class="m-0">Image Converter</h2><small class="tool-subtitle">Convert, resize and optimise on your device</small></div><button class="info-btn" data-bs-toggle="modal" data-bs-target="#infoModal" aria-label="About this tool"><i class="fa-solid fa-info"></i></button></div>
-  <section class="tool-panel">
-    <div class="privacy-note"><i class="fa-solid fa-shield-halved"></i> Private by design — your image stays in this browser.</div>
-    <label class="upload-zone" for="image-file"><i class="fa-solid fa-cloud-arrow-up"></i><strong>Choose an image</strong><span>JPG, PNG, WebP, GIF, BMP, SVG, AVIF, TIFF or HEIC</span></label><input type="file" id="image-file" accept="image/*,.svg,.bmp,.tif,.tiff,.heic,.heif" hidden>
-    <div id="image-workspace" hidden>
-      <div class="image-preview-wrap"><img id="image-preview" alt="Selected image preview"><div id="image-meta" class="file-meta"></div></div>
-      <div class="settings-grid">
-        <div class="input-group"><label for="format-select">Save as</label><select id="format-select" class="styled-select"><option value="image/jpeg">JPEG (.jpg)</option><option value="image/png">PNG (.png)</option><option value="image/webp">WebP (.webp)</option><option value="image/avif">AVIF (.avif) — if supported</option></select></div>
-        <div class="input-group"><label for="resize-select">Image size</label><select id="resize-select" class="styled-select"><option value="original">Keep original size</option><option value="1920">Fit within 1920 px</option><option value="1280">Fit within 1280 px</option><option value="800">Fit within 800 px</option><option value="600">Fit within 600 px</option></select></div>
-      </div>
-      <div class="slider-group"><label for="quality">Quality <span id="quality-value">90%</span></label><input id="quality" type="range" min="10" max="100" value="90"></div>
-      <div class="button-row"><button id="btn-convert" class="btn custom-btn"><i class="fa-solid fa-wand-magic-sparkles"></i> Convert image</button><button id="btn-pdf" class="btn custom-btn"><i class="fa-solid fa-file-pdf"></i> Image to PDF</button><button id="btn-reset" class="btn custom-btn btn-secondary"><i class="fa-solid fa-arrow-rotate-left"></i> Start over</button></div>
-      <a id="download-link" class="btn custom-btn w-100 mt-3" hidden><i class="fa-solid fa-download"></i> Download image</a>
-    </div><canvas id="canvas" hidden></canvas>
-  </section>
-</main>
-<div class="modal fade" id="infoModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Image Converter</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><p>Choose a picture, preview it, choose the output format and size, then download it. You can also turn the current image into a PDF.</p><p>Common browser-readable inputs include JPG, PNG, WebP, GIF, BMP, SVG and AVIF. TIFF and HEIC appear as choices for phones that support them; support depends on the browser.</p><p class="mb-0"><i class="fa-solid fa-lock"></i> No upload is made. Animated GIFs are saved as a still image because browser canvas tools edit one frame at a time.</p></div></div></div></div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-(() => { const $=id=>document.getElementById(id), input=$('image-file'), workspace=$('image-workspace'), preview=$('image-preview'), meta=$('image-meta'), canvas=$('canvas'), quality=$('quality'), download=$('download-link'); let file, image, url;
-  const formatName = type => ({'image/jpeg':'jpg','image/png':'png','image/webp':'webp','image/avif':'avif'})[type];
-  quality.oninput=()=>$('quality-value').textContent=quality.value+'%';
-  input.onchange=()=>{ file=input.files[0]; if(!file)return; if(url)URL.revokeObjectURL(url); url=URL.createObjectURL(file); image=new Image(); image.onload=()=>{ preview.src=url; meta.textContent=`${file.name} · ${image.naturalWidth} × ${image.naturalHeight} · ${(file.size/1024/1024).toFixed(2)} MB`; workspace.hidden=false; download.hidden=true; }; image.onerror=()=>alert('This file could not be read as an image.'); image.src=url; };
-  $('btn-convert').onclick=()=>{ if(!image)return; const max=+$('resize-select').value || Math.max(image.naturalWidth,image.naturalHeight); const scale=Math.min(1,max/Math.max(image.naturalWidth,image.naturalHeight)); canvas.width=Math.max(1,Math.round(image.naturalWidth*scale)); canvas.height=Math.max(1,Math.round(image.naturalHeight*scale)); const ctx=canvas.getContext('2d'); const type=$('format-select').value; if(type==='image/jpeg'){ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height)} ctx.drawImage(image,0,0,canvas.width,canvas.height); canvas.toBlob(blob=>{ if(!blob)return alert('Your browser cannot create this format. Please choose JPEG, PNG or WebP.'); if(type==='image/avif' && blob.type!=='image/avif')return alert('AVIF is not supported by this browser. Please choose JPEG, PNG or WebP.'); if(download.href)URL.revokeObjectURL(download.href); download.href=URL.createObjectURL(blob); download.download=`converted_${file.name.replace(/\.[^.]+$/,'')}.${formatName(type)}`; download.hidden=false; download.focus(); },type,+quality.value/100); };
-  $('btn-pdf').onclick=()=>{ if(!image)return; const {jsPDF}=window.jspdf; const landscape=image.naturalWidth>image.naturalHeight; const pdf=new jsPDF({orientation:landscape?'l':'p',unit:'px',format:[image.naturalWidth,image.naturalHeight],hotfixes:['px_scaling']}); pdf.addImage(image,'JPEG',0,0,image.naturalWidth,image.naturalHeight); pdf.save(`image_${file.name.replace(/\.[^.]+$/,'')}.pdf`); };
-  $('btn-reset').onclick=()=>{ input.value='';workspace.hidden=true;download.hidden=true;if(url)URL.revokeObjectURL(url);url=''; };
-})();
-</script></body></html>
+<body>
+    <div class="container mt-4">
+        <h2 class="text-center mb-4"><i class="fa-solid fa-crop-simple"></i> Pro Image Resizer</h2>
+        
+        <input type="file" id="imageInput" class="form-control mb-3" accept="image/*">
+        
+        <div class="img-container" id="cropContainer" style="display: none;">
+            <img id="image" src="">
+        </div>
+
+        <div id="editorControls" style="display: none;">
+            <div class="controls-grid mb-3">
+                <div>
+                    <label>Width (px)</label>
+                    <input type="number" id="outWidth" class="form-control" placeholder="e.g., 213 (PAN)">
+                </div>
+                <div>
+                    <label>Height (px)</label>
+                    <input type="number" id="outHeight" class="form-control" placeholder="e.g., 213 (PAN)">
+                </div>
+                <div>
+                    <label>Quality (%)</label>
+                    <input type="range" id="outQuality" class="form-range" min="0.1" max="1" step="0.1" value="0.8">
+                </div>
+                <div>
+                    <label>Format</label>
+                    <select id="outFormat" class="form-select">
+                        <option value="image/jpeg">JPEG / JPG</option>
+                        <option value="image/png">PNG</option>
+                        <option value="image/webp">WEBP</option>
+                    </select>
+                </div>
+            </div>
+            
+            <button id="processBtn" class="btn btn-primary w-100"><i class="fa-solid fa-download"></i> Crop, Resize & Download</button>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+    <script>
+        let cropper;
+        const image = document.getElementById('image');
+        const imageInput = document.getElementById('imageInput');
+        
+        imageInput.addEventListener('change', (e) => {
+            const files = e.target.files;
+            if (files && files.length > 0) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    image.src = event.target.result;
+                    document.getElementById('cropContainer').style.display = 'block';
+                    document.getElementById('editorControls').style.display = 'block';
+                    
+                    if (cropper) cropper.destroy();
+                    cropper = new Cropper(image, {
+                        viewMode: 1,
+                        background: false,
+                        zoomable: true,
+                    });
+                };
+                reader.readAsDataURL(files[0]);
+            }
+        });
+
+        document.getElementById('processBtn').addEventListener('click', () => {
+            if (!cropper) return;
+            
+            const width = parseInt(document.getElementById('outWidth').value) || undefined;
+            const height = parseInt(document.getElementById('outHeight').value) || undefined;
+            const format = document.getElementById('outFormat').value;
+            const quality = parseFloat(document.getElementById('outQuality').value);
+
+            // 1. Get the cropped canvas
+            const croppedCanvas = cropper.getCroppedCanvas({
+                width: width,
+                height: height,
+                imageSmoothingEnabled: true,
+                imageSmoothingQuality: 'high',
+            });
+
+            // 2. Convert to the requested format, quality, and trigger download
+            croppedCanvas.toBlob((blob) => {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `edited_image_${Date.now()}.${format.split('/')[1]}`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }, format, quality);
+        });
+    </script>
+</body>
+</html>

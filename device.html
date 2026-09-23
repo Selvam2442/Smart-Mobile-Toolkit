@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Device Diagnostics | Smart Mobile Toolkit</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; margin-bottom: 30px; }
+        .stat-card { background: rgba(0, 0, 0, 0.4); border: 1px solid var(--surface-border); border-radius: 16px; padding: 20px 15px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.3) inset; transition: 0.3s; }
+        .stat-card:hover { border-color: var(--primary-glow); background: rgba(0, 240, 255, 0.05); transform: translateY(-3px); }
+        .stat-card i { font-size: 2rem; color: var(--primary-glow); margin-bottom: 10px; filter: drop-shadow(0 0 8px rgba(0,240,255,0.4)); }
+        .stat-value { font-size: 1.2rem; font-weight: 800; color: #fff; font-family: monospace; word-break: break-word; }
+        .stat-label { font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-top: 5px; }
+        
+        .sys-log { background: #000; border: 1px solid #222; border-radius: 12px; padding: 15px; font-family: monospace; font-size: 0.85rem; color: #00f0ff; overflow-wrap: break-word; }
+        
+        /* Battery specific animations */
+        @keyframes pulse-charge { 0% { opacity: 0.5; } 50% { opacity: 1; text-shadow: 0 0 15px #00ff00; } 100% { opacity: 0.5; } }
+        .charging i { color: #00ff00 !important; animation: pulse-charge 2s infinite; }
+        .low-battery i { color: var(--danger-color) !important; animation: pulse-charge 1s infinite; }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg glass-navbar fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="index.html">
+                <img src="logo.svg" alt="Logo" style="width: 35px; height: 35px; border-radius: 8px;"> Toolkit
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link" href="index.html"><i class="fa-solid fa-house"></i> Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="about.html"><i class="fa-solid fa-circle-info"></i> About</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="app-container">
+        <div class="tool-header">
+            <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
+            <div>
+                <h2>Device Diagnostics</h2>
+                <span class="tool-subtitle">Live system & hardware analytics</span>
+            </div>
+            <button class="info-btn" data-bs-toggle="modal" data-bs-target="#infoModal"><i class="fa-solid fa-info"></i></button>
+        </div>
+
+        <div class="tool-panel" style="padding-top: 20px;">
+            
+            <!-- Battery Section -->
+            <div class="category-header mt-0">
+                <h3><i class="fa-solid fa-battery-half"></i> Power Metrics</h3>
+            </div>
+            <div class="stat-grid">
+                <div class="stat-card" id="bat-card">
+                    <i class="fa-solid fa-bolt" id="bat-icon"></i>
+                    <div class="stat-value" id="bat-level">--%</div>
+                    <div class="stat-label">Level</div>
+                </div>
+                <div class="stat-card">
+                    <i class="fa-solid fa-plug"></i>
+                    <div class="stat-value" id="bat-status">--</div>
+                    <div class="stat-label">Status</div>
+                </div>
+            </div>
+
+            <!-- Hardware Section -->
+            <div class="category-header">
+                <h3><i class="fa-solid fa-microchip"></i> Hardware</h3>
+            </div>
+            <div class="stat-grid">
+                <div class="stat-card">
+                    <i class="fa-solid fa-memory"></i>
+                    <div class="stat-value" id="hw-ram">--</div>
+                    <div class="stat-label">Device RAM</div>
+                </div>
+                <div class="stat-card">
+                    <i class="fa-solid fa-server"></i>
+                    <div class="stat-value" id="hw-cpu">--</div>
+                    <div class="stat-label">CPU Cores</div>
+                </div>
+                <div class="stat-card">
+                    <i class="fa-solid fa-hard-drive"></i>
+                    <div class="stat-value" id="hw-storage">--</div>
+                    <div class="stat-label">Browser Storage Limit</div>
+                </div>
+            </div>
+
+            <!-- Network Section -->
+            <div class="category-header">
+                <h3><i class="fa-solid fa-wifi"></i> Network</h3>
+            </div>
+            <div class="stat-grid">
+                <div class="stat-card">
+                    <i class="fa-solid fa-signal"></i>
+                    <div class="stat-value" id="net-type">--</div>
+                    <div class="stat-label">Connection</div>
+                </div>
+                <div class="stat-card">
+                    <i class="fa-solid fa-gauge-high"></i>
+                    <div class="stat-value" id="net-speed">--</div>
+                    <div class="stat-label">Est. Downlink</div>
+                </div>
+                <div class="stat-card">
+                    <i class="fa-solid fa-network-wired"></i>
+                    <div class="stat-value" id="net-ping">--</div>
+                    <div class="stat-label">Latency (RTT)</div>
+                </div>
+            </div>
+
+            <!-- Display & System Section -->
+            <div class="category-header">
+                <h3><i class="fa-solid fa-mobile-screen"></i> System & Display</h3>
+            </div>
+            <div class="stat-grid">
+                <div class="stat-card">
+                    <i class="fa-solid fa-expand"></i>
+                    <div class="stat-value" id="disp-res">--</div>
+                    <div class="stat-label">Resolution</div>
+                </div>
+                <div class="stat-card">
+                    <i class="fa-solid fa-droplet"></i>
+                    <div class="stat-value" id="disp-color">--</div>
+                    <div class="stat-label">Color Depth</div>
+                </div>
+            </div>
+
+            <div class="sys-log">
+                <strong>Platform:</strong> <span id="sys-platform"></span><br><br>
+                <strong>Language:</strong> <span id="sys-lang"></span><br><br>
+                <strong>User Agent:</strong> <span id="sys-ua"></span>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Info Modal -->
+    <div class="modal fade" id="infoModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fa-solid fa-circle-info"></i> Tool Info</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>View real-time diagnostic data directly from your device's hardware sensors and browser environment.</p>
+                    <ul>
+                        <li><i class="fa-solid fa-check"></i> Live battery & charging status.</li>
+                        <li><i class="fa-solid fa-check"></i> Network latency and bandwidth tracking.</li>
+                        <li><i class="fa-solid fa-check"></i> 100% Private. No data is logged or sent externally.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer><p><i class="fa-solid fa-code"></i> Created by Antony</p></footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // 1. Battery API
+        if ('getBattery' in navigator) {
+            navigator.getBattery().then(function(battery) {
+                updateBatteryStatus(battery);
+                battery.addEventListener('levelchange', () => updateBatteryStatus(battery));
+                battery.addEventListener('chargingchange', () => updateBatteryStatus(battery));
+            });
+        } else {
+            document.getElementById('bat-level').innerText = "N/A";
+            document.getElementById('bat-status').innerText = "Unsupported";
+        }
+
+        function updateBatteryStatus(battery) {
+            const level = Math.round(battery.level * 100);
+            document.getElementById('bat-level').innerText = level + '%';
+            document.getElementById('bat-status').innerText = battery.charging ? "Charging" : "Discharging";
+            
+            const card = document.getElementById('bat-card');
+            card.className = 'stat-card'; // reset
+            if (battery.charging) card.classList.add('charging');
+            else if (level <= 20) card.classList.add('low-battery');
+        }
+
+        // 2. Hardware APIs
+        document.getElementById('hw-ram').innerText = navigator.deviceMemory ? `>= ${navigator.deviceMemory} GB` : "N/A";
+        document.getElementById('hw-cpu').innerText = navigator.hardwareConcurrency ? navigator.hardwareConcurrency : "N/A";
+
+        if ('storage' in navigator && 'estimate' in navigator.storage) {
+            navigator.storage.estimate().then(({quota, usage}) => {
+                const limitGB = (quota / (1024 * 1024 * 1024)).toFixed(1);
+                document.getElementById('hw-storage').innerText = `${limitGB} GB`;
+            });
+        } else {
+            document.getElementById('hw-storage').innerText = "N/A";
+        }
+
+        // 3. Network API
+        function updateNetwork() {
+            if ('connection' in navigator) {
+                const conn = navigator.connection;
+                document.getElementById('net-type').innerText = conn.effectiveType ? conn.effectiveType.toUpperCase() : "Online";
+                document.getElementById('net-speed').innerText = conn.downlink ? `${conn.downlink} Mbps` : "N/A";
+                document.getElementById('net-ping').innerText = conn.rtt ? `${conn.rtt} ms` : "N/A";
+            } else {
+                document.getElementById('net-type').innerText = navigator.onLine ? "Online" : "Offline";
+                document.getElementById('net-speed').innerText = "N/A";
+                document.getElementById('net-ping').innerText = "N/A";
+            }
+        }
+        updateNetwork();
+        if('connection' in navigator) navigator.connection.addEventListener('change', updateNetwork);
+        window.addEventListener('online', updateNetwork);
+        window.addEventListener('offline', updateNetwork);
+
+        // 4. Display & System
+        document.getElementById('disp-res').innerText = `${window.screen.width} x ${window.screen.height}`;
+        document.getElementById('disp-color').innerText = `${window.screen.colorDepth}-bit`;
+        
+        document.getElementById('sys-platform').innerText = navigator.platform || "Unknown";
+        document.getElementById('sys-lang').innerText = navigator.language || "Unknown";
+        document.getElementById('sys-ua').innerText = navigator.userAgent || "Unknown";
+    </script>
+</body>
+</html>

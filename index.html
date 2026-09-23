@@ -97,9 +97,6 @@
                 <a href="pdf.html" class="card" data-keywords="merge split extract rotate duplicate document image to pdf converter">
                     <i class="fa-solid fa-file-pdf"></i><h3>PDF Manager</h3>
                 </a>
-                <a href="device.html" class="card" data-keywords="hardware battery network ram cpu ping internet speed system info health diagnostics">
-                    <i class="fa-solid fa-mobile-screen"></i><h3>Device Health</h3>
-                </a>
                 <a href="qr.html" class="card" data-keywords="barcode scanner generator reader make create link">
                     <i class="fa-solid fa-qrcode"></i><h3>QR Suite</h3>
                 </a>
@@ -176,7 +173,6 @@
                     const title = card.querySelector('h3').innerText.toLowerCase();
                     const keywords = card.getAttribute('data-keywords').toLowerCase();
 
-                    // Check if query matches title OR the hidden keyword aliases
                     if (title.includes(query) || keywords.includes(query)) {
                         card.style.display = 'flex';
                         hasVisibleCard = true;
@@ -185,7 +181,6 @@
                     }
                 });
 
-                // Hide the entire category section (header included) if no tools match
                 if (hasVisibleCard) {
                     category.style.display = 'block';
                 } else {

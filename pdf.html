@@ -6,161 +6,147 @@
     <title>Advanced PDF Manager | Smart Mobile Toolkit</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
     <style>
-        .pdf-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; margin-top: 20px; }
-        .page-card { background: #222; padding: 10px; border-radius: 8px; text-align: center; position: relative; }
-        .page-card canvas { max-width: 100%; height: auto; border: 1px solid #444; border-radius: 4px; transition: transform 0.3s; }
-        .page-controls { display: flex; justify-content: center; gap: 10px; margin-top: 10px; }
-        .deleted canvas { opacity: 0.3; filter: grayscale(100%); }
+        body { background-color: #0a0a0f; color: #fff; }
+        .upload-zone { border: 2px dashed #145054; border-radius: 12px; padding: 30px; text-align: center; cursor: pointer; background: #081214; }
+        .pdf-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; margin-top: 20px; }
+        .page-card { background: #1a1a24; padding: 10px; border-radius: 8px; text-align: center; border: 1px solid #333; }
+        .page-card canvas { max-width: 100%; border: 1px solid #555; border-radius: 4px; transition: transform 0.3s; }
+        .deleted canvas { opacity: 0.2; filter: grayscale(100%); }
     </style>
 </head>
 <body>
-    <div class="container mt-4">
-        <h2 class="text-center mb-4"><i class="fa-solid fa-file-pdf"></i> PDF Manager Pro</h2>
+    <div class="container mt-4 pb-5">
+        <h2 class="mb-4 fw-bold"><i class="fa-solid fa-file-pdf text-danger"></i> PDF Manager Pro</h2>
         
-        <div class="card p-3 mb-4" style="background: #1a1a1a; border: 1px solid #333;">
-            <label class="form-label">Upload PDF or Images (to convert):</label>
-            <input type="file" id="fileInput" class="form-control" accept="application/pdf, image/jpeg, image/png" multiple>
+        <div class="upload-zone mb-4" onclick="document.getElementById('fileInput').click()">
+            <i class="fa-solid fa-plus fs-1 text-info mb-2"></i>
+            <h5>Add PDF or Images</h5>
+            <p class="text-secondary small mb-0">You can add multiple files. They will be appended.</p>
+            <input type="file" id="fileInput" accept="application/pdf, image/jpeg, image/png" multiple hidden>
         </div>
 
-        <div id="pdfWorkspace" style="display: none;">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h4>Pages Preview</h4>
-                <button id="exportBtn" class="btn btn-success"><i class="fa-solid fa-download"></i> Save Final PDF</button>
+        <div id="workspace" style="display: none;">
+            <div class="d-flex justify-content-between align-items-center bg-dark p-3 rounded border border-secondary mb-3">
+                <span id="pageCount">0 Pages Loaded</span>
+                <button id="exportBtn" class="btn btn-success"><i class="fa-solid fa-download"></i> Export PDF</button>
             </div>
             <div class="pdf-grid" id="pagesGrid"></div>
         </div>
     </div>
 
-    <!-- Load pdf.js for rendering and pdf-lib for manipulation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
     <script>
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
         
-        let loadedPdfDoc = null;
-        let pageStates = []; // Tracks rotation and deletion
-        let isImageMode = false;
-        let imageFiles = [];
+        let pagesData = []; // Array of { type: 'pdf'|'image', bytes/file, pageIndex, rotation, deleted, elementId }
+        let globalId = 0;
 
         document.getElementById('fileInput').addEventListener('change', async (e) => {
             const files = Array.from(e.target.files);
-            if (files.length === 0) return;
-
-            document.getElementById('pagesGrid').innerHTML = '';
-            pageStates = [];
-            document.getElementById('pdfWorkspace').style.display = 'block';
-
-            if (files[0].type === 'application/pdf') {
-                isImageMode = false;
-                const arrayBuffer = await files[0].arrayBuffer();
-                loadedPdfDoc = await PDFLib.PDFDocument.load(arrayBuffer);
-                renderPdfPreview(arrayBuffer);
-            } else {
-                isImageMode = true;
-                imageFiles = files;
-                renderImagePreviews(files);
+            document.getElementById('workspace').style.display = 'block';
+            
+            for (let file of files) {
+                if (file.type === 'application/pdf') {
+                    const arrayBuffer = await file.arrayBuffer();
+                    const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
+                    for (let i = 1; i <= pdf.numPages; i++) {
+                        const page = await pdf.getPage(i);
+                        addPageToUI(page, false, arrayBuffer, i - 1);
+                    }
+                } else {
+                    addPageToUI(file, true, file, 0);
+                }
             }
         });
 
-        async function renderPdfPreview(arrayBuffer) {
-            const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
-            for (let i = 1; i <= pdf.numPages; i++) {
-                pageStates.push({ deleted: false, rotation: 0 });
-                const page = await pdf.getPage(i);
-                createPageCard(page, i - 1, false);
-            }
-        }
+        async function addPageToUI(source, isImage, rawData, originalIndex) {
+            const id = globalId++;
+            pagesData.push({ id, isImage, rawData, originalIndex, rotation: 0, deleted: false });
+            
+            const grid = document.getElementById('pagesGrid');
+            const card = document.createElement('div');
+            card.className = 'page-card';
+            card.id = `card-${id}`;
+            
+            const canvas = document.createElement('canvas');
+            canvas.id = `canvas-${id}`;
+            card.appendChild(canvas);
 
-        function renderImagePreviews(files) {
-            files.forEach((file, index) => {
-                pageStates.push({ deleted: false, rotation: 0 });
+            if (!isImage) {
+                const viewport = source.getViewport({ scale: 0.5 });
+                canvas.width = viewport.width; canvas.height = viewport.height;
+                await source.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
+            } else {
                 const reader = new FileReader();
                 reader.onload = (e) => {
                     const img = new Image();
                     img.src = e.target.result;
-                    img.onload = () => createPageCard(img, index, true);
+                    img.onload = () => {
+                        canvas.width = img.width; canvas.height = img.height;
+                        canvas.getContext('2d').drawImage(img, 0, 0);
+                    };
                 };
-                reader.readAsDataURL(file);
-            });
-        }
-
-        async function createPageCard(source, index, isImage) {
-            const grid = document.getElementById('pagesGrid');
-            const card = document.createElement('div');
-            card.className = 'page-card';
-            card.id = `page-card-${index}`;
-            
-            const canvas = document.createElement('canvas');
-            canvas.id = `canvas-${index}`;
-            
-            if (!isImage) {
-                const viewport = source.getViewport({ scale: 0.5 });
-                canvas.width = viewport.width;
-                canvas.height = viewport.height;
-                await source.render({ canvasContext: canvas.getContext('2d'), viewport: viewport }).promise;
-            } else {
-                canvas.width = source.width;
-                canvas.height = source.height;
-                canvas.getContext('2d').drawImage(source, 0, 0);
+                reader.readAsDataURL(source);
             }
 
-            const controls = document.createElement('div');
-            controls.className = 'page-controls';
-            controls.innerHTML = `
-                <button class="btn btn-sm btn-outline-warning" onclick="rotatePage(${index})"><i class="fa-solid fa-rotate-right"></i></button>
-                <button class="btn btn-sm btn-outline-danger" onclick="toggleDelete(${index})"><i class="fa-solid fa-trash"></i></button>
+            card.innerHTML += `
+                <div class="d-flex justify-content-center gap-2 mt-2">
+                    <button class="btn btn-sm btn-outline-info" onclick="rotatePage(${id})"><i class="fa-solid fa-rotate-right"></i></button>
+                    <button class="btn btn-sm btn-outline-danger" onclick="toggleDelete(${id})"><i class="fa-solid fa-trash"></i></button>
+                </div>
             `;
-
-            card.appendChild(canvas);
-            card.appendChild(controls);
             grid.appendChild(card);
+            document.getElementById('pageCount').innerText = `${pagesData.filter(p => !p.deleted).length} Pages`;
         }
 
-        window.rotatePage = (index) => {
-            if (pageStates[index].deleted) return;
-            pageStates[index].rotation = (pageStates[index].rotation + 90) % 360;
-            document.getElementById(`canvas-${index}`).style.transform = `rotate(${pageStates[index].rotation}deg)`;
+        window.rotatePage = (id) => {
+            const page = pagesData.find(p => p.id === id);
+            if (page.deleted) return;
+            page.rotation = (page.rotation + 90) % 360;
+            document.getElementById(`canvas-${id}`).style.transform = `rotate(${page.rotation}deg)`;
         };
 
-        window.toggleDelete = (index) => {
-            pageStates[index].deleted = !pageStates[index].deleted;
-            document.getElementById(`page-card-${index}`).classList.toggle('deleted');
+        window.toggleDelete = (id) => {
+            const page = pagesData.find(p => p.id === id);
+            page.deleted = !page.deleted;
+            document.getElementById(`card-${id}`).classList.toggle('deleted');
+            document.getElementById('pageCount').innerText = `${pagesData.filter(p => !p.deleted).length} Pages`;
         };
 
         document.getElementById('exportBtn').addEventListener('click', async () => {
             const { PDFDocument, degrees } = PDFLib;
             const newPdf = await PDFDocument.create();
+            
+            // Cache loaded PDFs to avoid re-parsing
+            const loadedPdfs = new Map();
 
-            if (!isImageMode) {
-                const copiedPages = await newPdf.copyPages(loadedPdfDoc, loadedPdfDoc.getPageIndices());
-                copiedPages.forEach((page, index) => {
-                    if (!pageStates[index].deleted) {
-                        page.setRotation(degrees(page.getRotation().angle + pageStates[index].rotation));
-                        newPdf.addPage(page);
+            for (let page of pagesData) {
+                if (page.deleted) continue;
+
+                if (!page.isImage) {
+                    if (!loadedPdfs.has(page.rawData)) {
+                        loadedPdfs.set(page.rawData, await PDFDocument.load(page.rawData));
                     }
-                });
-            } else {
-                for (let i = 0; i < imageFiles.length; i++) {
-                    if (pageStates[i].deleted) continue;
-                    const arrayBuffer = await imageFiles[i].arrayBuffer();
-                    let img;
-                    if (imageFiles[i].type === 'image/jpeg') img = await newPdf.embedJpg(arrayBuffer);
-                    else img = await newPdf.embedPng(arrayBuffer);
-                    
-                    const page = newPdf.addPage([img.width, img.height]);
-                    page.drawImage(img, { x: 0, y: 0, width: img.width, height: img.height });
-                    page.setRotation(degrees(pageStates[i].rotation));
+                    const srcPdf = loadedPdfs.get(page.rawData);
+                    const [copiedPage] = await newPdf.copyPages(srcPdf, [page.originalIndex]);
+                    copiedPage.setRotation(degrees(copiedPage.getRotation().angle + page.rotation));
+                    newPdf.addPage(copiedPage);
+                } else {
+                    const arrayBuffer = await page.rawData.arrayBuffer();
+                    let img = page.rawData.type === 'image/jpeg' ? await newPdf.embedJpg(arrayBuffer) : await newPdf.embedPng(arrayBuffer);
+                    const newPage = newPdf.addPage([img.width, img.height]);
+                    newPage.drawImage(img, { x: 0, y: 0, width: img.width, height: img.height });
+                    newPage.setRotation(degrees(page.rotation));
                 }
             }
 
             const pdfBytes = await newPdf.save();
-            const blob = new Blob([pdfBytes], { type: 'application/pdf' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = `Toolkit_Export_${Date.now()}.pdf`;
-            link.click();
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(new Blob([pdfBytes], { type: 'application/pdf' }));
+            a.download = `Merged_Document_${Date.now()}.pdf`;
+            a.click();
         });
     </script>
 </body>

@@ -6,124 +6,109 @@
     <title>Pro Photo Studio | Smart Mobile Toolkit</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
     <style>
-        .studio-canvas-container { width: 100%; max-height: 50vh; overflow: hidden; display: flex; justify-content: center; background: #111; border-radius: 8px; margin-bottom: 20px; }
-        canvas { max-width: 100%; max-height: 100%; object-fit: contain; }
+        body { background-color: #0a0a0f; color: #fff; }
+        .canvas-container { width: 100%; max-height: 45vh; overflow: hidden; display: flex; justify-content: center; align-items: center; background: #000; border-radius: 8px; margin-bottom: 20px; border: 1px solid #333; }
+        canvas { max-width: 100%; max-height: 45vh; object-fit: contain; }
         .filter-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .filter-label { font-size: 0.85rem; display: flex; justify-content: space-between; margin-bottom: 2px; color: #aaa; }
+        .filter-label { font-size: 0.8rem; color: #aaa; display: flex; justify-content: space-between; }
     </style>
 </head>
 <body>
     <div class="container mt-4 pb-5">
-        <h2 class="text-center mb-4"><i class="fa-solid fa-wand-magic-sparkles"></i> Pro Photo Studio</h2>
+        <h2 class="mb-4 fw-bold"><i class="fa-solid fa-wand-magic-sparkles text-warning"></i> Photo Studio</h2>
         
-        <input type="file" id="uploadImg" class="form-control mb-3" accept="image/*">
+        <input type="file" id="uploadImg" class="form-control bg-dark text-white mb-3" accept="image/*">
         
-        <div class="studio-canvas-container" id="canvasWrapper" style="display: none;">
+        <div class="canvas-container" id="canvasWrapper" style="display: none;">
             <canvas id="canvas"></canvas>
         </div>
 
         <div id="controls" style="display: none;">
+            <div class="d-flex gap-2 justify-content-center mb-4">
+                <button class="btn btn-dark border-secondary" onclick="transform('rotate', -90)"><i class="fa-solid fa-rotate-left"></i></button>
+                <button class="btn btn-dark border-secondary" onclick="transform('rotate', 90)"><i class="fa-solid fa-rotate-right"></i></button>
+                <button class="btn btn-dark border-secondary" onclick="transform('flipX')"><i class="fa-solid fa-arrows-left-right"></i></button>
+                <button class="btn btn-dark border-secondary" onclick="transform('flipY')"><i class="fa-solid fa-arrows-up-down"></i></button>
+            </div>
+
             <div class="filter-grid mb-4">
-                <div>
-                    <div class="filter-label"><span>Brightness</span> <span id="val-bright">100%</span></div>
-                    <input type="range" class="form-range filter-slider" id="bright" min="0" max="200" value="100">
-                </div>
-                <div>
-                    <div class="filter-label"><span>Contrast</span> <span id="val-contrast">100%</span></div>
-                    <input type="range" class="form-range filter-slider" id="contrast" min="0" max="200" value="100">
-                </div>
-                <div>
-                    <div class="filter-label"><span>Saturation</span> <span id="val-saturate">100%</span></div>
-                    <input type="range" class="form-range filter-slider" id="saturate" min="0" max="200" value="100">
-                </div>
-                <div>
-                    <div class="filter-label"><span>Blur</span> <span id="val-blur">0px</span></div>
-                    <input type="range" class="form-range filter-slider" id="blur" min="0" max="20" value="0">
-                </div>
-                <div>
-                    <div class="filter-label"><span>Sepia</span> <span id="val-sepia">0%</span></div>
-                    <input type="range" class="form-range filter-slider" id="sepia" min="0" max="100" value="0">
-                </div>
-                <div>
-                    <div class="filter-label"><span>Grayscale</span> <span id="val-gray">0%</span></div>
-                    <input type="range" class="form-range filter-slider" id="gray" min="0" max="100" value="0">
-                </div>
-                <div>
-                    <div class="filter-label"><span>Hue Rotate</span> <span id="val-hue">0°</span></div>
-                    <input type="range" class="form-range filter-slider" id="hue" min="0" max="360" value="0">
-                </div>
-                <div>
-                    <div class="filter-label"><span>Invert</span> <span id="val-invert">0%</span></div>
-                    <input type="range" class="form-range filter-slider" id="invert" min="0" max="100" value="0">
-                </div>
+                <div><div class="filter-label"><span>Brightness</span> <span id="v-bright">100%</span></div><input type="range" class="form-range f-slider" id="bright" min="0" max="200" value="100"></div>
+                <div><div class="filter-label"><span>Contrast</span> <span id="v-contrast">100%</span></div><input type="range" class="form-range f-slider" id="contrast" min="0" max="200" value="100"></div>
+                <div><div class="filter-label"><span>Saturation</span> <span id="v-saturate">100%</span></div><input type="range" class="form-range f-slider" id="saturate" min="0" max="200" value="100"></div>
+                <div><div class="filter-label"><span>Blur</span> <span id="v-blur">0px</span></div><input type="range" class="form-range f-slider" id="blur" min="0" max="20" value="0"></div>
+                <div><div class="filter-label"><span>Sepia</span> <span id="v-sepia">0%</span></div><input type="range" class="form-range f-slider" id="sepia" min="0" max="100" value="0"></div>
+                <div><div class="filter-label"><span>Hue</span> <span id="v-hue">0°</span></div><input type="range" class="form-range f-slider" id="hue" min="0" max="360" value="0"></div>
             </div>
             
-            <div class="d-flex gap-2">
-                <button class="btn btn-outline-danger w-50" id="resetBtn"><i class="fa-solid fa-rotate-left"></i> Reset</button>
-                <button class="btn btn-info w-50" id="downloadBtn"><i class="fa-solid fa-download"></i> Download</button>
-            </div>
+            <button class="btn btn-info w-100 fw-bold" id="downloadBtn"><i class="fa-solid fa-download"></i> Save Image</button>
         </div>
     </div>
 
     <script>
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
-        const upload = document.getElementById('uploadImg');
-        const sliders = document.querySelectorAll('.filter-slider');
         let img = new Image();
+        let currentTransform = { rotate: 0, flipX: 1, flipY: 1 };
 
-        upload.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) {
+        document.getElementById('uploadImg').addEventListener('change', (e) => {
+            if (e.target.files[0]) {
                 const reader = new FileReader();
                 reader.onload = (event) => {
                     img.src = event.target.result;
                     img.onload = () => {
-                        canvas.width = img.width;
-                        canvas.height = img.height;
+                        currentTransform = { rotate: 0, flipX: 1, flipY: 1 };
                         document.getElementById('canvasWrapper').style.display = 'flex';
                         document.getElementById('controls').style.display = 'block';
-                        applyFilters();
+                        applyRender();
                     };
                 };
-                reader.readAsDataURL(file);
+                reader.readAsDataURL(e.target.files[0]);
             }
         });
 
-        sliders.forEach(slider => {
+        document.querySelectorAll('.f-slider').forEach(slider => {
             slider.addEventListener('input', () => {
-                document.getElementById(`val-${slider.id}`).innerText = slider.id === 'blur' ? `${slider.value}px` : (slider.id === 'hue' ? `${slider.value}°` : `${slider.value}%`);
-                applyFilters();
+                document.getElementById(`v-${slider.id}`).innerText = slider.id === 'blur' ? `${slider.value}px` : (slider.id === 'hue' ? `${slider.value}°` : `${slider.value}%`);
+                applyRender();
             });
         });
 
-        function applyFilters() {
-            const bright = document.getElementById('bright').value;
-            const contrast = document.getElementById('contrast').value;
-            const saturate = document.getElementById('saturate').value;
-            const blur = document.getElementById('blur').value;
-            const sepia = document.getElementById('sepia').value;
-            const gray = document.getElementById('gray').value;
-            const hue = document.getElementById('hue').value;
-            const invert = document.getElementById('invert').value;
+        window.transform = (type, val) => {
+            if (type === 'rotate') currentTransform.rotate = (currentTransform.rotate + val) % 360;
+            if (type === 'flipX') currentTransform.flipX *= -1;
+            if (type === 'flipY') currentTransform.flipY *= -1;
+            applyRender();
+        };
 
-            ctx.filter = `brightness(${bright}%) contrast(${contrast}%) saturate(${saturate}%) blur(${blur}px) sepia(${sepia}%) grayscale(${gray}%) hue-rotate(${hue}deg) invert(${invert}%)`;
+        function applyRender() {
+            const { rotate, flipX, flipY } = currentTransform;
+            
+            // Adjust canvas size for 90/270 degree rotations
+            if (rotate % 180 !== 0) { canvas.width = img.height; canvas.height = img.width; } 
+            else { canvas.width = img.width; canvas.height = img.height; }
+
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            ctx.save();
+            ctx.translate(canvas.width / 2, canvas.height / 2);
+            ctx.rotate(rotate * Math.PI / 180);
+            ctx.scale(flipX, flipY);
+
+            // Apply Filters
+            const b = document.getElementById('bright').value, c = document.getElementById('contrast').value;
+            const s = document.getElementById('saturate').value, bl = document.getElementById('blur').value;
+            const sp = document.getElementById('sepia').value, h = document.getElementById('hue').value;
+            ctx.filter = `brightness(${b}%) contrast(${c}%) saturate(${s}%) blur(${bl}px) sepia(${sp}%) hue-rotate(${h}deg)`;
+
+            ctx.drawImage(img, -img.width / 2, -img.height / 2);
+            ctx.restore();
         }
 
-        document.getElementById('resetBtn').addEventListener('click', () => {
-            sliders.forEach(s => s.value = s.getAttribute('value'));
-            sliders.forEach(s => s.dispatchEvent(new Event('input')));
-        });
-
         document.getElementById('downloadBtn').addEventListener('click', () => {
-            const link = document.createElement('a');
-            link.download = `Studio_Edited_${Date.now()}.png`;
-            link.href = canvas.toDataURL('image/png');
-            link.click();
+            const a = document.createElement('a');
+            a.download = `Studio_${Date.now()}.png`;
+            a.href = canvas.toDataURL('image/png');
+            a.click();
         });
     </script>
 </body>

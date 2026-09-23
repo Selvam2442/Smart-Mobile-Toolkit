@@ -3,52 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pro Image Resizer & Cropper | Smart Mobile Toolkit</title>
+    <title>Image Converter & Cropper | Smart Mobile Toolkit</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
     <style>
-        .img-container { max-height: 400px; width: 100%; margin-bottom: 20px; background: #111; border-radius: 8px; overflow: hidden; }
+        body { background-color: #0a0a0f; color: #fff; font-family: system-ui, -apple-system, sans-serif; }
+        .private-badge { background: #0c2b2e; border: 1px solid #145054; color: #4fd1c5; padding: 10px 15px; border-radius: 8px; font-size: 0.9rem; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+        .upload-zone { border: 2px dashed #145054; border-radius: 12px; padding: 40px 20px; text-align: center; background: #081214; cursor: pointer; transition: 0.3s; }
+        .upload-zone:hover { background: #0c1a1d; }
+        .upload-zone i { font-size: 3rem; color: #00f0ff; margin-bottom: 15px; }
+        .editor-panel { display: none; background: #111; padding: 20px; border-radius: 12px; margin-top: 20px; }
+        .img-container { max-height: 50vh; width: 100%; background: #000; border-radius: 8px; overflow: hidden; margin-bottom: 20px; }
         img { display: block; max-width: 100%; }
-        .controls-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .preset-btn { background: #222; border: 1px solid #444; color: #fff; }
+        .preset-btn.active { background: #00f0ff; color: #000; border-color: #00f0ff; }
     </style>
 </head>
 <body>
-    <div class="container mt-4">
-        <h2 class="text-center mb-4"><i class="fa-solid fa-crop-simple"></i> Pro Image Resizer</h2>
-        
-        <input type="file" id="imageInput" class="form-control mb-3" accept="image/*">
-        
-        <div class="img-container" id="cropContainer" style="display: none;">
-            <img id="image" src="">
+    <div class="container mt-4 pb-5">
+        <h2 class="mb-1 fw-bold"><i class="fa-solid fa-arrow-left me-2"></i> Image Converter</h2>
+        <p class="text-secondary mb-4">Convert, resize, crop and optimise on your device</p>
+
+        <div class="private-badge">
+            <i class="fa-solid fa-shield-halved"></i> Private by design — your image stays in this browser.
         </div>
 
-        <div id="editorControls" style="display: none;">
-            <div class="controls-grid mb-3">
-                <div>
-                    <label>Width (px)</label>
-                    <input type="number" id="outWidth" class="form-control" placeholder="e.g., 213 (PAN)">
+        <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
+            <i class="fa-solid fa-cloud-arrow-up"></i>
+            <h4 class="fw-bold">Choose an image</h4>
+            <p class="text-secondary mb-0">JPG, PNG, WebP, BMP, HEIC</p>
+            <input type="file" id="fileInput" accept="image/*" hidden>
+        </div>
+
+        <div class="editor-panel" id="editorPanel">
+            <div class="img-container">
+                <img id="image" src="">
+            </div>
+
+            <div class="row g-3 mb-4">
+                <div class="col-12">
+                    <label class="form-label text-info small">Crop Presets</label>
+                    <div class="d-flex gap-2 flex-wrap">
+                        <button class="btn preset-btn active" onclick="setRatio(NaN, this)">Free</button>
+                        <button class="btn preset-btn" onclick="setRatio(1/1, this)">1:1 (Square)</button>
+                        <button class="btn preset-btn" onclick="setRatio(213/213, this, 213, 213)">PAN Card</button>
+                        <button class="btn preset-btn" onclick="setRatio(3.5/4.5, this, 350, 450)">Passport</button>
+                    </div>
                 </div>
-                <div>
-                    <label>Height (px)</label>
-                    <input type="number" id="outHeight" class="form-control" placeholder="e.g., 213 (PAN)">
+                <div class="col-6">
+                    <label class="form-label">Width (px)</label>
+                    <input type="number" id="outWidth" class="form-control bg-dark text-white border-secondary">
                 </div>
-                <div>
-                    <label>Quality (%)</label>
-                    <input type="range" id="outQuality" class="form-range" min="0.1" max="1" step="0.1" value="0.8">
+                <div class="col-6">
+                    <label class="form-label">Height (px)</label>
+                    <input type="number" id="outHeight" class="form-control bg-dark text-white border-secondary">
                 </div>
-                <div>
-                    <label>Format</label>
-                    <select id="outFormat" class="form-select">
-                        <option value="image/jpeg">JPEG / JPG</option>
+                <div class="col-6">
+                    <label class="form-label">Format</label>
+                    <select id="outFormat" class="form-select bg-dark text-white border-secondary">
+                        <option value="image/jpeg">JPEG</option>
                         <option value="image/png">PNG</option>
                         <option value="image/webp">WEBP</option>
                     </select>
                 </div>
+                <div class="col-6">
+                    <label class="form-label">Quality (<span id="qVal">80</span>%)</label>
+                    <input type="range" id="outQuality" class="form-range" min="0.1" max="1" step="0.1" value="0.8" oninput="document.getElementById('qVal').innerText=Math.round(this.value*100)">
+                </div>
             </div>
             
-            <button id="processBtn" class="btn btn-primary w-100"><i class="fa-solid fa-download"></i> Crop, Resize & Download</button>
+            <button id="processBtn" class="btn btn-info w-100 fw-bold py-2"><i class="fa-solid fa-download"></i> Process & Download</button>
         </div>
     </div>
 
@@ -56,54 +81,41 @@
     <script>
         let cropper;
         const image = document.getElementById('image');
-        const imageInput = document.getElementById('imageInput');
         
-        imageInput.addEventListener('change', (e) => {
-            const files = e.target.files;
-            if (files && files.length > 0) {
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            if (e.target.files && e.target.files.length > 0) {
                 const reader = new FileReader();
                 reader.onload = (event) => {
                     image.src = event.target.result;
-                    document.getElementById('cropContainer').style.display = 'block';
-                    document.getElementById('editorControls').style.display = 'block';
-                    
+                    document.getElementById('uploadZone').style.display = 'none';
+                    document.getElementById('editorPanel').style.display = 'block';
                     if (cropper) cropper.destroy();
-                    cropper = new Cropper(image, {
-                        viewMode: 1,
-                        background: false,
-                        zoomable: true,
-                    });
+                    cropper = new Cropper(image, { viewMode: 1, background: false });
                 };
-                reader.readAsDataURL(files[0]);
+                reader.readAsDataURL(e.target.files[0]);
             }
         });
 
+        function setRatio(ratio, btn, w = '', h = '') {
+            document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            cropper.setAspectRatio(ratio);
+            document.getElementById('outWidth').value = w;
+            document.getElementById('outHeight').value = h;
+        }
+
         document.getElementById('processBtn').addEventListener('click', () => {
-            if (!cropper) return;
-            
-            const width = parseInt(document.getElementById('outWidth').value) || undefined;
-            const height = parseInt(document.getElementById('outHeight').value) || undefined;
+            const w = parseInt(document.getElementById('outWidth').value) || undefined;
+            const h = parseInt(document.getElementById('outHeight').value) || undefined;
             const format = document.getElementById('outFormat').value;
             const quality = parseFloat(document.getElementById('outQuality').value);
 
-            // 1. Get the cropped canvas
-            const croppedCanvas = cropper.getCroppedCanvas({
-                width: width,
-                height: height,
-                imageSmoothingEnabled: true,
-                imageSmoothingQuality: 'high',
-            });
-
-            // 2. Convert to the requested format, quality, and trigger download
-            croppedCanvas.toBlob((blob) => {
+            cropper.getCroppedCanvas({ width: w, height: h, imageSmoothingQuality: 'high' }).toBlob((blob) => {
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = `edited_image_${Date.now()}.${format.split('/')[1]}`;
-                document.body.appendChild(a);
+                a.download = `edited_${Date.now()}.${format.split('/')[1]}`;
                 a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
             }, format, quality);
         });
     </script>

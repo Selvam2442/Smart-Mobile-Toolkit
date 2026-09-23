@@ -18,21 +18,22 @@
         .add-more-card:hover { background: rgba(0,240,255,0.1); border-color: var(--primary-glow); }
         .add-more-card i { font-size: 2rem; color: var(--primary-glow); margin-bottom: 10px; }
 
-        /* Fullscreen Lightbox Overlay */
-        #lightbox { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.95); z-index: 10000; align-items: center; justify-content: center; flex-direction: column; backdrop-filter: blur(10px); }
-        #lightbox.active { display: flex; animation: fadeIn 0.3s ease; }
-        #lightbox canvas { max-width: 95vw; max-height: 85vh; border-radius: 8px; box-shadow: 0 10px 40px rgba(0,0,0,0.8); object-fit: contain; }
-        .lightbox-close { position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.1); border: none; color: #fff; width: 50px; height: 50px; border-radius: 50%; font-size: 1.5rem; cursor: pointer; backdrop-filter: blur(5px); z-index: 10001; }
-        .lightbox-close:hover { background: var(--danger-color); }
+        /* HTML5 Native Dialog Lightbox */
+        #lightbox { border: none; padding: 0; margin: auto; width: 100vw; height: 100vh; max-width: 100vw; max-height: 100vh; background: transparent; overflow: hidden; }
+        #lightbox::backdrop { background: rgba(0,0,0,0.95); backdrop-filter: blur(15px); }
+        .lightbox-container { display: flex; width: 100vw; height: 100vh; align-items: center; justify-content: center; flex-direction: column; position: relative; }
+        #lightbox canvas { max-width: 95vw; max-height: 85vh; border-radius: 8px; box-shadow: 0 15px 50px rgba(0,0,0,0.9); object-fit: contain; }
+        .lightbox-close { position: absolute; top: 25px; right: 25px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; width: 50px; height: 50px; border-radius: 50%; font-size: 1.5rem; cursor: pointer; backdrop-filter: blur(5px); z-index: 10001; transition: 0.2s; }
+        .lightbox-close:hover { background: var(--danger-color); transform: scale(1.1); }
         
-        /* Upgraded Overlay Actions (2-column wrap) */
+        /* Upgraded Overlay Actions */
         .page-actions-overlay { position: absolute; top: 5px; right: 5px; display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 4px; background: rgba(0,0,0,0.8); padding: 6px; border-radius: 8px; backdrop-filter: blur(5px); max-width: 75px; z-index: 10; }
         .page-actions-overlay button { background: rgba(255,255,255,0.08); border: none; font-size: 0.95rem; cursor: pointer; width: 30px; height: 30px; border-radius: 6px; transition: 0.2s; display: flex; align-items: center; justify-content: center; }
         .page-actions-overlay button:hover { background: rgba(255,255,255,0.25); transform: scale(1.1); }
         
         /* Deleted State Handling */
         .deleted-page canvas { opacity: 0.2; filter: grayscale(100%); }
-        .deleted-page .page-actions-overlay button:not(.btn-delete) { display: none; } /* Hide tools, keep restore button */
+        .deleted-page .page-actions-overlay button:not(.btn-delete) { display: none; }
     </style>
 </head>
 <body>
@@ -95,11 +96,13 @@
         </div>
     </main>
 
-    <!-- Fullscreen Lightbox -->
-    <div id="lightbox">
-        <button class="lightbox-close" onclick="closeLightbox()"><i class="fa-solid fa-xmark"></i></button>
-        <div id="lightboxContent"></div>
-    </div>
+    <!-- Native HTML5 Fullscreen Lightbox -->
+    <dialog id="lightbox">
+        <div class="lightbox-container">
+            <button class="lightbox-close" onclick="closeLightbox()"><i class="fa-solid fa-xmark"></i></button>
+            <div id="lightboxContent"></div>
+        </div>
+    </dialog>
 
     <footer><p><i class="fa-solid fa-code"></i> Created by Antony</p></footer>
     
@@ -160,9 +163,10 @@
             canvas.id = `canvas_${id}`;
             canvas.style.width = '100%';
             canvas.style.height = 'auto';
+            canvas.style.borderRadius = '5px';
+            canvas.style.background = '#fff';
             card.appendChild(canvas);
 
-            // New 4-Action Grid Overlay
             card.innerHTML += `
                 <div class="page-actions-overlay" id="overlay_${id}">
                     <button class="text-info" onclick="openLightbox('${id}')" title="Full Screen Preview"><i class="fa-solid fa-expand"></i></button>
@@ -191,7 +195,7 @@
                             document.getElementById(`canvas_${id}`).width = img.width; 
                             document.getElementById(`canvas_${id}`).height = img.height; 
                             ctx.drawImage(img, 0, 0); 
-                            resolve(); // Ensures rendering finishes before user clicks preview
+                            resolve(); 
                         };
                     };
                     reader.readAsDataURL(source);
@@ -200,13 +204,10 @@
             updateCounter();
         }
 
-        /* --- PRO FEATURES START --- */
-
         window.duplicatePage = (id) => {
             const originalData = pagesDatabase.get(id);
             const newId = `page_${globalId++}`;
             
-            // Shallow copy data to new ID
             pagesDatabase.set(newId, { ...originalData });
 
             const originalCard = document.querySelector(`[data-id="${id}"]`);
@@ -215,7 +216,6 @@
             clone.querySelector('canvas').id = `canvas_${newId}`;
             clone.querySelector('.page-actions-overlay').id = `overlay_${newId}`;
             
-            // Re-bind onclicks to the new ID
             clone.querySelector('.page-actions-overlay').innerHTML = `
                 <button class="text-info" onclick="openLightbox('${newId}')" title="Full Screen Preview"><i class="fa-solid fa-expand"></i></button>
                 <button class="text-warning" onclick="rotatePage('${newId}')" title="Rotate Page"><i class="fa-solid fa-rotate-right"></i></button>
@@ -224,10 +224,8 @@
                 <button class="text-danger btn-delete" id="delBtn_${newId}" onclick="toggleDelete('${newId}')" style="width: 100%; margin-top: 4px;" title="Delete"><i class="fa-solid fa-trash"></i></button>
             `;
 
-            // Insert exactly after the original page
             originalCard.after(clone);
 
-            // Copy visual canvas pixel data
             const oldCanvas = document.getElementById(`canvas_${id}`);
             const newCanvas = document.getElementById(`canvas_${newId}`);
             newCanvas.width = oldCanvas.width;
@@ -265,8 +263,6 @@
             updateCounter();
         };
 
-        /* --- PRO FEATURES END --- */
-
         window.rotatePage = (id) => {
             const data = pagesDatabase.get(id);
             if (data.deleted) return;
@@ -286,15 +282,19 @@
             newCanvas.height = canvasToCopy.height;
             newCanvas.getContext('2d').drawImage(canvasToCopy, 0, 0);
             
-            // Apply current rotation to lightbox view
             newCanvas.style.transform = `rotate(${data.rotation}deg)`;
             
             lightboxContent.appendChild(newCanvas);
-            document.getElementById('lightbox').classList.add('active');
+            
+            // Open native dialog and lock background scroll
+            document.getElementById('lightbox').showModal();
+            document.body.style.overflow = 'hidden'; 
         };
 
         window.closeLightbox = () => {
-            document.getElementById('lightbox').classList.remove('active');
+            // Close native dialog and unlock background scroll
+            document.getElementById('lightbox').close();
+            document.body.style.overflow = 'auto'; 
         };
 
         function updateCounter() {

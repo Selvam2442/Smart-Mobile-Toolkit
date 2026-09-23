@@ -2,51 +2,93 @@
 <html lang="en" data-bs-theme="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced PDF Manager | Smart Mobile Toolkit</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>PDF Manager | Smart Mobile Toolkit</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        body { background-color: #0a0a0f; color: #fff; }
-        .upload-zone { border: 2px dashed #145054; border-radius: 12px; padding: 30px; text-align: center; cursor: pointer; background: #081214; }
-        .pdf-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; margin-top: 20px; }
-        .page-card { background: #1a1a24; padding: 10px; border-radius: 8px; text-align: center; border: 1px solid #333; }
-        .page-card canvas { max-width: 100%; border: 1px solid #555; border-radius: 4px; transition: transform 0.3s; }
-        .deleted canvas { opacity: 0.2; filter: grayscale(100%); }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container mt-4 pb-5">
-        <h2 class="mb-4 fw-bold"><i class="fa-solid fa-file-pdf text-danger"></i> PDF Manager Pro</h2>
-        
-        <div class="upload-zone mb-4" onclick="document.getElementById('fileInput').click()">
-            <i class="fa-solid fa-plus fs-1 text-info mb-2"></i>
-            <h5>Add PDF or Images</h5>
-            <p class="text-secondary small mb-0">You can add multiple files. They will be appended.</p>
-            <input type="file" id="fileInput" accept="application/pdf, image/jpeg, image/png" multiple hidden>
+    <nav class="navbar navbar-expand-lg glass-navbar fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="index.html">
+                <img src="logo.svg" alt="Logo" style="width: 35px; height: 35px; border-radius: 8px;"> Toolkit
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link" href="index.html"><i class="fa-solid fa-house"></i> Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="about.html"><i class="fa-solid fa-circle-info"></i> About</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="app-container">
+        <div class="tool-header">
+            <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
+            <div>
+                <h2>PDF Manager Pro</h2>
+                <span class="tool-subtitle">Merge, edit, and convert images to PDF</span>
+            </div>
+            <button class="info-btn" data-bs-toggle="modal" data-bs-target="#infoModal"><i class="fa-solid fa-info"></i></button>
         </div>
 
-        <div id="workspace" style="display: none;">
-            <div class="d-flex justify-content-between align-items-center bg-dark p-3 rounded border border-secondary mb-3">
-                <span id="pageCount">0 Pages Loaded</span>
-                <button id="exportBtn" class="btn btn-success"><i class="fa-solid fa-download"></i> Export PDF</button>
+        <div class="tool-panel">
+            <div class="privacy-note">
+                <i class="fa-solid fa-shield-halved"></i> Private by design — PDFs are processed locally.
             </div>
-            <div class="pdf-grid" id="pagesGrid"></div>
+
+            <div class="upload-zone" onclick="document.getElementById('fileInput').click()">
+                <i class="fa-solid fa-file-pdf"></i>
+                <h4 class="fw-bold text-white mb-1">Add PDF or Images</h4>
+                <p class="text-secondary small mb-0">Select multiple files to merge them</p>
+                <input type="file" id="fileInput" accept="application/pdf, image/jpeg, image/png" multiple hidden>
+            </div>
+
+            <div class="action-panel mt-4" id="workspace">
+                <div class="control-row">
+                    <span id="pageCount" class="text-info fw-bold">0 Pages</span>
+                    <button id="exportBtn" class="btn custom-btn btn-secondary py-2 px-3" style="font-size: 0.9rem;"><i class="fa-solid fa-download"></i> Export PDF</button>
+                </div>
+                <div class="pdf-preview" id="pagesGrid"></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Info Modal -->
+    <div class="modal fade" id="infoModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fa-solid fa-circle-info"></i> Tool Info</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>A full-suite PDF engine running right in your browser.</p>
+                    <ul>
+                        <li><i class="fa-solid fa-check"></i> Combine multiple PDFs and Images.</li>
+                        <li><i class="fa-solid fa-check"></i> Delete or rotate individual pages.</li>
+                        <li><i class="fa-solid fa-check"></i> Zero server uploads.</li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
 
+    <footer><p><i class="fa-solid fa-code"></i> Created by Antony</p></footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
     <script>
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-        
-        let pagesData = []; // Array of { type: 'pdf'|'image', bytes/file, pageIndex, rotation, deleted, elementId }
-        let globalId = 0;
+        let pagesData = []; let globalId = 0;
 
         document.getElementById('fileInput').addEventListener('change', async (e) => {
             const files = Array.from(e.target.files);
-            document.getElementById('workspace').style.display = 'block';
-            
+            document.getElementById('workspace').classList.add('active');
             for (let file of files) {
                 if (file.type === 'application/pdf') {
                     const arrayBuffer = await file.arrayBuffer();
@@ -67,7 +109,7 @@
             
             const grid = document.getElementById('pagesGrid');
             const card = document.createElement('div');
-            card.className = 'page-card';
+            card.className = 'pdf-page';
             card.id = `card-${id}`;
             
             const canvas = document.createElement('canvas');
@@ -81,24 +123,20 @@
             } else {
                 const reader = new FileReader();
                 reader.onload = (e) => {
-                    const img = new Image();
-                    img.src = e.target.result;
-                    img.onload = () => {
-                        canvas.width = img.width; canvas.height = img.height;
-                        canvas.getContext('2d').drawImage(img, 0, 0);
-                    };
+                    const img = new Image(); img.src = e.target.result;
+                    img.onload = () => { canvas.width = img.width; canvas.height = img.height; canvas.getContext('2d').drawImage(img, 0, 0); };
                 };
                 reader.readAsDataURL(source);
             }
 
             card.innerHTML += `
-                <div class="d-flex justify-content-center gap-2 mt-2">
-                    <button class="btn btn-sm btn-outline-info" onclick="rotatePage(${id})"><i class="fa-solid fa-rotate-right"></i></button>
-                    <button class="btn btn-sm btn-outline-danger" onclick="toggleDelete(${id})"><i class="fa-solid fa-trash"></i></button>
+                <div class="button-row mt-2" style="gap: 5px;">
+                    <button class="btn btn-adjust w-100" onclick="rotatePage(${id})"><i class="fa-solid fa-rotate-right"></i></button>
+                    <button class="btn btn-adjust w-100" onclick="toggleDelete(${id})" style="color: var(--danger-color);"><i class="fa-solid fa-trash"></i></button>
                 </div>
             `;
             grid.appendChild(card);
-            document.getElementById('pageCount').innerText = `${pagesData.filter(p => !p.deleted).length} Pages`;
+            updateCounter();
         }
 
         window.rotatePage = (id) => {
@@ -111,26 +149,24 @@
         window.toggleDelete = (id) => {
             const page = pagesData.find(p => p.id === id);
             page.deleted = !page.deleted;
-            document.getElementById(`card-${id}`).classList.toggle('deleted');
-            document.getElementById('pageCount').innerText = `${pagesData.filter(p => !p.deleted).length} Pages`;
+            document.getElementById(`card-${id}`).style.opacity = page.deleted ? "0.3" : "1";
+            updateCounter();
         };
+
+        function updateCounter() {
+            document.getElementById('pageCount').innerText = `${pagesData.filter(p => !p.deleted).length} Pages`;
+        }
 
         document.getElementById('exportBtn').addEventListener('click', async () => {
             const { PDFDocument, degrees } = PDFLib;
             const newPdf = await PDFDocument.create();
-            
-            // Cache loaded PDFs to avoid re-parsing
             const loadedPdfs = new Map();
 
             for (let page of pagesData) {
                 if (page.deleted) continue;
-
                 if (!page.isImage) {
-                    if (!loadedPdfs.has(page.rawData)) {
-                        loadedPdfs.set(page.rawData, await PDFDocument.load(page.rawData));
-                    }
-                    const srcPdf = loadedPdfs.get(page.rawData);
-                    const [copiedPage] = await newPdf.copyPages(srcPdf, [page.originalIndex]);
+                    if (!loadedPdfs.has(page.rawData)) loadedPdfs.set(page.rawData, await PDFDocument.load(page.rawData));
+                    const [copiedPage] = await newPdf.copyPages(loadedPdfs.get(page.rawData), [page.originalIndex]);
                     copiedPage.setRotation(degrees(copiedPage.getRotation().angle + page.rotation));
                     newPdf.addPage(copiedPage);
                 } else {
@@ -145,7 +181,7 @@
             const pdfBytes = await newPdf.save();
             const a = document.createElement('a');
             a.href = URL.createObjectURL(new Blob([pdfBytes], { type: 'application/pdf' }));
-            a.download = `Merged_Document_${Date.now()}.pdf`;
+            a.download = `Toolkit_Document_${Date.now()}.pdf`;
             a.click();
         });
     </script>

@@ -2,81 +2,120 @@
 <html lang="en" data-bs-theme="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Converter & Cropper | Smart Mobile Toolkit</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Image Converter | Smart Mobile Toolkit</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        body { background-color: #0a0a0f; color: #fff; font-family: system-ui, -apple-system, sans-serif; }
-        .private-badge { background: #0c2b2e; border: 1px solid #145054; color: #4fd1c5; padding: 10px 15px; border-radius: 8px; font-size: 0.9rem; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
-        .upload-zone { border: 2px dashed #145054; border-radius: 12px; padding: 40px 20px; text-align: center; background: #081214; cursor: pointer; transition: 0.3s; }
-        .upload-zone:hover { background: #0c1a1d; }
-        .upload-zone i { font-size: 3rem; color: #00f0ff; margin-bottom: 15px; }
-        .editor-panel { display: none; background: #111; padding: 20px; border-radius: 12px; margin-top: 20px; }
-        .img-container { max-height: 50vh; width: 100%; background: #000; border-radius: 8px; overflow: hidden; margin-bottom: 20px; }
-        img { display: block; max-width: 100%; }
-        .preset-btn { background: #222; border: 1px solid #444; color: #fff; }
-        .preset-btn.active { background: #00f0ff; color: #000; border-color: #00f0ff; }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container mt-4 pb-5">
-        <h2 class="mb-1 fw-bold"><i class="fa-solid fa-arrow-left me-2"></i> Image Converter</h2>
-        <p class="text-secondary mb-4">Convert, resize, crop and optimise on your device</p>
+    <!-- Premium Glass Navbar -->
+    <nav class="navbar navbar-expand-lg glass-navbar fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="index.html">
+                <img src="logo.svg" alt="Logo" style="width: 35px; height: 35px; border-radius: 8px;"> Toolkit
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link" href="index.html"><i class="fa-solid fa-house"></i> Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="about.html"><i class="fa-solid fa-circle-info"></i> About</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
 
-        <div class="private-badge">
-            <i class="fa-solid fa-shield-halved"></i> Private by design — your image stays in this browser.
+    <main class="app-container">
+        <!-- Tool Header -->
+        <div class="tool-header">
+            <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
+            <div>
+                <h2>Image Converter</h2>
+                <span class="tool-subtitle">Crop, resize, and optimize formats offline</span>
+            </div>
+            <button class="info-btn" data-bs-toggle="modal" data-bs-target="#infoModal"><i class="fa-solid fa-info"></i></button>
         </div>
 
-        <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
-            <i class="fa-solid fa-cloud-arrow-up"></i>
-            <h4 class="fw-bold">Choose an image</h4>
-            <p class="text-secondary mb-0">JPG, PNG, WebP, BMP, HEIC</p>
-            <input type="file" id="fileInput" accept="image/*" hidden>
-        </div>
-
-        <div class="editor-panel" id="editorPanel">
-            <div class="img-container">
-                <img id="image" src="">
+        <!-- Main Panel -->
+        <div class="tool-panel">
+            <div class="privacy-note">
+                <i class="fa-solid fa-shield-halved"></i> Private by design — your image stays in this browser.
             </div>
 
-            <div class="row g-3 mb-4">
-                <div class="col-12">
-                    <label class="form-label text-info small">Crop Presets</label>
-                    <div class="d-flex gap-2 flex-wrap">
-                        <button class="btn preset-btn active" onclick="setRatio(NaN, this)">Free</button>
-                        <button class="btn preset-btn" onclick="setRatio(1/1, this)">1:1 (Square)</button>
-                        <button class="btn preset-btn" onclick="setRatio(213/213, this, 213, 213)">PAN Card</button>
-                        <button class="btn preset-btn" onclick="setRatio(3.5/4.5, this, 350, 450)">Passport</button>
+            <!-- Upload Zone -->
+            <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
+                <i class="fa-solid fa-cloud-arrow-up"></i>
+                <h4 class="fw-bold text-white mb-1">Choose an image</h4>
+                <p class="text-secondary small mb-0">JPG, PNG, WebP, BMP</p>
+                <input type="file" id="fileInput" accept="image/*" hidden>
+            </div>
+
+            <!-- Editor Action Panel -->
+            <div class="action-panel" id="editorPanel">
+                <div class="canvas-container" style="display: block;">
+                    <img id="image" src="">
+                </div>
+
+                <div class="mode-tabs">
+                    <button class="mode-tab active" onclick="setRatio(NaN, this)">Free Crop</button>
+                    <button class="mode-tab" onclick="setRatio(1/1, this)">Square</button>
+                    <button class="mode-tab" onclick="setRatio(213/213, this, 213, 213)">PAN Card</button>
+                    <button class="mode-tab" onclick="setRatio(3.5/4.5, this, 350, 450)">Passport</button>
+                </div>
+
+                <div class="settings-grid mb-4">
+                    <div class="input-group">
+                        <label>Width (px)</label>
+                        <input type="number" id="outWidth" class="styled-input">
+                    </div>
+                    <div class="input-group">
+                        <label>Height (px)</label>
+                        <input type="number" id="outHeight" class="styled-input">
+                    </div>
+                    <div class="input-group">
+                        <label>Output Format</label>
+                        <select id="outFormat" class="styled-select">
+                            <option value="image/jpeg">JPEG (.jpg)</option>
+                            <option value="image/png">PNG (.png)</option>
+                            <option value="image/webp">WEBP (.webp)</option>
+                        </select>
+                    </div>
+                    <div class="slider-group mt-3">
+                        <label>Quality <span><span id="qVal">80</span>%</span></label>
+                        <input type="range" id="outQuality" min="0.1" max="1" step="0.1" value="0.8" oninput="document.getElementById('qVal').innerText=Math.round(this.value*100)">
                     </div>
                 </div>
-                <div class="col-6">
-                    <label class="form-label">Width (px)</label>
-                    <input type="number" id="outWidth" class="form-control bg-dark text-white border-secondary">
+                
+                <button id="processBtn" class="btn custom-btn w-100"><i class="fa-solid fa-download"></i> Process & Download</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Info Modal -->
+    <div class="modal fade" id="infoModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fa-solid fa-circle-info"></i> Tool Info</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="col-6">
-                    <label class="form-label">Height (px)</label>
-                    <input type="number" id="outHeight" class="form-control bg-dark text-white border-secondary">
-                </div>
-                <div class="col-6">
-                    <label class="form-label">Format</label>
-                    <select id="outFormat" class="form-select bg-dark text-white border-secondary">
-                        <option value="image/jpeg">JPEG</option>
-                        <option value="image/png">PNG</option>
-                        <option value="image/webp">WEBP</option>
-                    </select>
-                </div>
-                <div class="col-6">
-                    <label class="form-label">Quality (<span id="qVal">80</span>%)</label>
-                    <input type="range" id="outQuality" class="form-range" min="0.1" max="1" step="0.1" value="0.8" oninput="document.getElementById('qVal').innerText=Math.round(this.value*100)">
+                <div class="modal-body">
+                    <p>Resize, crop, and convert image formats locally on your device.</p>
+                    <ul>
+                        <li><i class="fa-solid fa-check"></i> Precise px control for PAN/Passport.</li>
+                        <li><i class="fa-solid fa-check"></i> Quality reduction for fast uploads.</li>
+                        <li><i class="fa-solid fa-check"></i> 100% Offline and secure.</li>
+                    </ul>
                 </div>
             </div>
-            
-            <button id="processBtn" class="btn btn-info w-100 fw-bold py-2"><i class="fa-solid fa-download"></i> Process & Download</button>
         </div>
     </div>
 
+    <footer><p><i class="fa-solid fa-code"></i> Created by Antony</p></footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
     <script>
         let cropper;
@@ -88,16 +127,16 @@
                 reader.onload = (event) => {
                     image.src = event.target.result;
                     document.getElementById('uploadZone').style.display = 'none';
-                    document.getElementById('editorPanel').style.display = 'block';
+                    document.getElementById('editorPanel').classList.add('active');
                     if (cropper) cropper.destroy();
-                    cropper = new Cropper(image, { viewMode: 1, background: false });
+                    cropper = new Cropper(image, { viewMode: 1, background: false, responsive: true });
                 };
                 reader.readAsDataURL(e.target.files[0]);
             }
         });
 
         function setRatio(ratio, btn, w = '', h = '') {
-            document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.mode-tab').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             cropper.setAspectRatio(ratio);
             document.getElementById('outWidth').value = w;
@@ -105,6 +144,7 @@
         }
 
         document.getElementById('processBtn').addEventListener('click', () => {
+            if(!cropper) return;
             const w = parseInt(document.getElementById('outWidth').value) || undefined;
             const h = parseInt(document.getElementById('outHeight').value) || undefined;
             const format = document.getElementById('outFormat').value;
@@ -114,7 +154,7 @@
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = `edited_${Date.now()}.${format.split('/')[1]}`;
+                a.download = `toolkit_image_${Date.now()}.${format.split('/')[1]}`;
                 a.click();
             }, format, quality);
         });

@@ -2,49 +2,113 @@
 <html lang="en" data-bs-theme="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pro Photo Studio | Smart Mobile Toolkit</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Photo Studio | Smart Mobile Toolkit</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        body { background-color: #0a0a0f; color: #fff; }
-        .canvas-container { width: 100%; max-height: 45vh; overflow: hidden; display: flex; justify-content: center; align-items: center; background: #000; border-radius: 8px; margin-bottom: 20px; border: 1px solid #333; }
-        canvas { max-width: 100%; max-height: 45vh; object-fit: contain; }
-        .filter-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .filter-label { font-size: 0.8rem; color: #aaa; display: flex; justify-content: space-between; }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container mt-4 pb-5">
-        <h2 class="mb-4 fw-bold"><i class="fa-solid fa-wand-magic-sparkles text-warning"></i> Photo Studio</h2>
-        
-        <input type="file" id="uploadImg" class="form-control bg-dark text-white mb-3" accept="image/*">
-        
-        <div class="canvas-container" id="canvasWrapper" style="display: none;">
-            <canvas id="canvas"></canvas>
+    <nav class="navbar navbar-expand-lg glass-navbar fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="index.html">
+                <img src="logo.svg" alt="Logo" style="width: 35px; height: 35px; border-radius: 8px;"> Toolkit
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link" href="index.html"><i class="fa-solid fa-house"></i> Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="about.html"><i class="fa-solid fa-circle-info"></i> About</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="app-container">
+        <div class="tool-header">
+            <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
+            <div>
+                <h2>Photo Studio</h2>
+                <span class="tool-subtitle">Apply pro filters & transformations</span>
+            </div>
+            <button class="info-btn" data-bs-toggle="modal" data-bs-target="#infoModal"><i class="fa-solid fa-info"></i></button>
         </div>
 
-        <div id="controls" style="display: none;">
-            <div class="d-flex gap-2 justify-content-center mb-4">
-                <button class="btn btn-dark border-secondary" onclick="transform('rotate', -90)"><i class="fa-solid fa-rotate-left"></i></button>
-                <button class="btn btn-dark border-secondary" onclick="transform('rotate', 90)"><i class="fa-solid fa-rotate-right"></i></button>
-                <button class="btn btn-dark border-secondary" onclick="transform('flipX')"><i class="fa-solid fa-arrows-left-right"></i></button>
-                <button class="btn btn-dark border-secondary" onclick="transform('flipY')"><i class="fa-solid fa-arrows-up-down"></i></button>
+        <div class="tool-panel">
+            <div class="upload-zone" onclick="document.getElementById('uploadImg').click()">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                <h4 class="fw-bold text-white mb-1">Load Image</h4>
+                <p class="text-secondary small mb-0">Apply adjustments safely</p>
+                <input type="file" id="uploadImg" accept="image/*" hidden>
             </div>
 
-            <div class="filter-grid mb-4">
-                <div><div class="filter-label"><span>Brightness</span> <span id="v-bright">100%</span></div><input type="range" class="form-range f-slider" id="bright" min="0" max="200" value="100"></div>
-                <div><div class="filter-label"><span>Contrast</span> <span id="v-contrast">100%</span></div><input type="range" class="form-range f-slider" id="contrast" min="0" max="200" value="100"></div>
-                <div><div class="filter-label"><span>Saturation</span> <span id="v-saturate">100%</span></div><input type="range" class="form-range f-slider" id="saturate" min="0" max="200" value="100"></div>
-                <div><div class="filter-label"><span>Blur</span> <span id="v-blur">0px</span></div><input type="range" class="form-range f-slider" id="blur" min="0" max="20" value="0"></div>
-                <div><div class="filter-label"><span>Sepia</span> <span id="v-sepia">0%</span></div><input type="range" class="form-range f-slider" id="sepia" min="0" max="100" value="0"></div>
-                <div><div class="filter-label"><span>Hue</span> <span id="v-hue">0°</span></div><input type="range" class="form-range f-slider" id="hue" min="0" max="360" value="0"></div>
+            <div class="action-panel mt-4" id="controls">
+                <div class="canvas-container" style="display: block; background: #000; padding: 0;">
+                    <canvas id="canvas" style="max-width: 100%; max-height: 40vh; border-radius: 12px;"></canvas>
+                </div>
+
+                <div class="mode-tabs justify-content-center mt-3 mb-4">
+                    <button class="mode-tab" onclick="transform('rotate', -90)"><i class="fa-solid fa-rotate-left"></i> Left</button>
+                    <button class="mode-tab" onclick="transform('rotate', 90)"><i class="fa-solid fa-rotate-right"></i> Right</button>
+                    <button class="mode-tab" onclick="transform('flipX')"><i class="fa-solid fa-arrows-left-right"></i> Flip H</button>
+                    <button class="mode-tab" onclick="transform('flipY')"><i class="fa-solid fa-arrows-up-down"></i> Flip V</button>
+                </div>
+
+                <div class="settings-grid mb-4">
+                    <div class="slider-group">
+                        <label>Brightness <span><span id="v-bright">100</span>%</span></label>
+                        <input type="range" class="f-slider" id="bright" min="0" max="200" value="100">
+                    </div>
+                    <div class="slider-group">
+                        <label>Contrast <span><span id="v-contrast">100</span>%</span></label>
+                        <input type="range" class="f-slider" id="contrast" min="0" max="200" value="100">
+                    </div>
+                    <div class="slider-group">
+                        <label>Saturation <span><span id="v-saturate">100</span>%</span></label>
+                        <input type="range" class="f-slider" id="saturate" min="0" max="200" value="100">
+                    </div>
+                    <div class="slider-group">
+                        <label>Hue Rotate <span><span id="v-hue">0</span>°</span></label>
+                        <input type="range" class="f-slider" id="hue" min="0" max="360" value="0">
+                    </div>
+                    <div class="slider-group">
+                        <label>Sepia <span><span id="v-sepia">0</span>%</span></label>
+                        <input type="range" class="f-slider" id="sepia" min="0" max="100" value="0">
+                    </div>
+                    <div class="slider-group">
+                        <label>Blur <span><span id="v-blur">0</span>px</span></label>
+                        <input type="range" class="f-slider" id="blur" min="0" max="20" value="0">
+                    </div>
+                </div>
+                
+                <button class="btn custom-btn w-100" id="downloadBtn"><i class="fa-solid fa-download"></i> Save Masterpiece</button>
             </div>
-            
-            <button class="btn btn-info w-100 fw-bold" id="downloadBtn"><i class="fa-solid fa-download"></i> Save Image</button>
+        </div>
+    </main>
+
+    <!-- Info Modal -->
+    <div class="modal fade" id="infoModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fa-solid fa-circle-info"></i> Tool Info</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Edit images like a pro, entirely in your browser.</p>
+                    <ul>
+                        <li><i class="fa-solid fa-check"></i> Advanced CSS/Canvas filtering.</li>
+                        <li><i class="fa-solid fa-check"></i> Non-destructive rotations and flips.</li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
 
+    <footer><p><i class="fa-solid fa-code"></i> Created by Antony</p></footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
@@ -58,8 +122,8 @@
                     img.src = event.target.result;
                     img.onload = () => {
                         currentTransform = { rotate: 0, flipX: 1, flipY: 1 };
-                        document.getElementById('canvasWrapper').style.display = 'flex';
-                        document.getElementById('controls').style.display = 'block';
+                        document.querySelector('.upload-zone').style.display = 'none';
+                        document.getElementById('controls').classList.add('active');
                         applyRender();
                     };
                 };
@@ -69,7 +133,7 @@
 
         document.querySelectorAll('.f-slider').forEach(slider => {
             slider.addEventListener('input', () => {
-                document.getElementById(`v-${slider.id}`).innerText = slider.id === 'blur' ? `${slider.value}px` : (slider.id === 'hue' ? `${slider.value}°` : `${slider.value}%`);
+                document.getElementById(`v-${slider.id}`).innerText = slider.value;
                 applyRender();
             });
         });
@@ -83,8 +147,6 @@
 
         function applyRender() {
             const { rotate, flipX, flipY } = currentTransform;
-            
-            // Adjust canvas size for 90/270 degree rotations
             if (rotate % 180 !== 0) { canvas.width = img.height; canvas.height = img.width; } 
             else { canvas.width = img.width; canvas.height = img.height; }
 
@@ -94,7 +156,6 @@
             ctx.rotate(rotate * Math.PI / 180);
             ctx.scale(flipX, flipY);
 
-            // Apply Filters
             const b = document.getElementById('bright').value, c = document.getElementById('contrast').value;
             const s = document.getElementById('saturate').value, bl = document.getElementById('blur').value;
             const sp = document.getElementById('sepia').value, h = document.getElementById('hue').value;

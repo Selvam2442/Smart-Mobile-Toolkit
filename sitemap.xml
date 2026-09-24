@@ -1,63 +1,138 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+        http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
   <url>
-    <loc>https://selvam2442.github.io/Smart-Mobile-Toolkit/index.html</loc>
-    <changefreq>weekly</changefreq>
+    <loc>https://alaneditxz.online/index.html</loc>
+    <lastmod>2026-09-24</lastmod>
+    <changefreq>daily</changefreq>
     <priority>1.00</priority>
   </url>
   <url>
-    <loc>https://selvam2442.github.io/Smart-Mobile-Toolkit/compressor.html</loc>
-    <changefreq>monthly</changefreq>
+    <loc>https://alaneditxz.online/studio.html</loc>
+    <lastmod>2026-09-24</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.90</priority>
   </url>
   <url>
-    <loc>https://selvam2442.github.io/Smart-Mobile-Toolkit/vid2aud.html</loc>
+    <loc>https://alaneditxz.online/cutter.html</loc>
+    <lastmod>2026-09-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.90</priority>
+  </url>
+  <url>
+    <loc>https://alaneditxz.online/vid2aud.html</loc>
+    <lastmod>2026-09-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.90</priority>
+  </url>
+  <url>
+    <loc>https://alaneditxz.online/trimmer.html</loc>
+    <lastmod>2026-09-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.90</priority>
+  </url>
+  <url>
+    <loc>https://alaneditxz.online/compressor.html</loc>
+    <lastmod>2026-09-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.90</priority>
+  </url>
+  <url>
+    <loc>https://alaneditxz.online/format.html</loc>
+    <lastmod>2026-09-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.90</priority>
+  </url>
+  <url>
+    <loc>https://alaneditxz.online/pdf.html</loc>
+    <lastmod>2026-09-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.90</priority>
+  </url>
+  <url>
+    <loc>https://alaneditxz.online/spreadsheet.html</loc>
+    <lastmod>2026-09-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.90</priority>
+  </url>
+  <url>
+    <loc>https://alaneditxz.online/qr.html</loc>
+    <lastmod>2026-09-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.90</priority>
+  </url>
+  <url>
+    <loc>https://alaneditxz.online/cipher.html</loc>
+    <lastmod>2026-09-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.90</priority>
+  </url>
+  <url>
+    <loc>https://alaneditxz.online/expense.html</loc>
+    <lastmod>2026-09-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://alaneditxz.online/countdown.html</loc>
+    <lastmod>2026-09-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://alaneditxz.online/audio.html</loc>
+    <lastmod>2026-09-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
-    <loc>https://selvam2442.github.io/Smart-Mobile-Toolkit/cutter.html</loc>
+    <loc>https://alaneditxz.online/timer.html</loc>
+    <lastmod>2026-09-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
-    <loc>https://selvam2442.github.io/Smart-Mobile-Toolkit/format.html</loc>
+    <loc>https://alaneditxz.online/notes.html</loc>
+    <lastmod>2026-09-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
-    <loc>https://selvam2442.github.io/Smart-Mobile-Toolkit/converter.html</loc>
+    <loc>https://alaneditxz.online/converter.html</loc>
+    <lastmod>2026-09-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
-    <loc>https://selvam2442.github.io/Smart-Mobile-Toolkit/number.html</loc>
+    <loc>https://alaneditxz.online/number.html</loc>
+    <lastmod>2026-09-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
-    <loc>https://selvam2442.github.io/Smart-Mobile-Toolkit/audio.html</loc>
+    <loc>https://alaneditxz.online/repeater.html</loc>
+    <lastmod>2026-09-24</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.64</priority>
+    <priority>0.80</priority>
   </url>
   <url>
-    <loc>https://selvam2442.github.io/Smart-Mobile-Toolkit/timer.html</loc>
+    <loc>https://alaneditxz.online/reverser.html</loc>
+    <lastmod>2026-09-24</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.64</priority>
+    <priority>0.80</priority>
   </url>
   <url>
-    <loc>https://selvam2442.github.io/Smart-Mobile-Toolkit/notes.html</loc>
+    <loc>https://alaneditxz.online/about.html</loc>
+    <lastmod>2026-09-24</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.64</priority>
+    <priority>0.70</priority>
   </url>
   <url>
-    <loc>https://selvam2442.github.io/Smart-Mobile-Toolkit/repeater.html</loc>
+    <loc>https://alaneditxz.online/contact.html</loc>
+    <lastmod>2026-09-24</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.64</priority>
-  </url>
-  <url>
-    <loc>https://selvam2442.github.io/Smart-Mobile-Toolkit/reverser.html</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.64</priority>
+    <priority>0.70</priority>
   </url>
 </urlset>

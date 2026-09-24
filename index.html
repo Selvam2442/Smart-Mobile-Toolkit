@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
-    <title>Smart Mobile Toolkit | Free Offline Web Utilities</title>
+    <title>Smart Mobile Toolkit | Free Offline Web Utilities & Online Tools</title>
     <link rel="icon" type="image/svg+xml" href="logo.svg">
     
     <!-- PWA Setup -->
@@ -14,11 +14,68 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Toolkit">
     
-    <meta name="description" content="The ultimate all-in-one free offline web utility toolkit. File Compressor, Photo Studio, Audio Cutter, PDF Tools, Cipher Box, and more. Fast, secure, and free.">
-    <meta name="keywords" content="offline tools, file compressor, photo studio, audio cutter, pdf tools, encryption, online toolkit, web utilities, Antony">
-    <meta name="author" content="Antony">
-    <meta name="robots" content="index, follow">
+    <!-- SEO Meta Tags for Google Search -->
+    <meta name="description" content="The ultimate all-in-one free offline web utility toolkit. Compress files, edit photos, convert video to audio, merge PDF, calculate expenses, QR suite, cipher box, and unit converter. 100% fast, secure & offline.">
+    <meta name="keywords" content="global search, offline web tools, file compressor, photo studio, audio cutter, pdf merger, video to mp3, qr generator, expense tracker, unit converter, web utilities, Antony">
+    <meta name="author" content="Maria Antony Selvam S">
+    <meta name="robots" content="index, follow, max-image-preview:large">
     <link rel="canonical" href="https://alaneditxz.online/">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://alaneditxz.online/">
+    <meta property="og:title" content="Smart Mobile Toolkit | Free Offline Web Utilities">
+    <meta property="og:description" content="Over 20+ powerful client-side tools: PDF Manager, Photo Studio, Audio Cutter, Video to Audio, File Compressor, QR Suite, Expense Tracker & more.">
+    <meta property="og:image" content="https://alaneditxz.online/Profile.png">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://alaneditxz.online/">
+    <meta name="twitter:title" content="Smart Mobile Toolkit | Free Offline Web Utilities">
+    <meta name="twitter:description" content="Over 20+ powerful client-side tools: PDF Manager, Photo Studio, Audio Cutter, Video to Audio, File Compressor, QR Suite & more.">
+    <meta name="twitter:image" content="https://alaneditxz.online/Profile.png">
+
+    <!-- Google Search Sitelinks Search Box Schema (JSON-LD) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Smart Mobile Toolkit",
+      "alternateName": ["Toolkit", "Smart Web Utilities", "Alan Editxz Toolkit"],
+      "url": "https://alaneditxz.online/",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://alaneditxz.online/index.html?q={search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+
+    <!-- WebApplication & Organization Schema (JSON-LD) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Smart Mobile Toolkit",
+      "url": "https://alaneditxz.online/",
+      "description": "Comprehensive client-side web utility toolkit providing free offline tools for image editing, audio cutting, PDF merging, video converting, encryption, budget tracking, and data conversion.",
+      "applicationCategory": "UtilityApplication",
+      "operatingSystem": "All",
+      "browserRequirements": "Requires HTML5 & JavaScript",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "author": {
+        "@type": "Person",
+        "name": "Maria Antony Selvam S"
+      }
+    }
+    </script>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
@@ -44,6 +101,11 @@
             <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                 <ul class="navbar-nav">
                     <li class="nav-item"><a class="nav-link active" href="index.html"><i class="fa-solid fa-house"></i> Home</a></li>
+                    <li class="nav-item">
+                        <button class="nav-link bg-transparent border-0" data-bs-toggle="modal" data-bs-target="#globalSearchModal" style="cursor: pointer;">
+                            <i class="fa-solid fa-magnifying-glass"></i> Search
+                        </button>
+                    </li>
                     <li class="nav-item"><a class="nav-link" href="about.html"><i class="fa-solid fa-circle-info"></i> About</a></li>
                     <li class="nav-item"><a class="nav-link" href="contact.html"><i class="fa-solid fa-envelope"></i> Contact</a></li>
                 </ul>
@@ -53,103 +115,149 @@
 
     <main class="app-container">
         
-        <!-- SMART SEARCH BAR -->
-        <div class="search-container mb-4" style="margin-top: 10px;">
-            <div class="position-relative">
-                <i class="fa-solid fa-magnifying-glass position-absolute top-50 start-0 translate-middle-y ms-3" style="color: var(--primary-glow);"></i>
-                <input type="text" id="toolSearch" class="styled-input ps-5" placeholder="Search for tools (e.g., 'mp4 to mp3', 'excel', 'pdf')...">
+        <!-- ADVANCED GLOBAL SEARCH DASHBOARD ENGINE -->
+        <div class="search-container mb-3" style="margin-top: 10px;">
+            <div class="search-input-wrapper">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <input type="text" id="toolSearch" class="styled-input" placeholder="Search 20+ offline tools (e.g., 'pdf merge', 'mp4 to mp3', 'crop', 'excel')..." autocomplete="off">
+                <kbd class="search-kbd">Ctrl + K</kbd>
+                <button type="button" id="clearSearchBtn" class="search-clear-btn" title="Clear Search">&times;</button>
+            </div>
+
+            <!-- Category Filter Pills -->
+            <div class="search-category-filters" id="categoryFilters">
+                <button type="button" class="search-cat-pill active" data-cat="all"><i class="fa-solid fa-border-all"></i> All Tools</button>
+                <button type="button" class="search-cat-pill" data-cat="media"><i class="fa-solid fa-photo-film"></i> Media & Photo</button>
+                <button type="button" class="search-cat-pill" data-cat="management"><i class="fa-solid fa-folder-open"></i> PDF & Data</button>
+                <button type="button" class="search-cat-pill" data-cat="lifestyle"><i class="fa-solid fa-wallet"></i> Lifestyle & Finance</button>
+                <button type="button" class="search-cat-pill" data-cat="utilities"><i class="fa-solid fa-wrench"></i> Utilities</button>
+            </div>
+
+            <!-- Popular Quick Tags -->
+            <div class="search-tags-bar">
+                <span class="search-tags-label"><i class="fa-solid fa-fire text-warning"></i> Popular Searches:</span>
+                <span class="search-tag-chip" data-query="pdf">#PDF Merge</span>
+                <span class="search-tag-chip" data-query="mp4 to mp3">#Video to Audio</span>
+                <span class="search-tag-chip" data-query="compress">#File Compressor</span>
+                <span class="search-tag-chip" data-query="photo">#Photo Studio</span>
+                <span class="search-tag-chip" data-query="qr">#QR Suite</span>
+                <span class="search-tag-chip" data-query="expense">#Expense Tracker</span>
+                <span class="search-tag-chip" data-query="excel">#Data Converter</span>
+                <span class="search-tag-chip" data-query="cipher">#Cipher Lock</span>
+            </div>
+
+            <!-- Recent Searches History -->
+            <div class="search-history-container" id="searchHistoryContainer">
+                <div class="search-history-header">
+                    <span><i class="fa-solid fa-clock-rotate-left"></i> Recent Searches</span>
+                    <button type="button" class="search-history-clear" id="clearHistoryBtn"><i class="fa-solid fa-trash-can"></i> Clear History</button>
+                </div>
+                <div class="search-history-chips" id="searchHistoryChips"></div>
             </div>
         </div>
 
+        <!-- Search Results Count Indicator -->
+        <div class="search-status-bar">
+            <span><i class="fa-solid fa-layer-group"></i> Dashboard Utilities</span>
+            <span class="search-count-badge" id="searchCountBadge">Showing 19 Tools</span>
+        </div>
+
+        <!-- No Results Found Card -->
+        <div class="no-results-card" id="noResultsCard">
+            <i class="fa-solid fa-magnifying-glass-minus"></i>
+            <h4>No Matching Tools Found</h4>
+            <p id="noResultsText">We couldn't find any tool matching your search. Try searching for PDF, MP3, Video, Photo, or Converter.</p>
+            <button type="button" class="btn custom-btn btn-sm" id="resetSearchBtn"><i class="fa-solid fa-rotate-left"></i> Clear Search & View All</button>
+        </div>
+
         <!-- CATEGORY 1: MEDIA & PROCESSING TOOLS -->
-        <div class="category-section">
+        <div class="category-section" data-cat-id="media">
             <div class="category-header">
                 <h3><i class="fa-solid fa-photo-film"></i> Advanced Media Tools</h3>
             </div>
             <div class="grid">
-                <a href="studio.html" class="card" data-keywords="edit image pictures crop filters effects editor rotation flip">
+                <a href="studio.html" class="card" data-category="media" data-keywords="photo studio edit image pictures crop filters effects editor rotation flip brightness contrast picture editor design resize passport">
                     <i class="fa-solid fa-wand-magic-sparkles"></i><h3>Photo Studio</h3>
                 </a>
-                <a href="cutter.html" class="card" data-keywords="mp3 trimmer ringtone maker slice split music audio editor">
+                <a href="cutter.html" class="card" data-category="media" data-keywords="audio cutter mp3 trimmer ringtone maker slice split music audio editor wav sound track cut audio song editor">
                     <i class="fa-solid fa-scissors"></i><h3>Audio Cutter</h3>
                 </a>
-                <a href="vid2aud.html" class="card" data-keywords="mp4 to mp3 converter extract sound rip video">
+                <a href="vid2aud.html" class="card" data-category="media" data-keywords="video to audio mp4 to mp3 converter extract sound rip video extract audio soundtrack music m4a aac video converter">
                     <i class="fa-solid fa-file-audio"></i><h3>Video to Audio</h3>
                 </a>
-                <a href="trimmer.html" class="card" data-keywords="mp4 cutter crop video slice split clip editor">
+                <a href="trimmer.html" class="card" data-category="media" data-keywords="video trimmer mp4 cutter crop video slice split clip editor movie video editor cut clip">
                     <i class="fa-solid fa-video"></i><h3>Video Trimmer</h3>
                 </a>
-                <a href="compressor.html" class="card" data-keywords="zip reduce size compress archive shrink pdf image">
+                <a href="compressor.html" class="card" data-category="media" data-keywords="file compressor zip reduce size compress archive shrink pdf image photo shrink file size Optimizer">
                     <i class="fa-solid fa-file-zipper"></i><h3>File Compressor</h3>
                 </a>
-                <a href="format.html" class="card" data-keywords="jpg png webp pan card passport resize crop image converter">
+                <a href="format.html" class="card" data-category="media" data-keywords="format converter jpg png webp pan card passport resize crop image converter convert image format transform avatar">
                     <i class="fa-solid fa-file-image"></i><h3>Format Converter</h3>
                 </a>
             </div>
         </div>
 
         <!-- CATEGORY 2: DOCUMENT & SECURITY MANAGEMENT -->
-        <div class="category-section">
+        <div class="category-section" data-cat-id="management">
             <div class="category-header">
                 <h3><i class="fa-solid fa-folder-open"></i> Smart Management</h3>
             </div>
             <div class="grid">
-                <a href="pdf.html" class="card" data-keywords="merge split extract rotate duplicate document image to pdf converter">
+                <a href="pdf.html" class="card" data-category="management" data-keywords="pdf manager merge split extract rotate duplicate document image to pdf converter combine pdf pdf tools organzier page editor">
                     <i class="fa-solid fa-file-pdf"></i><h3>PDF Manager</h3>
                 </a>
-                <!-- NEW SPREADSHEET TOOL -->
-                <a href="spreadsheet.html" class="card" data-keywords="data excel csv text converter xlsx spreadsheet sheet json pdf table document">
+                <a href="spreadsheet.html" class="card" data-category="management" data-keywords="data converter excel csv text converter xlsx spreadsheet sheet json pdf table document rows columns parsing">
                     <i class="fa-solid fa-table"></i><h3>Data Converter</h3>
                 </a>
-                <a href="qr.html" class="card" data-keywords="barcode scanner generator reader make create link">
+                <a href="qr.html" class="card" data-category="management" data-keywords="qr suite barcode scanner generator reader make create link wifi scan custom color code barcode tool">
                     <i class="fa-solid fa-qrcode"></i><h3>QR Suite</h3>
                 </a>
-                <a href="cipher.html" class="card" data-keywords="encrypt decrypt password secure lock hide text vault">
+                <a href="cipher.html" class="card" data-category="management" data-keywords="cipher box encrypt decrypt password secure lock hide text vault crypto secret aes key protection text lock">
                     <i class="fa-solid fa-user-secret"></i><h3>Cipher Box</h3>
                 </a>
             </div>
         </div>
 
         <!-- CATEGORY 3: EVERYDAY LIFESTYLE -->
-        <div class="category-section">
+        <div class="category-section" data-cat-id="lifestyle">
             <div class="category-header">
                 <h3><i class="fa-solid fa-wallet"></i> Everyday Lifestyle</h3>
             </div>
             <div class="grid">
-                <a href="expense.html" class="card" data-keywords="money finance spend budget wallet calculator track cost">
+                <a href="expense.html" class="card" data-category="lifestyle" data-keywords="expense tracker money finance spend budget wallet calculator track cost income daily rupee balance manager">
                     <i class="fa-solid fa-indian-rupee-sign"></i><h3>Expense Tracker</h3>
                 </a>
-                <a href="countdown.html" class="card" data-keywords="timer days left clock reminder date schedule event">
+                <a href="countdown.html" class="card" data-category="lifestyle" data-keywords="event countdown timer days left clock reminder date schedule event birthday anniversary timer calendar target">
                     <i class="fa-solid fa-hourglass-half"></i><h3>Event Countdown</h3>
                 </a>
             </div>
         </div>
 
         <!-- CATEGORY 4: PRODUCTIVITY & BASIC UTILITIES -->
-        <div class="category-section">
+        <div class="category-section" data-cat-id="utilities">
             <div class="category-header">
                 <h3><i class="fa-solid fa-wrench"></i> Basic Utilities</h3>
             </div>
             <div class="grid">
-                <a href="audio.html" class="card" data-keywords="headphone check stereo speaker left right sound frequency">
+                <a href="audio.html" class="card" data-category="utilities" data-keywords="audio tester headphone check stereo speaker left right sound frequency earphone channel sound test speaker test">
                     <i class="fa-solid fa-headphones-simple"></i><h3>Audio Tester</h3>
                 </a>
-                <a href="timer.html" class="card" data-keywords="timestamp log notepad text editor write stopwatch">
+                <a href="timer.html" class="card" data-category="utilities" data-keywords="time notes timestamp log notepad text editor write stopwatch clock event logger real time timer">
                     <i class="fa-solid fa-stopwatch"></i><h3>Time Notes</h3>
                 </a>
-                <a href="notes.html" class="card" data-keywords="to do list text pad notepad write diary daily">
+                <a href="notes.html" class="card" data-category="utilities" data-keywords="advanced notes to do list text pad notepad write diary daily task checklist rich text journal bold italic">
                     <i class="fa-solid fa-clipboard-list"></i><h3>Advanced Notes</h3>
                 </a>
-                <a href="converter.html" class="card" data-keywords="length weight temperature calculate measure metric convert">
+                <a href="converter.html" class="card" data-category="utilities" data-keywords="unit converter length weight temperature calculate measure metric convert km miles kg lbs celsius fahrenheit swap">
                     <i class="fa-solid fa-calculator"></i><h3>Unit Converter</h3>
                 </a>
-                <a href="number.html" class="card" data-keywords="binary hex decimal octal base calculator math">
+                <a href="number.html" class="card" data-category="utilities" data-keywords="number converter binary hex decimal octal base calculator math bit byte system convert base">
                     <i class="fa-solid fa-hashtag"></i><h3>Number Converter</h3>
                 </a>
-                <a href="repeater.html" class="card" data-keywords="spam duplicate copy loop text multiply font">
+                <a href="repeater.html" class="card" data-category="utilities" data-keywords="text repeater spam duplicate copy loop text multiply font whatsapp message generator repeat text text generator">
                     <i class="fa-solid fa-repeat"></i><h3>Text Repeater</h3>
                 </a>
-                <a href="reverser.html" class="card" data-keywords="flip backwards reverse string text upside down">
+                <a href="reverser.html" class="card" data-category="utilities" data-keywords="text reverser flip backwards reverse string text upside down mirror word reverse text transform">
                     <i class="fa-solid fa-right-left"></i><h3>Text Reverser</h3>
                 </a>
             </div>
@@ -158,39 +266,182 @@
     </main>
 
     <footer>
-        <p><i class="fa-solid fa-code"></i> Created by Antony</p>
+        <p><i class="fa-solid fa-code"></i> Created by Maria Antony Selvam S | Smart Mobile Toolkit &copy; 2026</p>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="global-search.js"></script>
     
-    <!-- Smart Search Logic -->
+    <!-- Smart Dashboard Search Controller Logic -->
     <script>
-        document.getElementById('toolSearch').addEventListener('input', function(e) {
-            const query = e.target.value.toLowerCase().trim();
-            const categories = document.querySelectorAll('.category-section');
+        document.addEventListener('DOMContentLoaded', () => {
+            const searchInput = document.getElementById('toolSearch');
+            const clearSearchBtn = document.getElementById('clearSearchBtn');
+            const categoryPills = document.querySelectorAll('.search-cat-pill');
+            const tagChips = document.querySelectorAll('.search-tag-chip');
+            const searchCountBadge = document.getElementById('searchCountBadge');
+            const noResultsCard = document.getElementById('noResultsCard');
+            const noResultsText = document.getElementById('noResultsText');
+            const resetSearchBtn = document.getElementById('resetSearchBtn');
+            const categorySections = document.querySelectorAll('.category-section');
 
-            categories.forEach(category => {
-                const cards = category.querySelectorAll('.card');
-                let hasVisibleCard = false;
+            const historyContainer = document.getElementById('searchHistoryContainer');
+            const historyChips = document.getElementById('searchHistoryChips');
+            const clearHistoryBtn = document.getElementById('clearHistoryBtn');
 
-                cards.forEach(card => {
-                    const title = card.querySelector('h3').innerText.toLowerCase();
-                    const keywords = card.getAttribute('data-keywords').toLowerCase();
+            let activeCategory = 'all';
 
-                    if (title.includes(query) || keywords.includes(query)) {
-                        card.style.display = 'flex';
-                        hasVisibleCard = true;
+            // Function to perform live search filtering
+            function filterDashboardTools() {
+                const query = searchInput.value.toLowerCase().trim();
+                let visibleCount = 0;
+
+                // Show/hide clear button
+                if (query.length > 0) {
+                    clearSearchBtn.style.display = 'flex';
+                } else {
+                    clearSearchBtn.style.display = 'none';
+                }
+
+                categorySections.forEach(section => {
+                    const cards = section.querySelectorAll('.card');
+                    let sectionVisibleCardCount = 0;
+
+                    cards.forEach(card => {
+                        const title = card.querySelector('h3').innerText.toLowerCase();
+                        const keywords = card.getAttribute('data-keywords').toLowerCase();
+                        const cardCat = card.getAttribute('data-category');
+
+                        const matchesQuery = !query || title.includes(query) || keywords.includes(query);
+                        const matchesCategory = activeCategory === 'all' || cardCat === activeCategory;
+
+                        if (matchesQuery && matchesCategory) {
+                            card.style.display = 'flex';
+                            sectionVisibleCardCount++;
+                            visibleCount++;
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+
+                    if (sectionVisibleCardCount > 0) {
+                        section.style.display = 'block';
                     } else {
-                        card.style.display = 'none';
+                        section.style.display = 'none';
                     }
                 });
 
-                if (hasVisibleCard) {
-                    category.style.display = 'block';
+                // Update count badge
+                searchCountBadge.innerText = `Showing ${visibleCount} Tool${visibleCount === 1 ? '' : 's'}`;
+
+                // Handle Empty State
+                if (visibleCount === 0) {
+                    noResultsCard.style.display = 'block';
+                    noResultsText.innerHTML = `We couldn't find any tool matching "<strong>${escapeHTML(query)}</strong>"${activeCategory !== 'all' ? ` in <strong>${activeCategory}</strong>` : ''}. Try another keyword or category.`;
                 } else {
-                    category.style.display = 'none';
+                    noResultsCard.style.display = 'none';
+                }
+            }
+
+            // Category Pill Click
+            categoryPills.forEach(pill => {
+                pill.addEventListener('click', () => {
+                    categoryPills.forEach(p => p.classList.remove('active'));
+                    pill.classList.add('active');
+                    activeCategory = pill.getAttribute('data-cat');
+                    filterDashboardTools();
+                });
+            });
+
+            // Quick Tag Click
+            tagChips.forEach(chip => {
+                chip.addEventListener('click', () => {
+                    const query = chip.getAttribute('data-query');
+                    searchInput.value = query;
+                    saveSearchHistory(query);
+                    filterDashboardTools();
+                    searchInput.focus();
+                });
+            });
+
+            // Input listener
+            searchInput.addEventListener('input', () => {
+                filterDashboardTools();
+            });
+
+            // Input Enter key saves history
+            searchInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && searchInput.value.trim().length > 0) {
+                    saveSearchHistory(searchInput.value.trim());
+                    renderSearchHistory();
                 }
             });
+
+            // Clear Input
+            clearSearchBtn.addEventListener('click', () => {
+                searchInput.value = '';
+                filterDashboardTools();
+                searchInput.focus();
+            });
+
+            // Reset Search Button
+            resetSearchBtn.addEventListener('click', () => {
+                searchInput.value = '';
+                activeCategory = 'all';
+                categoryPills.forEach(p => p.classList.remove('active'));
+                categoryPills[0].classList.add('active');
+                filterDashboardTools();
+                searchInput.focus();
+            });
+
+            // Recent Searches Storage
+            function saveSearchHistory(term) {
+                if (!term || term.length < 2) return;
+                let history = JSON.parse(localStorage.getItem('toolkit_search_history') || '[]');
+                history = history.filter(item => item.toLowerCase() !== term.toLowerCase());
+                history.unshift(term);
+                if (history.length > 6) history = history.slice(0, 6);
+                localStorage.setItem('toolkit_search_history', JSON.stringify(history));
+                renderSearchHistory();
+            }
+
+            function renderSearchHistory() {
+                const history = JSON.parse(localStorage.getItem('toolkit_search_history') || '[]');
+                if (history.length === 0) {
+                    historyContainer.style.display = 'none';
+                    return;
+                }
+                historyContainer.style.display = 'block';
+                historyChips.innerHTML = history.map(item => `
+                    <span class="search-history-chip" onclick="applyHistorySearch('${escapeHTML(item)}')">
+                        <i class="fa-solid fa-clock-rotate-left"></i> ${escapeHTML(item)}
+                    </span>
+                `).join('');
+            }
+
+            window.applyHistorySearch = function(term) {
+                searchInput.value = term;
+                filterDashboardTools();
+                searchInput.focus();
+            };
+
+            clearHistoryBtn.addEventListener('click', () => {
+                localStorage.removeItem('toolkit_search_history');
+                renderSearchHistory();
+            });
+
+            renderSearchHistory();
+
+            // URL Search Query Parser (e.g. index.html?q=pdf or index.html?search=mp3)
+            const urlParams = new URLSearchParams(window.location.search);
+            const initialQuery = urlParams.get('q') || urlParams.get('search') || urlParams.get('query');
+            if (initialQuery) {
+                searchInput.value = initialQuery;
+                filterDashboardTools();
+                setTimeout(() => {
+                    searchInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 300);
+            }
         });
     </script>
 

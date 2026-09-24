@@ -1,0 +1,7 @@
+# Robots.txt for Smart Mobile Toolkit
+User-agent: *
+Allow: /
+
+# Sitemaps for Google and Search Engines
+Sitemap: https://alaneditxz.online/sitemap.xml
+Sitemap: https://selvam2442.github.io/Smart-Mobile-Toolkit/sitemap.xml

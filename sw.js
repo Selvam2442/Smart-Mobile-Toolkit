@@ -1,10 +1,11 @@
-const CACHE_NAME = 'toolkit-cache-v4';
+const CACHE_NAME = 'toolkit-cache-v5';
 
-// List all the files you want saved for offline use
+// List all the files saved for offline use
 const urlsToCache = [
   '/',
   '/index.html',
   '/style.css',
+  '/global-search.js',
   '/logo.svg',
   '/studio.html',
   '/cutter.html',
@@ -13,6 +14,7 @@ const urlsToCache = [
   '/compressor.html',
   '/format.html',
   '/pdf.html',
+  '/spreadsheet.html',
   '/qr.html',
   '/cipher.html',
   '/expense.html',

@@ -3,8 +3,14 @@
 <head>
     <meta name="google-adsense-account" content="ca-pub-8050432929862649">
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact - Smart Mobile Toolkit</title>
+    <meta name="description" content="Contact Maria Antony Selvam S, developer of Smart Mobile Toolkit. Reach out via WhatsApp, email, or social links for feedback and support.">
+    <meta name="keywords" content="contact developer, Antony, Smart Mobile Toolkit contact, support, WhatsApp">
+    <meta name="author" content="Maria Antony Selvam S">
+    <link rel="canonical" href="https://alaneditxz.online/contact.html">
+    <meta property="og:title" content="Contact - Smart Mobile Toolkit">
+    <meta property="og:description" content="Contact Maria Antony Selvam S, developer of Smart Mobile Toolkit. Reach out via WhatsApp, email, or social links.">
+    <meta property="og:url" content="https://alaneditxz.online/contact.html">
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -26,13 +32,20 @@
 
     <nav class="navbar navbar-expand-lg glass-navbar fixed-top">
         <div class="container-fluid">
-            <a class="navbar-brand" href="index.html"><i class="fa-solid fa-toolbox"></i> Toolkit</a>
+            <a class="navbar-brand" href="index.html" style="display: flex; align-items: center; gap: 10px;">
+                <img src="logo.svg" alt="Toolkit Logo" style="width: 35px; height: 35px; border-radius: 8px;"> Toolkit
+            </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                 <ul class="navbar-nav">
                     <li class="nav-item"><a class="nav-link" href="index.html"><i class="fa-solid fa-house"></i> Home</a></li>
+                    <li class="nav-item">
+                        <button class="nav-link bg-transparent border-0" data-bs-toggle="modal" data-bs-target="#globalSearchModal" style="cursor: pointer;">
+                            <i class="fa-solid fa-magnifying-glass"></i> Search
+                        </button>
+                    </li>
                     <li class="nav-item"><a class="nav-link" href="about.html"><i class="fa-solid fa-circle-info"></i> About</a></li>
                     <li class="nav-item"><a class="nav-link active" href="contact.html"><i class="fa-solid fa-envelope"></i> Contact</a></li>
                 </ul>
@@ -77,5 +90,6 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="global-search.js"></script>
 </body>
 </html>

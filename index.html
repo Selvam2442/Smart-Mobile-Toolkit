@@ -122,9 +122,8 @@
         <div class="search-container mb-3" style="margin-top: 10px;">
             <div class="search-input-wrapper">
                 <i class="fa-solid fa-magnifying-glass search-icon"></i>
-                <input type="text" id="toolSearch" class="styled-input" placeholder="Search 20+ offline tools (e.g., 'pdf merge', 'mp4 to mp3', 'crop', 'excel')..." autocomplete="off">
-                <kbd class="search-kbd">Ctrl + K</kbd>
-                <button type="button" id="clearSearchBtn" class="search-clear-btn" title="Clear Search">&times;</button>
+                <input type="text" id="toolSearch" class="styled-input" placeholder="Search 20+ offline tools (e.g., 'pdf merge', 'mp4 to mp3', 'age', 'excel')..." autocomplete="off" aria-label="Search tools">
+                <button type="button" id="clearSearchBtn" class="search-clear-btn" title="Clear Search" aria-label="Clear Search Input">&times;</button>
             </div>
 
             <!-- Category Filter Pills -->
@@ -143,10 +142,10 @@
                 <span class="search-tag-chip" data-query="mp4 to mp3">#Video to Audio</span>
                 <span class="search-tag-chip" data-query="compress">#File Compressor</span>
                 <span class="search-tag-chip" data-query="photo">#Photo Studio</span>
+                <span class="search-tag-chip" data-query="age">#Age Calculator</span>
                 <span class="search-tag-chip" data-query="qr">#QR Suite</span>
                 <span class="search-tag-chip" data-query="expense">#Expense Tracker</span>
                 <span class="search-tag-chip" data-query="excel">#Data Converter</span>
-                <span class="search-tag-chip" data-query="cipher">#Cipher Lock</span>
             </div>
 
             <!-- Recent Searches History -->
@@ -162,14 +161,14 @@
         <!-- Search Results Count Indicator -->
         <div class="search-status-bar">
             <span><i class="fa-solid fa-layer-group"></i> Dashboard Utilities</span>
-            <span class="search-count-badge" id="searchCountBadge">Showing 19 Tools</span>
+            <span class="search-count-badge" id="searchCountBadge">Showing 25 Tools</span>
         </div>
 
         <!-- No Results Found Card -->
         <div class="no-results-card" id="noResultsCard">
             <i class="fa-solid fa-magnifying-glass-minus"></i>
             <h4>No Matching Tools Found</h4>
-            <p id="noResultsText">We couldn't find any tool matching your search. Try searching for PDF, MP3, Video, Photo, or Converter.</p>
+            <p id="noResultsText">We couldn't find any tool matching your search. Try searching for PDF, MP3, Video, Photo, or Age.</p>
             <button type="button" class="btn custom-btn btn-sm" id="resetSearchBtn"><i class="fa-solid fa-rotate-left"></i> Clear Search & View All</button>
         </div>
 
@@ -197,6 +196,9 @@
                 <a href="format.html" class="card" data-category="media" data-keywords="format converter jpg png webp pan card passport resize crop image converter convert image format transform avatar">
                     <i class="fa-solid fa-file-image"></i><h3>Format Converter</h3>
                 </a>
+                <a href="resizer.html" class="card" data-category="media" data-keywords="photo resizer signature ssc upsc ibps exam photo kb size reduce photo job portal target kb resize image width height">
+                    <i class="fa-solid fa-id-card"></i><h3>Exam Photo Resizer</h3>
+                </a>
             </div>
         </div>
 
@@ -218,6 +220,9 @@
                 <a href="cipher.html" class="card" data-category="management" data-keywords="cipher box encrypt decrypt password secure lock hide text vault crypto secret aes key protection text lock">
                     <i class="fa-solid fa-user-secret"></i><h3>Cipher Box</h3>
                 </a>
+                <a href="password-generator.html" class="card" data-category="management" data-keywords="password generator passphrase secure crypto random password strength checker vault strong password">
+                    <i class="fa-solid fa-key"></i><h3>Secure Passwords</h3>
+                </a>
             </div>
         </div>
 
@@ -227,11 +232,20 @@
                 <h3><i class="fa-solid fa-wallet"></i> Everyday Lifestyle</h3>
             </div>
             <div class="grid">
-                <a href="expense.html" class="card" data-category="lifestyle" data-keywords="expense tracker money finance spend budget wallet calculator track cost income daily rupee balance manager">
+                <a href="expense.html" class="card" data-category="lifestyle" data-keywords="expense tracker money finance spend budget wallet calculator track cost income daily rupee balance manager export csv json">
                     <i class="fa-solid fa-indian-rupee-sign"></i><h3>Expense Tracker</h3>
                 </a>
                 <a href="countdown.html" class="card" data-category="lifestyle" data-keywords="event countdown timer days left clock reminder date schedule event birthday anniversary timer calendar target">
                     <i class="fa-solid fa-hourglass-half"></i><h3>Event Countdown</h3>
+                </a>
+                <a href="date.html" class="card" data-category="lifestyle" data-keywords="date age calculator birthday exact age days between business days working days calendar difference">
+                    <i class="fa-solid fa-cake-candles"></i><h3>Date & Age Calculator</h3>
+                </a>
+                <a href="split-bill.html" class="card" data-category="lifestyle" data-keywords="split bill tip calculator group dining shared expense restaurant bill splitter per person uneven split">
+                    <i class="fa-solid fa-file-invoice-dollar"></i><h3>Split Bill & Tip</h3>
+                </a>
+                <a href="tax-calculator.html" class="card" data-category="lifestyle" data-keywords="discount gst tax calculator sales tax coupon savings net price cgst sgst shopping percentage discount">
+                    <i class="fa-solid fa-tags"></i><h3>Discount & GST Tax</h3>
                 </a>
             </div>
         </div>
@@ -262,6 +276,9 @@
                 </a>
                 <a href="reverser.html" class="card" data-category="utilities" data-keywords="text reverser flip backwards reverse string text upside down mirror word reverse text transform">
                     <i class="fa-solid fa-right-left"></i><h3>Text Reverser</h3>
+                </a>
+                <a href="word-counter.html" class="card" data-category="utilities" data-keywords="word counter character counter reading time text statistics sentence counter keyword density length words chars">
+                    <i class="fa-solid fa-align-left"></i><h3>Word Counter</h3>
                 </a>
             </div>
         </div>

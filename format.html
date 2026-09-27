@@ -122,12 +122,17 @@
                 <i class="fa-solid fa-shield-halved"></i> Private by design — images are cropped and processed in your browser.
             </div>
 
-            <!-- Upload Zone -->
-            <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
-                <i class="fa-solid fa-cloud-arrow-up"></i>
-                <h4 class="fw-bold text-white mb-1">Select an Image</h4>
-                <p class="text-secondary small mb-0">Supports JPG, PNG, WEBP, BMP</p>
-                <input type="file" id="fileInput" accept="image/*" hidden>
+            <!-- Modern File Upload Zone -->
+            <div class="file-dropzone" id="uploadZone" role="button" tabindex="0" aria-label="Tap or drag and drop image to upload">
+                <div class="dropzone-icon-pulse">
+                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                </div>
+                <div class="dropzone-text-group">
+                    <h4 class="dropzone-title">Tap to Choose Image</h4>
+                    <p class="dropzone-subtitle">or Drag & Drop image file here</p>
+                    <span class="dropzone-badge"><i class="fa-solid fa-image"></i> Supports JPG, PNG, WEBP, BMP</span>
+                </div>
+                <input type="file" id="fileInput" accept="image/*" style="display: none;" aria-label="Select Image File">
             </div>
 
             <!-- Workspace -->
@@ -191,7 +196,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title"><i class="fa-solid fa-circle-info"></i> Tool Features</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close Modal"></button>
                 </div>
                 <div class="modal-body">
                     <p>Crop, scale, and adjust your photos to exact application standards.</p>
@@ -213,22 +218,21 @@
         let cropper = null;
         const imageElement = document.getElementById('image');
         const fileInput = document.getElementById('fileInput');
+        const uploadZone = document.getElementById('uploadZone');
 
-        fileInput.addEventListener('change', function(e) {
-            const file = e.target.files[0];
+        function handleFile(file) {
             if (!file) return;
 
             const reader = new FileReader();
             reader.onload = function(event) {
                 imageElement.src = event.target.result;
-                document.getElementById('uploadZone').style.display = 'none';
+                uploadZone.style.display = 'none';
                 document.getElementById('editorPanel').classList.add('active');
 
                 if (cropper) {
                     cropper.destroy();
                 }
 
-                // Initialize Cropper with optimal touch and desktop parameters
                 cropper = new Cropper(imageElement, {
                     viewMode: 1,
                     dragMode: 'move',
@@ -245,7 +249,13 @@
                 });
             };
             reader.readAsDataURL(file);
-        });
+        }
+
+        if (window.setupModernDropzone) {
+            window.setupModernDropzone(uploadZone, fileInput, handleFile);
+        } else {
+            fileInput.addEventListener('change', (e) => handleFile(e.target.files[0]));
+        }
 
         function applyPreset(aspectRatio, btn, width, height) {
             if (!cropper) return;

@@ -48,9 +48,9 @@
 
     <div class="app-container">
         <div class="tool-header">
-            <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
+            <a href="index.html" class="back-btn" aria-label="Go Back to Home"><i class="fa-solid fa-arrow-left"></i></a>
             <h2 class="m-0">Expense Tracker</h2>
-            <button class="info-btn" data-bs-toggle="modal" data-bs-target="#infoModal"><i class="fa-solid fa-info"></i></button>
+            <button class="info-btn" data-bs-toggle="modal" data-bs-target="#infoModal" aria-label="Tool Information"><i class="fa-solid fa-info"></i></button>
         </div>
         
         <div class="tool-panel">
@@ -59,24 +59,55 @@
                 <h1 style="color: #fff; font-weight: 800; font-size: 2.8rem; margin: 0;">₹<span id="total-amount">0</span></h1>
             </div>
 
+            <!-- Export & Import Controls -->
+            <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
+                <button id="btn-export-csv" class="btn custom-btn btn-secondary" style="flex: 1; min-width: 120px; padding: 10px; font-size: 0.85rem;" aria-label="Export Expenses to CSV"><i class="fa-solid fa-file-csv"></i> Export CSV</button>
+                <button id="btn-export-json" class="btn custom-btn btn-secondary" style="flex: 1; min-width: 120px; padding: 10px; font-size: 0.85rem;" aria-label="Export Expenses to JSON"><i class="fa-solid fa-file-code"></i> Export JSON</button>
+                <button id="btn-import-json" class="btn custom-btn btn-secondary" style="flex: 1; min-width: 120px; padding: 10px; font-size: 0.85rem;" aria-label="Import Expenses JSON"><i class="fa-solid fa-file-import"></i> Import Data</button>
+                <input type="file" id="import-file-input" accept=".json" style="display: none;">
+            </div>
+
             <div style="display: flex; gap: 10px; margin-bottom: 15px;">
                 <div class="input-group" style="margin-bottom: 0; flex: 2;">
-                    <input type="text" id="exp-desc" class="styled-input" placeholder="e.g., Train to Chennai, Free Fire top-up...">
+                    <input type="text" id="exp-desc" class="styled-input" placeholder="e.g., Train to Chennai, Free Fire top-up..." aria-label="Expense Description">
                 </div>
                 <div class="input-group" style="margin-bottom: 0; flex: 1;">
-                    <input type="number" id="exp-amount" class="styled-input" placeholder="₹ Amount">
+                    <input type="number" id="exp-amount" class="styled-input" placeholder="₹ Amount" aria-label="Expense Amount">
                 </div>
             </div>
             
-            <button id="btn-add" class="btn custom-btn w-100 mb-4"><i class="fa-solid fa-plus"></i> ADD EXPENSE</button>
+            <button id="btn-add" class="btn custom-btn w-100 mb-4" aria-label="Add Expense Entry"><i class="fa-solid fa-plus"></i> ADD EXPENSE</button>
             
             <div style="text-align: left;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                     <h4 style="color: #fff; font-size: 1.1rem; margin: 0;"><i class="fa-solid fa-list-ul"></i> Recent Transactions</h4>
-                    <button id="btn-clear" style="background: transparent; border: none; color: var(--danger-color); cursor: pointer; font-size: 0.9rem; font-weight: 600;"><i class="fa-solid fa-trash"></i> Clear All</button>
+                    <button id="btn-clear" style="background: transparent; border: none; color: var(--danger-color); cursor: pointer; font-size: 0.9rem; font-weight: 600;" aria-label="Clear All Transactions"><i class="fa-solid fa-trash"></i> Clear All</button>
                 </div>
                 <ul id="expense-list" style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px;">
-                    </ul>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import Mode Confirmation Modal -->
+    <div class="modal fade" id="importModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fa-solid fa-file-import"></i> Import Expense Data</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close Modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Select how you want to restore the imported JSON entries:</p>
+                    <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 15px;">
+                        <button type="button" id="btn-confirm-merge" class="btn custom-btn" style="text-align: left; justify-content: flex-start;">
+                            <i class="fa-solid fa-code-merge"></i> Merge with Existing Entries
+                        </button>
+                        <button type="button" id="btn-confirm-overwrite" class="btn custom-btn btn-secondary" style="border-color: var(--danger-color); color: var(--danger-color); text-align: left; justify-content: flex-start;">
+                            <i class="fa-solid fa-rotate"></i> Overwrite Current Entries
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -86,12 +117,16 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title"><i class="fa-solid fa-wallet"></i> Daily Expense Tracker</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close Modal"></button>
                 </div>
                 <div class="modal-body">
                     <p>Log your daily spending to keep your pocket money and UPI transactions organized.</p>
                     <hr style="border-color: rgba(255,255,255,0.1); margin: 15px 0;">
-                    <p style="color: #25D366; font-size: 0.9rem; margin-bottom: 0;">
+                    <ul>
+                        <li><i class="fa-solid fa-file-csv text-info"></i> <strong>Data Export:</strong> Export entries to CSV (for Excel) or JSON (for backup).</li>
+                        <li><i class="fa-solid fa-file-import text-info"></i> <strong>Data Import:</strong> Restore JSON backups with safe non-destructive merging.</li>
+                    </ul>
+                    <p style="color: #25D366; font-size: 0.9rem; margin-top: 15px; margin-bottom: 0;">
                         <i class="fa-solid fa-shield-halved"></i> <strong>Offline Storage:</strong> Your financial data is saved locally on your phone's browser and is completely private.
                     </p>
                 </div>
@@ -109,6 +144,16 @@
             const btnClear = document.getElementById('btn-clear');
             const expenseList = document.getElementById('expense-list');
             const totalAmountDisplay = document.getElementById('total-amount');
+
+            const btnExportCsv = document.getElementById('btn-export-csv');
+            const btnExportJson = document.getElementById('btn-export-json');
+            const btnImportJson = document.getElementById('btn-import-json');
+            const importFileInput = document.getElementById('import-file-input');
+            const importModalEl = document.getElementById('importModal');
+            const btnConfirmMerge = document.getElementById('btn-confirm-merge');
+            const btnConfirmOverwrite = document.getElementById('btn-confirm-overwrite');
+
+            let pendingImportData = null;
 
             // Load from LocalStorage
             let expenses = JSON.parse(localStorage.getItem('toolkit_expenses')) || [];
@@ -128,18 +173,22 @@
                     
                     li.innerHTML = `
                         <div style="display: flex; flex-direction: column;">
-                            <span style="color: #fff; font-weight: 600; font-size: 1.05rem;">${expense.desc}</span>
+                            <span style="color: var(--text-main); font-weight: 600; font-size: 1.05rem;">${escapeHTML(expense.desc)}</span>
                             <span style="color: var(--text-muted); font-size: 0.8rem;">${expense.date}</span>
                         </div>
                         <div style="display: flex; align-items: center; gap: 15px;">
                             <span style="color: var(--primary-glow); font-weight: 800; font-size: 1.1rem;">₹${expense.amount}</span>
-                            <button onclick="deleteExpense(${index})" style="background: transparent; border: none; color: var(--danger-color); cursor: pointer; padding: 5px;"><i class="fa-solid fa-xmark"></i></button>
+                            <button onclick="deleteExpense(${index})" style="background: transparent; border: none; color: var(--danger-color); cursor: pointer; padding: 5px;" aria-label="Delete Expense Entry"><i class="fa-solid fa-xmark"></i></button>
                         </div>
                     `;
                     expenseList.appendChild(li);
                 });
 
-                totalAmountDisplay.innerText = total;
+                totalAmountDisplay.innerText = total.toLocaleString('en-IN');
+            }
+
+            function escapeHTML(str) {
+                return (str || '').replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
             }
 
             btnAdd.addEventListener('click', () => {
@@ -166,7 +215,89 @@
                 }
             });
 
-            // Expose delete function globally for the inline onclick handler
+            // Export to CSV
+            btnExportCsv.addEventListener('click', () => {
+                if (expenses.length === 0) return alert('No expenses to export.');
+                let csvContent = 'data:text/csv;charset=utf-8,Description,Amount (INR),Date\n';
+                expenses.forEach(e => {
+                    const cleanDesc = `"${e.desc.replace(/"/g, '""')}"`;
+                    csvContent += `${cleanDesc},${e.amount},${e.date}\n`;
+                });
+                const encodedUri = encodeURI(csvContent);
+                const link = document.createElement('a');
+                link.setAttribute('href', encodedUri);
+                link.setAttribute('download', `Expenses_Backup_${Date.now()}.csv`);
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            });
+
+            // Export to JSON
+            btnExportJson.addEventListener('click', () => {
+                if (expenses.length === 0) return alert('No expenses to export.');
+                const jsonStr = JSON.stringify(expenses, null, 2);
+                const blob = new Blob([jsonStr], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `Expenses_Backup_${Date.now()}.json`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+            });
+
+            // Import JSON Trigger
+            btnImportJson.addEventListener('click', () => {
+                importFileInput.value = '';
+                importFileInput.click();
+            });
+
+            importFileInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    try {
+                        const parsed = JSON.parse(event.target.result);
+                        if (!Array.isArray(parsed)) throw new Error('Format must be an array of expenses.');
+                        
+                        pendingImportData = parsed.filter(item => item && typeof item.desc === 'string' && typeof item.amount === 'number');
+                        if (pendingImportData.length === 0) return alert('No valid expense entries found in the file.');
+
+                        const modal = new bootstrap.Modal(importModalEl);
+                        modal.show();
+                    } catch (err) {
+                        alert('Invalid JSON file format: ' + err.message);
+                    }
+                };
+                reader.readAsText(file);
+            });
+
+            btnConfirmMerge.addEventListener('click', () => {
+                if (pendingImportData) {
+                    expenses = [...expenses, ...pendingImportData];
+                    localStorage.setItem('toolkit_expenses', JSON.stringify(expenses));
+                    updateUI();
+                    bootstrap.Modal.getInstance(importModalEl).hide();
+                    alert(`Successfully merged ${pendingImportData.length} expense entries!`);
+                    pendingImportData = null;
+                }
+            });
+
+            btnConfirmOverwrite.addEventListener('click', () => {
+                if (pendingImportData) {
+                    expenses = [...pendingImportData];
+                    localStorage.setItem('toolkit_expenses', JSON.stringify(expenses));
+                    updateUI();
+                    bootstrap.Modal.getInstance(importModalEl).hide();
+                    alert(`Successfully replaced entries with ${pendingImportData.length} new entries!`);
+                    pendingImportData = null;
+                }
+            });
+
+            // Expose delete function globally for inline onclick
             window.deleteExpense = function(index) {
                 expenses.splice(index, 1);
                 localStorage.setItem('toolkit_expenses', JSON.stringify(expenses));

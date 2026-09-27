@@ -1,4 +1,4 @@
-const CACHE_NAME = 'toolkit-cache-v5';
+const CACHE_NAME = 'toolkit-cache-v7';
 
 // List all the files saved for offline use
 const urlsToCache = [
@@ -19,6 +19,7 @@ const urlsToCache = [
   '/cipher.html',
   '/expense.html',
   '/countdown.html',
+  '/date.html',
   '/audio.html',
   '/timer.html',
   '/notes.html',
@@ -26,6 +27,11 @@ const urlsToCache = [
   '/number.html',
   '/repeater.html',
   '/reverser.html',
+  '/resizer.html',
+  '/split-bill.html',
+  '/tax-calculator.html',
+  '/password-generator.html',
+  '/word-counter.html',
   '/about.html',
   '/contact.html'
 ];

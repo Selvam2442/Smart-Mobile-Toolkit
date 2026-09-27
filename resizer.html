@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job & Exam Photo Resizer | Smart Mobile Toolkit</title>
+    <meta name="description" content="Resize photos and signatures for SSC, UPSC, IBPS, college and govt job portals to exact pixel dimensions and maximum KB size limits offline.">
+    <meta name="keywords" content="photo resizer, signature resizer, ssc photo resizer, upsc photo size, kb size reducer, job application photo tool">
+    <meta name="author" content="Smart Mobile Toolkit">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="Job & Exam Photo Resizer | Smart Mobile Toolkit">
+    <meta property="og:description" content="Resize photos and signatures for government exam and job portals to exact dimensions and KB limits offline.">
+    <meta property="og:image" content="https://alaneditxz.online/Profile.png">
+    <meta property="og:url" content="https://alaneditxz.online/resizer.html">
+    <meta property="og:type" content="website">
+
+    <!-- Schema.org JSON-LD -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Job & Exam Photo & Signature Resizer",
+      "url": "https://alaneditxz.online/resizer.html",
+      "description": "Resize photos and signatures for SSC, UPSC, IBPS, and govt job portals to exact dimensions and KB limit offline.",
+      "applicationCategory": "UtilitiesApplication",
+      "operatingSystem": "All",
+      "offers": { "@type": "Offer", "price": "0" }
+    }
+    </script>
+
+    <!-- Bootstrap 5 CSS & Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    
+    <!-- Custom Design System -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Modern Glass Navbar -->
+    <nav class="navbar navbar-expand-lg glass-navbar fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html" aria-label="Smart Mobile Toolkit Home">
+                <i class="bi bi-cpu-fill me-2 text-info"></i>Smart Toolkit
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-row navbar-nav ms-auto align-items-center">
+                    <li class="nav-item"><a class="nav-link" href="index.html"><i class="bi bi-grid-fill"></i> Tools</a></li>
+                    <li class="nav-item"><a class="nav-link" href="about.html"><i class="bi bi-info-circle-fill"></i> About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="contact.html"><i class="bi bi-envelope-fill"></i> Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Container -->
+    <main class="container my-5 pt-3">
+        
+        <!-- Header -->
+        <div class="text-center mb-4">
+            <h1 class="fw-bold text-white mb-2">Job & Exam Photo Resizer</h1>
+            <p class="text-muted">Resize photos & signatures for SSC, UPSC, IBPS, and exam portals to exact dimensions &amp; KB limits 100% offline.</p>
+        </div>
+
+        <div class="row g-4 justify-content-center">
+            <div class="col-lg-10">
+                <div class="glass-card p-4">
+
+                    <!-- Portal Presets -->
+                    <div class="mb-4">
+                        <label class="form-label text-info fw-bold mb-2"><i class="bi bi-award-fill me-2"></i>Select Portal Preset:</label>
+                        <div class="d-flex flex-wrap gap-2 mb-3">
+                            <button class="btn btn-outline-info btn-sm rounded-pill preset-btn active" data-w="200" data-h="230" data-min-kb="20" data-max-kb="50" aria-label="Preset SSC Photo">SSC Photo (200x230 px, &lt;50KB)</button>
+                            <button class="btn btn-outline-info btn-sm rounded-pill preset-btn" data-w="140" data-h="60" data-min-kb="10" data-max-kb="20" aria-label="Preset SSC Signature">SSC Signature (140x60 px, &lt;20KB)</button>
+                            <button class="btn btn-outline-info btn-sm rounded-pill preset-btn" data-w="350" data-h="350" data-min-kb="20" data-max-kb="300" aria-label="Preset UPSC Passport">UPSC Passport (350x350 px, &lt;300KB)</button>
+                            <button class="btn btn-outline-info btn-sm rounded-pill preset-btn" data-w="200" data-h="230" data-min-kb="20" data-max-kb="50" aria-label="Preset IBPS Photo">IBPS Photo (200x230 px, &lt;50KB)</button>
+                            <button class="btn btn-outline-secondary btn-sm rounded-pill preset-btn" data-w="0" data-h="0" data-min-kb="0" data-max-kb="0" aria-label="Preset Custom Dimensions">Custom Specs</button>
+                        </div>
+                    </div>
+
+                    <!-- Custom Spec Inputs -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-6 col-md-3">
+                            <label for="reqWidth" class="form-label text-muted small fw-bold">Width (Pixels)</label>
+                            <input type="number" id="reqWidth" class="form-control glass-input" value="200">
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <label for="reqHeight" class="form-label text-muted small fw-bold">Height (Pixels)</label>
+                            <input type="number" id="reqHeight" class="form-control glass-input" value="230">
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <label for="maxKb" class="form-label text-muted small fw-bold">Max File Size (KB)</label>
+                            <input type="number" id="maxKb" class="form-control glass-input" value="50">
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <label for="outputFormat" class="form-label text-muted small fw-bold">Format</label>
+                            <select id="outputFormat" class="form-select glass-input">
+                                <option value="image/jpeg">JPG / JPEG</option>
+                                <option value="image/png">PNG</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Dropzone upload -->
+                    <div class="modern-dropzone p-4 text-center mb-4" id="resizerDropzone" tabindex="0" role="button" aria-label="Upload photo or signature file">
+                        <input type="file" id="imageInput" accept="image/*" class="d-none">
+                        <div class="dz-content">
+                            <i class="bi bi-cloud-arrow-up-fill text-info display-4 mb-2"></i>
+                            <h5 class="fw-bold text-white mb-1">Choose Photo or Signature</h5>
+                            <p class="text-muted small mb-0">Tap to select or drag and drop image file</p>
+                        </div>
+                        <div class="dz-file-card d-none" id="resizerFileCard">
+                            <i class="bi bi-image-fill text-info me-2 fs-4"></i>
+                            <span class="dz-filename fw-semibold text-white me-auto">file.jpg</span>
+                            <span class="dz-filesize text-muted me-3">0 KB</span>
+                            <button type="button" class="btn btn-sm btn-outline-danger dz-remove-btn" aria-label="Remove image">&times;</button>
+                        </div>
+                    </div>
+
+                    <!-- Preview & Process Section -->
+                    <div id="processSection" class="d-none">
+                        <div class="row g-4 align-items-center mb-4">
+                            <div class="col-md-6 text-center">
+                                <h6 class="text-muted fw-bold mb-2">Original Preview</h6>
+                                <img id="origImg" class="img-fluid rounded border border-secondary p-1 bg-dark" style="max-height: 220px;" alt="Original image preview">
+                                <div id="origSpecs" class="badge bg-secondary mt-2">--</div>
+                            </div>
+                            <div class="col-md-6 text-center">
+                                <h6 class="text-info fw-bold mb-2">Resized Preview</h6>
+                                <img id="resImg" class="img-fluid rounded border border-info p-1 bg-dark" style="max-height: 220px;" alt="Resized image preview">
+                                <div id="resSpecs" class="badge bg-info text-dark mt-2">--</div>
+                            </div>
+                        </div>
+
+                        <div class="text-center">
+                            <button id="processBtn" class="btn btn-info btn-lg px-4 rounded-pill text-dark fw-bold me-2" aria-label="Resize image">
+                                <i class="bi bi-gear-fill me-2"></i>Resize &amp; Fit KB Limit
+                            </button>
+                            <a id="downloadBtn" class="btn btn-success btn-lg px-4 rounded-pill fw-bold d-none" download="resized_exam_photo.jpg" aria-label="Download resized image">
+                                <i class="bi bi-download me-2"></i>Download Resized Image
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p class="mb-0">&copy; 2026 Smart Mobile Toolkit. All client-side processing happens offline in your browser.</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="global-search.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const imageInput = document.getElementById('imageInput');
+            const resizerDropzone = document.getElementById('resizerDropzone');
+            const resizerFileCard = document.getElementById('resizerFileCard');
+            const reqWidth = document.getElementById('reqWidth');
+            const reqHeight = document.getElementById('reqHeight');
+            const maxKb = document.getElementById('maxKb');
+            const outputFormat = document.getElementById('outputFormat');
+            const processSection = document.getElementById('processSection');
+            const origImg = document.getElementById('origImg');
+            const resImg = document.getElementById('resImg');
+            const origSpecs = document.getElementById('origSpecs');
+            const resSpecs = document.getElementById('resSpecs');
+            const processBtn = document.getElementById('processBtn');
+            const downloadBtn = document.getElementById('downloadBtn');
+            const presetBtns = document.querySelectorAll('.preset-btn');
+
+            let currentFile = null;
+
+            if (window.setupModernDropzone) {
+                window.setupModernDropzone('resizerDropzone', 'imageInput', 'resizerFileCard', (file) => {
+                    if (file) handleFileSelected(file);
+                });
+            }
+
+            presetBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    presetBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    const w = btn.getAttribute('data-w');
+                    const h = btn.getAttribute('data-h');
+                    const max = btn.getAttribute('data-max-kb');
+                    if (parseInt(w) > 0) {
+                        reqWidth.value = w;
+                        reqHeight.value = h;
+                        maxKb.value = max;
+                    }
+                });
+            });
+
+            function handleFileSelected(file) {
+                currentFile = file;
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    origImg.src = e.target.result;
+                    const tempImg = new Image();
+                    tempImg.src = e.target.result;
+                    tempImg.onload = () => {
+                        origSpecs.textContent = `${tempImg.width} x ${tempImg.height} px | ${(file.size / 1024).toFixed(1)} KB`;
+                        processSection.classList.remove('d-none');
+                        downloadBtn.classList.add('d-none');
+                        resImg.src = '';
+                        resSpecs.textContent = '--';
+                    };
+                };
+                reader.readAsDataURL(file);
+            }
+
+            processBtn.addEventListener('click', () => {
+                if (!currentFile || !origImg.src) return;
+
+                const targetW = parseInt(reqWidth.value) || 200;
+                const targetH = parseInt(reqHeight.value) || 230;
+                const targetMaxBytes = (parseFloat(maxKb.value) || 50) * 1024;
+                const format = outputFormat.value;
+
+                const canvas = document.createElement('canvas');
+                canvas.width = targetW;
+                canvas.height = targetH;
+                const ctx = canvas.getContext('2d');
+
+                // High quality image smoothing
+                ctx.imageSmoothingEnabled = true;
+                ctx.imageSmoothingQuality = 'high';
+                ctx.drawImage(origImg, 0, 0, targetW, targetH);
+
+                // Quality iteration loop to meet max KB limit
+                let quality = 0.95;
+                let dataUrl = canvas.toDataURL(format, quality);
+
+                if (format === 'image/jpeg') {
+                    while (dataUrl.length * 0.75 > targetMaxBytes && quality > 0.1) {
+                        quality -= 0.05;
+                        dataUrl = canvas.toDataURL(format, quality);
+                    }
+                }
+
+                resImg.src = dataUrl;
+                const finalSizeKb = (dataUrl.length * 0.75 / 1024).toFixed(1);
+                resSpecs.textContent = `${targetW} x ${targetH} px | ${finalSizeKb} KB`;
+
+                if (parseFloat(finalSizeKb) > parseFloat(maxKb.value)) {
+                    resSpecs.className = 'badge bg-danger mt-2';
+                } else {
+                    resSpecs.className = 'badge bg-success mt-2';
+                }
+
+                downloadBtn.href = dataUrl;
+                const ext = format === 'image/png' ? 'png' : 'jpg';
+                downloadBtn.download = `resized_${targetW}x${targetH}_${finalSizeKb}kb.${ext}`;
+                downloadBtn.classList.remove('d-none');
+            });
+        });
+    </script>
+</body>
+</html>

@@ -77,16 +77,24 @@
             <div id="panel-scan" class="action-panel">
                 <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">Use your camera to snap a photo of a QR Code or Product Barcode, or upload an image from your gallery.</p>
                 
-                <input type="file" id="camera-input" accept="image/*" capture="environment" style="display: none;">
-                <input type="file" id="gallery-input" accept="image/*" style="display: none;">
-                
+                <!-- Modern File Dropzone for Gallery Upload -->
+                <div class="file-dropzone" id="scanDropzone" role="button" tabindex="0" aria-label="Tap or drag and drop image to scan QR code">
+                    <div class="dropzone-icon-pulse">
+                        <i class="fa-solid fa-qrcode"></i>
+                    </div>
+                    <div class="dropzone-text-group">
+                        <h4 class="dropzone-title">Tap to Choose Image to Scan</h4>
+                        <p class="dropzone-subtitle">or Drag & Drop QR / Barcode image here</p>
+                        <span class="dropzone-badge"><i class="fa-solid fa-camera"></i> Supports QR Codes & Barcodes</span>
+                    </div>
+                    <input type="file" id="gallery-input" accept="image/*" style="display: none;" aria-label="Choose QR Code Image">
+                </div>
+
                 <div style="display: flex; gap: 10px; margin-bottom: 20px;">
-                    <button id="btn-camera" class="btn custom-btn" style="flex: 1.5; padding: 15px;">
-                        <i class="fa-solid fa-camera"></i> TAKE PHOTO
+                    <button id="btn-camera" class="btn custom-btn w-100" style="padding: 14px;" type="button" aria-label="Take Photo with Camera">
+                        <i class="fa-solid fa-camera"></i> TAKE PHOTO WITH CAMERA
                     </button>
-                    <button id="btn-gallery" class="btn custom-btn btn-secondary" style="flex: 1; padding: 15px;">
-                        <i class="fa-solid fa-image"></i> GALLERY
-                    </button>
+                    <input type="file" id="camera-input" accept="image/*" capture="environment" style="display: none;" aria-label="Camera Input">
                 </div>
 
                 <p id="status-text" style="color: var(--primary-glow); font-weight: 600; display: none; margin-top: 15px;"><i class="fa-solid fa-spinner fa-spin"></i> Analyzing Image...</p>
@@ -178,9 +186,6 @@
 
             const html5QrCode = new Html5Qrcode("qr-reader-hidden");
 
-            btnCamera.addEventListener('click', () => cameraInput.click());
-            btnGallery.addEventListener('click', () => galleryInput.click());
-
             function processImageFile(file) {
                 if (!file) return;
                 
@@ -206,8 +211,16 @@
                     });
             }
 
+            const scanDropzone = document.getElementById('scanDropzone');
+            if (btnCamera) btnCamera.addEventListener('click', () => cameraInput.click());
+
+            if (window.setupModernDropzone && scanDropzone) {
+                window.setupModernDropzone(scanDropzone, galleryInput, (file) => processImageFile(file));
+            } else {
+                galleryInput.addEventListener('change', (e) => processImageFile(e.target.files[0]));
+            }
+
             cameraInput.addEventListener('change', (e) => processImageFile(e.target.files[0]));
-            galleryInput.addEventListener('change', (e) => processImageFile(e.target.files[0]));
         });
     </script>
     <script src="global-search.js"></script>

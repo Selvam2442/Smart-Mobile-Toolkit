@@ -1,6 +1,40 @@
 /* ==========================================================================
-   SMART MOBILE TOOLKIT - ADVANCED GLOBAL SEARCH ENGINE SYSTEM
+   SMART MOBILE TOOLKIT - ADVANCED GLOBAL SEARCH & SYSTEM CONTROLLER
    ========================================================================== */
+
+// 1. EARLY THEME INITIALIZATION (Prevents Light/Dark Flicker)
+(function initTheme() {
+    const savedTheme = localStorage.getItem('toolkit_theme');
+    if (savedTheme) {
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        document.documentElement.setAttribute('data-bs-theme', savedTheme);
+    } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+        document.documentElement.setAttribute('data-theme', 'light');
+        document.documentElement.setAttribute('data-bs-theme', 'light');
+    } else {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        document.documentElement.setAttribute('data-bs-theme', 'dark');
+    }
+})();
+
+// Toggle theme function
+window.toggleTheme = function() {
+    const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', newTheme);
+    document.documentElement.setAttribute('data-bs-theme', newTheme);
+    localStorage.setItem('toolkit_theme', newTheme);
+    updateThemeToggleIcons();
+};
+
+function updateThemeToggleIcons() {
+    const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+    const btns = document.querySelectorAll('.theme-toggle-btn');
+    btns.forEach(btn => {
+        btn.innerHTML = currentTheme === 'dark' ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
+        btn.setAttribute('aria-label', `Switch to ${currentTheme === 'dark' ? 'Light' : 'Dark'} Mode`);
+    });
+}
 
 const TOOL_INDEX = [
     {
@@ -110,8 +144,8 @@ const TOOL_INDEX = [
         icon: 'fa-indian-rupee-sign',
         category: 'lifestyle',
         categoryLabel: 'Everyday Lifestyle',
-        description: 'Track daily expenses, budget breakdown, and manage personal finance.',
-        keywords: ['expense', 'tracker', 'money', 'finance', 'spend', 'budget', 'wallet', 'calculator', 'track', 'cost', 'income', 'rupee']
+        description: 'Track daily expenses, budget breakdown, export/import data, and manage personal finance.',
+        keywords: ['expense', 'tracker', 'money', 'finance', 'spend', 'budget', 'wallet', 'calculator', 'track', 'cost', 'income', 'rupee', 'csv', 'json']
     },
     {
         id: 'countdown',
@@ -122,6 +156,16 @@ const TOOL_INDEX = [
         categoryLabel: 'Everyday Lifestyle',
         description: 'Track remaining days, hours, and minutes for upcoming events and reminders.',
         keywords: ['countdown', 'timer', 'days left', 'clock', 'reminder', 'date', 'schedule', 'event', 'calendar', 'anniversary', 'birthday']
+    },
+    {
+        id: 'date',
+        title: 'Date & Age Calculator',
+        url: 'date.html',
+        icon: 'fa-cake-candles',
+        category: 'lifestyle',
+        categoryLabel: 'Everyday Lifestyle',
+        description: 'Calculate exact age in years, months, days, or days/business days between dates.',
+        keywords: ['date', 'age', 'calculator', 'birthday', 'exact age', 'days between', 'business days', 'working days', 'calendar', 'difference']
     },
     {
         id: 'audio',
@@ -140,8 +184,8 @@ const TOOL_INDEX = [
         icon: 'fa-stopwatch',
         category: 'utilities',
         categoryLabel: 'Basic Utilities',
-        description: 'Log real-time events with exact timestamp logs and stopwatch timer.',
-        keywords: ['time', 'notes', 'timestamp', 'log', 'notepad', 'text editor', 'write', 'stopwatch', 'clock', 'event logger']
+        description: 'Log real-time events with exact timestamp logs, export/import, and stopwatch timer.',
+        keywords: ['time', 'notes', 'timestamp', 'log', 'notepad', 'text editor', 'write', 'stopwatch', 'clock', 'event logger', 'export']
     },
     {
         id: 'notes',
@@ -150,8 +194,8 @@ const TOOL_INDEX = [
         icon: 'fa-clipboard-list',
         category: 'utilities',
         categoryLabel: 'Basic Utilities',
-        description: 'Rich-text note pad with bold/italic styling, headings, and interactive check-lists.',
-        keywords: ['notes', 'advanced', 'to do list', 'text pad', 'notepad', 'write', 'diary', 'daily', 'checklist', 'tasks', 'journal']
+        description: 'Rich-text note pad with bold/italic styling, headings, export/import, and interactive check-lists.',
+        keywords: ['notes', 'advanced', 'to do list', 'text pad', 'notepad', 'write', 'diary', 'daily', 'checklist', 'tasks', 'journal', 'export']
     },
     {
         id: 'converter',
@@ -180,7 +224,7 @@ const TOOL_INDEX = [
         icon: 'fa-repeat',
         category: 'utilities',
         categoryLabel: 'Basic Utilities',
-        description: 'Repeat text multiple times with newlines and custom separators for messaging.',
+        description: 'Repeat text multiple times with safe count caps, newlines, and custom separators.',
         keywords: ['text', 'repeater', 'spam', 'duplicate', 'copy', 'loop', 'text', 'multiply', 'font', 'whatsapp', 'messages']
     },
     {
@@ -192,6 +236,56 @@ const TOOL_INDEX = [
         categoryLabel: 'Basic Utilities',
         description: 'Reverse text characters or flip word order upside-down.',
         keywords: ['text', 'reverser', 'flip', 'backwards', 'reverse', 'string', 'text', 'upside down', 'mirror']
+    },
+    {
+        id: 'resizer',
+        title: 'Exam Photo Resizer',
+        url: 'resizer.html',
+        icon: 'fa-id-card',
+        category: 'media',
+        categoryLabel: 'Advanced Media',
+        description: 'Resize photos & signatures for SSC, UPSC, IBPS, college and job applications to exact KB limits.',
+        keywords: ['photo', 'resizer', 'signature', 'ssc', 'upsc', 'ibps', 'exam photo', 'kb size', 'reduce photo', 'job portal']
+    },
+    {
+        id: 'split-bill',
+        title: 'Split Bill & Tip',
+        url: 'split-bill.html',
+        icon: 'fa-file-invoice-dollar',
+        category: 'lifestyle',
+        categoryLabel: 'Everyday Lifestyle',
+        description: 'Divide group bills, calculate tips, and compute per-person shares easily.',
+        keywords: ['split bill', 'tip calculator', 'group dining', 'shared expense', 'restaurant', 'bill splitter', 'per person']
+    },
+    {
+        id: 'tax-calculator',
+        title: 'Discount & GST Tax',
+        url: 'tax-calculator.html',
+        icon: 'fa-tags',
+        category: 'lifestyle',
+        categoryLabel: 'Everyday Lifestyle',
+        description: 'Compute shopping discounts, savings, and GST / sales tax breakdowns offline.',
+        keywords: ['discount', 'gst', 'tax calculator', 'sales tax', 'coupon', 'savings', 'net price', 'cgst', 'sgst']
+    },
+    {
+        id: 'password-generator',
+        title: 'Secure Passwords',
+        url: 'password-generator.html',
+        icon: 'fa-key',
+        category: 'management',
+        categoryLabel: 'Smart Management',
+        description: 'Generate cryptographically strong passwords and memorable passphrases offline.',
+        keywords: ['password generator', 'passphrase', 'secure', 'crypto', 'random password', 'strength checker', 'vault']
+    },
+    {
+        id: 'word-counter',
+        title: 'Word & Character Counter',
+        url: 'word-counter.html',
+        icon: 'fa-align-left',
+        category: 'utilities',
+        categoryLabel: 'Basic Utilities',
+        description: 'Count words, characters, reading time, sentences, and paragraphs in real time.',
+        keywords: ['word counter', 'character counter', 'reading time', 'text statistics', 'sentence counter', 'keyword density']
     },
     {
         id: 'about',
@@ -239,9 +333,9 @@ function injectGlobalSearchModal() {
                 <div class="modal-header border-0 pb-0">
                     <div class="w-100 modal-search-wrapper">
                         <i class="fa-solid fa-magnifying-glass"></i>
-                        <input type="text" id="modalSearchInput" class="form-control modal-search-input" placeholder="Search any tool (e.g., 'pdf', 'mp4 to mp3', 'crop', 'qr')..." autocomplete="off">
+                        <input type="text" id="modalSearchInput" class="form-control modal-search-input" placeholder="Search tools (e.g. 'pdf', 'mp4 to mp3', 'age', 'qr')..." autocomplete="off">
                     </div>
-                    <button type="button" class="btn-close ms-2" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close ms-2" data-bs-dismiss="modal" aria-label="Close Modal"></button>
                 </div>
                 <div class="modal-body pt-2">
                     <div id="modalSearchTagsBar" class="search-tags-bar mb-2">
@@ -249,7 +343,7 @@ function injectGlobalSearchModal() {
                         <span class="search-tag-chip" onclick="triggerModalSearch('pdf')">#PDF</span>
                         <span class="search-tag-chip" onclick="triggerModalSearch('mp4 to mp3')">#Video to Audio</span>
                         <span class="search-tag-chip" onclick="triggerModalSearch('compress')">#Compress</span>
-                        <span class="search-tag-chip" onclick="triggerModalSearch('photo')">#Photo Editor</span>
+                        <span class="search-tag-chip" onclick="triggerModalSearch('age')">#Age Calculator</span>
                         <span class="search-tag-chip" onclick="triggerModalSearch('qr')">#QR Code</span>
                         <span class="search-tag-chip" onclick="triggerModalSearch('excel')">#Data Converter</span>
                     </div>
@@ -318,30 +412,72 @@ function escapeHTML(str) {
     );
 }
 
-// Keyboard Hotkey Listener: Ctrl + K or / to search
-document.addEventListener('keydown', (e) => {
-    // Prevent overriding when user is inside input/textarea
-    if (['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName)) {
-        if (e.key === 'Escape') {
-            document.activeElement.blur();
+// Inject Theme Switcher button into Navbar
+function injectThemeToggleBtn() {
+    const navList = document.querySelector('.navbar-nav');
+    if (navList && !document.getElementById('themeToggleBtn')) {
+        const li = document.createElement('li');
+        li.className = 'nav-item d-flex align-items-center';
+        li.innerHTML = `
+            <button class="theme-toggle-btn" id="themeToggleBtn" onclick="toggleTheme()" aria-label="Toggle Light & Dark Theme">
+                <i class="fa-solid fa-sun"></i>
+            </button>
+        `;
+        navList.appendChild(li);
+        updateThemeToggleIcons();
+    }
+}
+
+// Utility helper to setup modern file input drag & drop behavior
+window.setupModernDropzone = function(dropzoneEl, fileInputEl, onFileSelected) {
+    if (!dropzoneEl || !fileInputEl) return;
+    
+    ['dragenter', 'dragover'].forEach(eventName => {
+        dropzoneEl.addEventListener(eventName, (e) => {
+            e.preventDefault(); e.stopPropagation();
+            dropzoneEl.classList.add('dragover');
+        }, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+        dropzoneEl.addEventListener(eventName, (e) => {
+            e.preventDefault(); e.stopPropagation();
+            dropzoneEl.classList.remove('dragover');
+        }, false);
+    });
+
+    dropzoneEl.addEventListener('drop', (e) => {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        if (files && files.length > 0) {
+            fileInputEl.files = files;
+            if (typeof onFileSelected === 'function') onFileSelected(files[0], files);
         }
+    });
+
+    dropzoneEl.addEventListener('click', () => fileInputEl.click());
+    dropzoneEl.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            fileInputEl.click();
+        }
+    });
+
+    fileInputEl.addEventListener('change', () => {
+        if (fileInputEl.files && fileInputEl.files.length > 0) {
+            if (typeof onFileSelected === 'function') onFileSelected(fileInputEl.files[0], fileInputEl.files);
+        }
+    });
+};
+
+// Keyboard Listener for slash or search input
+document.addEventListener('keydown', (e) => {
+    if (['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName)) {
+        if (e.key === 'Escape') document.activeElement.blur();
         return;
     }
 
-    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
-        e.preventDefault();
-        const mainInput = document.getElementById('toolSearch');
-        if (mainInput) {
-            mainInput.focus();
-            mainInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        } else {
-            const modalEl = document.getElementById('globalSearchModal');
-            if (modalEl && window.bootstrap) {
-                const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
-                modal.show();
-            }
-        }
-    } else if (e.key === '/' && !e.ctrlKey && !e.metaKey) {
+    if (e.key === '/' && !e.ctrlKey && !e.metaKey) {
         e.preventDefault();
         const mainInput = document.getElementById('toolSearch');
         if (mainInput) {
@@ -356,8 +492,17 @@ document.addEventListener('keydown', (e) => {
         }
     }
 });
+
+// Register Service Worker for offline PWA
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').catch(err => console.log('SW Register Error:', err));
+    });
+}
 
 // Initialize on DOM ready
 document.addEventListener('DOMContentLoaded', () => {
     injectGlobalSearchModal();
+    injectThemeToggleBtn();
 });
+

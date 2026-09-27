@@ -82,13 +82,18 @@
                 <i class="fa-solid fa-shield-halved"></i> Private by design — processed entirely on your device.
             </div>
 
-            <!-- Initial Upload Zone -->
-            <div class="upload-zone" id="initialUploadZone" onclick="document.getElementById('fileInput').click()">
-                <i class="fa-solid fa-file-pdf"></i>
-                <h4 class="fw-bold text-white mb-1">Add PDF or Images</h4>
-                <p class="text-secondary small mb-0">Select files to start the workspace</p>
+            <!-- Modern File Upload Zone -->
+            <div class="file-dropzone" id="initialUploadZone" role="button" tabindex="0" aria-label="Tap or drag and drop PDF or Image files to upload">
+                <div class="dropzone-icon-pulse">
+                    <i class="fa-solid fa-file-pdf"></i>
+                </div>
+                <div class="dropzone-text-group">
+                    <h4 class="dropzone-title">Tap to Choose Files</h4>
+                    <p class="dropzone-subtitle">or Drag & Drop PDF & images here</p>
+                    <span class="dropzone-badge"><i class="fa-solid fa-layer-group"></i> Supports PDF, JPG, PNG</span>
+                </div>
+                <input type="file" id="fileInput" accept="application/pdf, image/jpeg, image/png" multiple style="display: none;" aria-label="Select PDF or Image files">
             </div>
-            <input type="file" id="fileInput" accept="application/pdf, image/jpeg, image/png" multiple hidden>
 
             <!-- Active Workspace -->
             <div class="action-panel" id="workspace">
@@ -141,11 +146,14 @@
             onEnd: updateCounter
         });
 
-        document.getElementById('fileInput').addEventListener('change', async (e) => {
-            const files = Array.from(e.target.files);
+        const fileInputEl = document.getElementById('fileInput');
+        const initialDropzoneEl = document.getElementById('initialUploadZone');
+
+        async function processFiles(fileList) {
+            const files = Array.from(fileList);
             if(files.length === 0) return;
             
-            document.getElementById('initialUploadZone').style.display = 'none';
+            initialDropzoneEl.style.display = 'none';
             document.getElementById('workspace').classList.add('active');
             document.getElementById('exportBtn').innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Loading...';
             
@@ -162,8 +170,14 @@
                 }
             }
             document.getElementById('exportBtn').innerHTML = '<i class="fa-solid fa-download"></i> EXPORT PDF';
-            e.target.value = '';
-        });
+            fileInputEl.value = '';
+        }
+
+        if (window.setupModernDropzone) {
+            window.setupModernDropzone(initialDropzoneEl, fileInputEl, (file, files) => processFiles(files));
+        } else {
+            fileInputEl.addEventListener('change', (e) => processFiles(e.target.files));
+        }
 
         async function addPageToUI(source, isImage, rawData, originalIndex) {
             const id = `page_${globalId++}`;

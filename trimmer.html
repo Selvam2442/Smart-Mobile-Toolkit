@@ -54,9 +54,31 @@
         </div>
         
         <div class="tool-panel">
-            <div class="input-group" id="upload-group">
-                <label>Select Video File (MP4, WebM)</label>
-                <input type="file" id="video-upload" class="styled-input" accept="video/mp4, video/webm" style="padding: 10px;">
+            <!-- Modern File Upload Zone -->
+            <div class="file-dropzone" id="uploadZone" role="button" tabindex="0" aria-label="Tap or drag and drop video file to trim">
+                <div class="dropzone-icon-pulse">
+                    <i class="fa-solid fa-video"></i>
+                </div>
+                <div class="dropzone-text-group">
+                    <h4 class="dropzone-title">Tap to Choose Video</h4>
+                    <p class="dropzone-subtitle">or Drag & Drop video file here</p>
+                    <span class="dropzone-badge"><i class="fa-solid fa-film"></i> Supports MP4, WebM & MOV</span>
+                </div>
+                <input type="file" id="video-upload" accept="video/mp4, video/webm, video/*" style="display: none;" aria-label="Select Video File">
+            </div>
+
+            <!-- Selected File Card -->
+            <div class="selected-file-card" id="selectedFileCard" style="display: none;">
+                <div class="selected-file-icon">
+                    <i class="fa-solid fa-file-video"></i>
+                </div>
+                <div class="selected-file-details">
+                    <div class="selected-file-name" id="selectedFileName">video.mp4</div>
+                    <div class="selected-file-size" id="selectedFileSize">12.5 MB</div>
+                </div>
+                <button type="button" class="btn-change-file" id="btnChangeFile" aria-label="Change Selected Video File">
+                    <i class="fa-solid fa-rotate"></i> Change
+                </button>
             </div>
 
             <div id="video-container" class="video-preview-container">
@@ -149,12 +171,30 @@
             const progressFill = document.getElementById('progress-fill');
             const downloadLink = document.getElementById('download-link');
 
+            const uploadZone = document.getElementById('uploadZone');
+            const selectedFileCard = document.getElementById('selectedFileCard');
+            const selectedFileName = document.getElementById('selectedFileName');
+            const selectedFileSize = document.getElementById('selectedFileSize');
+            const btnChangeFile = document.getElementById('btnChangeFile');
+
             let sourceFile = null;
             let currentVideoUrl = null;
 
-            videoUpload.addEventListener('change', (e) => {
-                sourceFile = e.target.files[0];
-                if (!sourceFile) return;
+            function formatBytes(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024, dm = 2, sizes = ['Bytes', 'KB', 'MB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+            }
+
+            function handleVideoFile(file) {
+                if (!file) return;
+                sourceFile = file;
+                selectedFileName.innerText = file.name;
+                selectedFileSize.innerText = formatBytes(file.size);
+
+                uploadZone.style.display = 'none';
+                selectedFileCard.style.display = 'flex';
 
                 if (currentVideoUrl) URL.revokeObjectURL(currentVideoUrl);
                 currentVideoUrl = URL.createObjectURL(sourceFile);
@@ -164,7 +204,24 @@
                 trimmerControls.style.display = 'block';
                 downloadLink.style.display = 'none';
                 statusPanel.style.display = 'none';
+            }
+
+            btnChangeFile.addEventListener('click', () => {
+                videoUpload.value = '';
+                uploadZone.style.display = 'flex';
+                selectedFileCard.style.display = 'none';
+                videoContainer.style.display = 'none';
+                trimmerControls.style.display = 'none';
+                downloadLink.style.display = 'none';
+                statusPanel.style.display = 'none';
+                video.pause();
             });
+
+            if (window.setupModernDropzone) {
+                window.setupModernDropzone(uploadZone, videoUpload, handleVideoFile);
+            } else {
+                videoUpload.addEventListener('change', (e) => handleVideoFile(e.target.files[0]));
+            }
 
             video.addEventListener('loadedmetadata', () => {
                 startInput.value = "0.0";

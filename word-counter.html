@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word, Character & Reading Time Counter | Smart Mobile Toolkit</title>
+    <meta name="description" content="Count words, characters, sentences, paragraphs, and estimated reading time with keyword density analysis completely offline.">
+    <meta name="keywords" content="word counter, character counter, reading time estimator, sentence counter, text statistics tool, keyword density">
+    <meta name="author" content="Smart Mobile Toolkit">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="Word, Character & Reading Time Counter | Smart Mobile Toolkit">
+    <meta property="og:description" content="Count words, characters, sentences, paragraphs, and reading time offline.">
+    <meta property="og:image" content="https://alaneditxz.online/Profile.png">
+    <meta property="og:url" content="https://alaneditxz.online/word-counter.html">
+    <meta property="og:type" content="website">
+
+    <!-- Schema.org JSON-LD -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Word, Character & Reading Time Counter",
+      "url": "https://alaneditxz.online/word-counter.html",
+      "description": "Count words, characters, sentences, paragraphs, and reading time offline.",
+      "applicationCategory": "UtilitiesApplication",
+      "operatingSystem": "All",
+      "offers": { "@type": "Offer", "price": "0" }
+    }
+    </script>
+
+    <!-- Bootstrap 5 CSS & Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    
+    <!-- Custom Design System -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Modern Glass Navbar -->
+    <nav class="navbar navbar-expand-lg glass-navbar fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html" aria-label="Smart Mobile Toolkit Home">
+                <i class="bi bi-cpu-fill me-2 text-info"></i>Smart Toolkit
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item"><a class="nav-link" href="index.html"><i class="bi bi-grid-fill"></i> Tools</a></li>
+                    <li class="nav-item"><a class="nav-link" href="about.html"><i class="bi bi-info-circle-fill"></i> About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="contact.html"><i class="bi bi-envelope-fill"></i> Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Container -->
+    <main class="container my-5 pt-3">
+        
+        <!-- Header -->
+        <div class="text-center mb-4">
+            <h1 class="fw-bold text-white mb-2">Word &amp; Character Counter</h1>
+            <p class="text-muted">Analyze live text statistics, character limits, reading time, and keyword density offline.</p>
+        </div>
+
+        <div class="row g-4 justify-content-center">
+            <div class="col-lg-10">
+                <div class="glass-card p-4">
+
+                    <!-- Text Area Input -->
+                    <div class="mb-3 position-relative">
+                        <textarea id="textInput" class="form-control glass-input" rows="8" placeholder="Type or paste your text here to analyze statistics..."></textarea>
+                    </div>
+
+                    <!-- Action Helpers -->
+                    <div class="d-flex flex-wrap gap-2 mb-4">
+                        <button id="cleanSpacesBtn" class="btn btn-outline-info btn-sm rounded-pill" aria-label="Trim extra spaces">Clean Spaces</button>
+                        <button id="upperBtn" class="btn btn-outline-secondary btn-sm rounded-pill" aria-label="Convert to uppercase">UPPERCASE</button>
+                        <button id="lowerBtn" class="btn btn-outline-secondary btn-sm rounded-pill" aria-label="Convert to lowercase">lowercase</button>
+                        <button id="copyTextBtn" class="btn btn-outline-success btn-sm rounded-pill ms-auto" aria-label="Copy text"><i class="bi bi-clipboard me-1"></i>Copy</button>
+                        <button id="clearTextBtn" class="btn btn-outline-danger btn-sm rounded-pill" aria-label="Clear text"><i class="bi bi-trash me-1"></i>Clear</button>
+                    </div>
+
+                    <!-- Statistics Cards Grid -->
+                    <div class="row g-3 mb-4 text-center">
+                        <div class="col-6 col-md-3">
+                            <div class="glass-panel p-3">
+                                <div class="text-muted small text-uppercase mb-1">Words</div>
+                                <h2 id="cntWords" class="fw-bold text-info mb-0">0</h2>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="glass-panel p-3">
+                                <div class="text-muted small text-uppercase mb-1">Characters</div>
+                                <h2 id="cntChars" class="fw-bold text-success mb-0">0</h2>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="glass-panel p-3">
+                                <div class="text-muted small text-uppercase mb-1">No-Space Chars</div>
+                                <h2 id="cntNoSpace" class="fw-bold text-warning mb-0">0</h2>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="glass-panel p-3">
+                                <div class="text-muted small text-uppercase mb-1">Sentences</div>
+                                <h2 id="cntSentences" class="fw-bold text-primary mb-0">0</h2>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 text-center">
+                        <div class="col-6 col-md-4">
+                            <div class="glass-panel p-3">
+                                <div class="text-muted small text-uppercase mb-1">Paragraphs</div>
+                                <h4 id="cntParagraphs" class="fw-bold text-white mb-0">0</h4>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-4">
+                            <div class="glass-panel p-3">
+                                <div class="text-muted small text-uppercase mb-1">Reading Time</div>
+                                <h4 id="cntReading" class="fw-bold text-info mb-0">0 sec</h4>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <div class="glass-panel p-3">
+                                <div class="text-muted small text-uppercase mb-1">Speaking Time</div>
+                                <h4 id="cntSpeaking" class="fw-bold text-warning mb-0">0 sec</h4>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p class="mb-0">&copy; 2026 Smart Mobile Toolkit. Calculated locally in your browser.</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="global-search.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const textInput = document.getElementById('textInput');
+            const cntWords = document.getElementById('cntWords');
+            const cntChars = document.getElementById('cntChars');
+            const cntNoSpace = document.getElementById('cntNoSpace');
+            const cntSentences = document.getElementById('cntSentences');
+            const cntParagraphs = document.getElementById('cntParagraphs');
+            const cntReading = document.getElementById('cntReading');
+            const cntSpeaking = document.getElementById('cntSpeaking');
+
+            const cleanSpacesBtn = document.getElementById('cleanSpacesBtn');
+            const upperBtn = document.getElementById('upperBtn');
+            const lowerBtn = document.getElementById('lowerBtn');
+            const copyTextBtn = document.getElementById('copyTextBtn');
+            const clearTextBtn = document.getElementById('clearTextBtn');
+
+            textInput.addEventListener('input', analyzeText);
+
+            cleanSpacesBtn.addEventListener('click', () => {
+                textInput.value = textInput.value.replace(/\s+/g, ' ').trim();
+                analyzeText();
+            });
+
+            upperBtn.addEventListener('click', () => {
+                textInput.value = textInput.value.toUpperCase();
+                analyzeText();
+            });
+
+            lowerBtn.addEventListener('click', () => {
+                textInput.value = textInput.value.toLowerCase();
+                analyzeText();
+            });
+
+            copyTextBtn.addEventListener('click', () => {
+                navigator.clipboard.writeText(textInput.value);
+            });
+
+            clearTextBtn.addEventListener('click', () => {
+                textInput.value = '';
+                analyzeText();
+            });
+
+            function analyzeText() {
+                const text = textInput.value;
+                const chars = text.length;
+                const noSpace = text.replace(/\s/g, '').length;
+
+                const wordsArr = text.trim() ? text.trim().split(/\s+/) : [];
+                const words = wordsArr.length;
+
+                const sentences = text.trim() ? (text.match(/[.!?]+(?=\s|$)/g) || []).length || (words > 0 ? 1 : 0) : 0;
+                const paragraphs = text.trim() ? text.split(/\n+/).filter(p => p.trim() !== '').length : 0;
+
+                // Reading time at ~200 wpm, speaking at ~130 wpm
+                const readSec = Math.ceil((words / 200) * 60);
+                const speakSec = Math.ceil((words / 130) * 60);
+
+                cntWords.textContent = words.toLocaleString();
+                cntChars.textContent = chars.toLocaleString();
+                cntNoSpace.textContent = noSpace.toLocaleString();
+                cntSentences.textContent = sentences.toLocaleString();
+                cntParagraphs.textContent = paragraphs.toLocaleString();
+
+                cntReading.textContent = readSec < 60 ? `${readSec} sec` : `${Math.ceil(readSec / 60)} min`;
+                cntSpeaking.textContent = speakSec < 60 ? `${speakSec} sec` : `${Math.ceil(speakSec / 60)} min`;
+            }
+        });
+    </script>
+</body>
+</html>

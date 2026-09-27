@@ -72,11 +72,17 @@
                 <i class="fa-solid fa-shield-halved"></i> Private by design — your spreadsheets are processed locally.
             </div>
 
-            <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
-                <i class="fa-solid fa-file-excel"></i>
-                <h4 class="fw-bold text-white mb-1">Select Document</h4>
-                <p class="text-secondary small mb-0">Supports .XLSX, .XLS, .CSV, .TXT, .JSON</p>
-                <input type="file" id="fileInput" accept=".xlsx, .xls, .csv, .txt, .json" hidden>
+            <!-- Modern File Upload Zone -->
+            <div class="file-dropzone" id="uploadZone" role="button" tabindex="0" aria-label="Tap or drag and drop spreadsheet document to load">
+                <div class="dropzone-icon-pulse">
+                    <i class="fa-solid fa-file-excel"></i>
+                </div>
+                <div class="dropzone-text-group">
+                    <h4 class="dropzone-title">Tap to Choose Spreadsheet</h4>
+                    <p class="dropzone-subtitle">or Drag & Drop Excel / CSV / JSON file here</p>
+                    <span class="dropzone-badge"><i class="fa-solid fa-table"></i> Supports .XLSX, .XLS, .CSV, .TXT, .JSON</span>
+                </div>
+                <input type="file" id="fileInput" accept=".xlsx, .xls, .csv, .txt, .json" style="display: none;" aria-label="Select Document File">
             </div>
 
             <div class="action-panel" id="editorPanel">
@@ -109,7 +115,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title"><i class="fa-solid fa-circle-info"></i> Tool Features</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close Modal"></button>
                 </div>
                 <div class="modal-body">
                     <p>Convert structural data documents securely without an internet connection.</p>
@@ -150,8 +156,10 @@
             { val: 'pdf', text: 'PDF Table', icon: 'fa-file-pdf' }
         ];
 
-        document.getElementById('fileInput').addEventListener('change', function(e) {
-            const file = e.target.files[0];
+        const fileInput = document.getElementById('fileInput');
+        const uploadZone = document.getElementById('uploadZone');
+
+        function handleSpreadsheetFile(file) {
             if (!file) return;
 
             currentFile = file;
@@ -161,7 +169,7 @@
             const reader = new FileReader();
             reader.onload = function(event) {
                 fileDataArray = new Uint8Array(event.target.result);
-                document.getElementById('uploadZone').style.display = 'none';
+                uploadZone.style.display = 'none';
                 document.getElementById('editorPanel').classList.add('active');
                 
                 // Build Dynamic Grid
@@ -183,7 +191,13 @@
                 generatePreview();
             };
             reader.readAsArrayBuffer(file);
-        });
+        }
+
+        if (window.setupModernDropzone) {
+            window.setupModernDropzone(uploadZone, fileInput, handleSpreadsheetFile);
+        } else {
+            fileInput.addEventListener('change', (e) => handleSpreadsheetFile(e.target.files[0]));
+        }
 
         function generatePreview() {
             try {

@@ -23,18 +23,26 @@
 <body>
     <div class="app-container">
         <div class="tool-header">
-            <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
+            <a href="index.html" class="back-btn" aria-label="Go Back to Home"><i class="fa-solid fa-arrow-left"></i></a>
             <h2 class="m-0">Time Notes</h2>
-            <button class="info-btn" data-bs-toggle="modal" data-bs-target="#infoModal"><i class="fa-solid fa-info"></i></button>
+            <button class="info-btn" data-bs-toggle="modal" data-bs-target="#infoModal" aria-label="Tool Information"><i class="fa-solid fa-info"></i></button>
         </div>
         
         <div class="tool-panel">
             <div id="real-time-clock" style="font-size: 3.5rem; font-weight: 800; font-variant-numeric: tabular-nums; margin-bottom: 5px; text-shadow: 0 0 20px rgba(0, 240, 255, 0.4);">00:00:00</div>
-            <div id="real-time-date" style="color: var(--text-muted); margin-bottom: 30px; font-size: 0.9rem; text-transform: uppercase;">Loading date...</div>
+            <div id="real-time-date" style="color: var(--text-muted); margin-bottom: 25px; font-size: 0.9rem; text-transform: uppercase;">Loading date...</div>
+
+            <!-- Export & Import Controls -->
+            <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
+                <button id="btn-export-timer-json" class="btn custom-btn btn-secondary" style="flex: 1; min-width: 110px; padding: 10px; font-size: 0.85rem;" aria-label="Export Logs JSON"><i class="fa-solid fa-file-code"></i> Export JSON</button>
+                <button id="btn-export-timer-csv" class="btn custom-btn btn-secondary" style="flex: 1; min-width: 110px; padding: 10px; font-size: 0.85rem;" aria-label="Export Logs CSV"><i class="fa-solid fa-file-csv"></i> Export CSV</button>
+                <button id="btn-import-timer-json" class="btn custom-btn btn-secondary" style="flex: 1; min-width: 110px; padding: 10px; font-size: 0.85rem;" aria-label="Import Logs JSON"><i class="fa-solid fa-file-import"></i> Import Logs</button>
+                <input type="file" id="timer-import-input" accept=".json" style="display: none;">
+            </div>
             
             <div class="input-group">
-                <input type="text" id="quick-note" class="styled-input" placeholder="What's happening? (e.g., Boarded bus)">
-                <button id="btn-log-now" class="btn custom-btn w-100 mt-2"><i class="fa-solid fa-bolt"></i> LOG CURRENT TIME</button>
+                <input type="text" id="quick-note" class="styled-input" placeholder="What's happening? (e.g., Boarded bus)" aria-label="Quick Time Log Note">
+                <button id="btn-log-now" class="btn custom-btn w-100 mt-2" aria-label="Log Current Time"><i class="fa-solid fa-bolt"></i> LOG CURRENT TIME</button>
             </div>
 
             <div id="log-list" style="margin-top: 25px; max-height: 250px; overflow-y: auto;"></div>
@@ -43,10 +51,33 @@
 
             <div class="input-group">
                 <div style="display: flex; gap: 10px; margin-bottom: 10px;">
-                    <input type="time" id="manual-time" class="styled-input" style="flex: 1;">
-                    <input type="text" id="manual-note" class="styled-input" style="flex: 2;" placeholder="Manual note...">
+                    <input type="time" id="manual-time" class="styled-input" style="flex: 1;" aria-label="Manual Time Entry">
+                    <input type="text" id="manual-note" class="styled-input" style="flex: 2;" placeholder="Manual note..." aria-label="Manual Log Note">
                 </div>
-                <button id="btn-log-manual" class="btn custom-btn btn-secondary w-100 m-0"><i class="fa-solid fa-plus"></i> ADD MANUAL LOG</button>
+                <button id="btn-log-manual" class="btn custom-btn btn-secondary w-100 m-0" aria-label="Add Manual Time Log"><i class="fa-solid fa-plus"></i> ADD MANUAL LOG</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Timer Import Confirmation Modal -->
+    <div class="modal fade" id="timerImportModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fa-solid fa-file-import"></i> Import Time Logs</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close Modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Select how you want to restore the imported JSON logs:</p>
+                    <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 15px;">
+                        <button type="button" id="btn-timer-merge" class="btn custom-btn" style="text-align: left; justify-content: flex-start;">
+                            <i class="fa-solid fa-code-merge"></i> Merge with Existing Logs
+                        </button>
+                        <button type="button" id="btn-timer-overwrite" class="btn custom-btn btn-secondary" style="border-color: var(--danger-color); color: var(--danger-color); text-align: left; justify-content: flex-start;">
+                            <i class="fa-solid fa-rotate"></i> Overwrite Current Logs
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -56,14 +87,13 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title"><i class="fa-solid fa-stopwatch"></i> About Time Notes</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close Modal"></button>
                 </div>
                 <div class="modal-body">
                     <p>Stopwatches are tedious. This is a rapid-entry event logger perfect for daily travel and tracking routines.</p>
                     <ul>
                         <li><i class="fa-solid fa-bolt"></i> <strong>Quick Log:</strong> Type "Bus arrived" and hit Log to instantly save the exact time.</li>
-                        <li><i class="fa-solid fa-clock-rotate-left"></i> <strong>Check Back:</strong> Review logs tomorrow so you know when to leave!</li>
-                        <li><i class="fa-solid fa-pen-to-square"></i> <strong>Manual Log:</strong> Missed an event? Log it manually at the bottom.</li>
+                        <li><i class="fa-solid fa-file-export text-info"></i> <strong>Export & Import:</strong> Easily backup time logs as JSON/CSV and restore them anytime.</li>
                     </ul>
                 </div>
                 <div class="modal-footer">
@@ -79,6 +109,16 @@
             const clockDisplay = document.getElementById('real-time-clock');
             const dateDisplay = document.getElementById('real-time-date');
             const logList = document.getElementById('log-list');
+
+            const btnExportJson = document.getElementById('btn-export-timer-json');
+            const btnExportCsv = document.getElementById('btn-export-timer-csv');
+            const btnImportJson = document.getElementById('btn-import-timer-json');
+            const importInput = document.getElementById('timer-import-input');
+            const importModalEl = document.getElementById('timerImportModal');
+            const btnMerge = document.getElementById('btn-timer-merge');
+            const btnOverwrite = document.getElementById('btn-timer-overwrite');
+
+            let pendingLogs = null;
             let timeLogs = JSON.parse(localStorage.getItem('smart_time_logs')) || [];
 
             function updateClock() {
@@ -90,10 +130,14 @@
 
             function renderLogs() {
                 logList.innerHTML = '';
-                if(timeLogs.length === 0) return logList.innerHTML = '<p style="color: var(--text-muted);">No time logs yet.</p>';
+                if(timeLogs.length === 0) return logList.innerHTML = '<p style="color: var(--text-muted); text-align: center; padding: 15px;">No time logs yet.</p>';
                 timeLogs.forEach(log => {
-                    logList.innerHTML = `<div class="log-item"><span class="log-time">${log.timeStr}</span><span class="log-text">${log.note}</span><button class="delete-log" onclick="deleteLog(${log.id})"><i class="fa-solid fa-trash"></i></button></div>` + logList.innerHTML;
+                    logList.innerHTML = `<div class="log-item" style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.3); padding: 12px 15px; border-radius: 12px; margin-bottom: 8px; border: 1px solid var(--surface-border);"><span class="log-time" style="color: var(--primary-glow); font-weight: 700; font-family: monospace;">${log.timeStr}</span><span class="log-text" style="color: var(--text-main); flex: 1; margin: 0 15px; text-align: left;">${escapeHTML(log.note)}</span><button class="delete-log" onclick="deleteLog(${log.id})" aria-label="Delete Time Log" style="background: transparent; border: none; color: var(--danger-color); cursor: pointer;"><i class="fa-solid fa-trash"></i></button></div>` + logList.innerHTML;
                 });
+            }
+
+            function escapeHTML(str) {
+                return (str || '').replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
             }
 
             document.getElementById('btn-log-now').addEventListener('click', () => {
@@ -112,6 +156,84 @@
                 timeLogs.push({ id: Date.now(), timeStr: `${h}:${m} ${ampm}`, note });
                 localStorage.setItem('smart_time_logs', JSON.stringify(timeLogs)); renderLogs();
                 document.getElementById('manual-time').value = ''; document.getElementById('manual-note').value = '';
+            });
+
+            // Export to JSON
+            btnExportJson.addEventListener('click', () => {
+                if (timeLogs.length === 0) return alert('No logs to export.');
+                const dataStr = JSON.stringify(timeLogs, null, 2);
+                const blob = new Blob([dataStr], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `Time_Notes_Backup_${Date.now()}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            });
+
+            // Export to CSV
+            btnExportCsv.addEventListener('click', () => {
+                if (timeLogs.length === 0) return alert('No logs to export.');
+                let csv = 'Time,Note\n';
+                timeLogs.forEach(l => {
+                    csv += `"${l.timeStr}","${(l.note || '').replace(/"/g, '""')}"\n`;
+                });
+                const encodedUri = encodeURI('data:text/csv;charset=utf-8,' + csv);
+                const a = document.createElement('a');
+                a.href = encodedUri;
+                a.download = `Time_Notes_${Date.now()}.csv`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            });
+
+            // Import JSON
+            btnImportJson.addEventListener('click', () => {
+                importInput.value = '';
+                importInput.click();
+            });
+
+            importInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    try {
+                        const parsed = JSON.parse(event.target.result);
+                        if (!Array.isArray(parsed)) throw new Error('File must contain an array of logs.');
+                        pendingLogs = parsed.filter(l => l && typeof l.timeStr === 'string' && typeof l.note === 'string');
+                        if (pendingLogs.length === 0) return alert('No valid logs found in file.');
+                        const modal = new bootstrap.Modal(importModalEl);
+                        modal.show();
+                    } catch (err) {
+                        alert('Failed to parse logs file: ' + err.message);
+                    }
+                };
+                reader.readAsText(file);
+            });
+
+            btnMerge.addEventListener('click', () => {
+                if (pendingLogs) {
+                    timeLogs = [...timeLogs, ...pendingLogs];
+                    localStorage.setItem('smart_time_logs', JSON.stringify(timeLogs));
+                    renderLogs();
+                    bootstrap.Modal.getInstance(importModalEl).hide();
+                    alert(`Successfully merged ${pendingLogs.length} logs!`);
+                    pendingLogs = null;
+                }
+            });
+
+            btnOverwrite.addEventListener('click', () => {
+                if (pendingLogs) {
+                    timeLogs = [...pendingLogs];
+                    localStorage.setItem('smart_time_logs', JSON.stringify(timeLogs));
+                    renderLogs();
+                    bootstrap.Modal.getInstance(importModalEl).hide();
+                    alert(`Successfully overwritten with ${pendingLogs.length} imported logs!`);
+                    pendingLogs = null;
+                }
             });
 
             window.deleteLog = id => { timeLogs = timeLogs.filter(l => l.id !== id); localStorage.setItem('smart_time_logs', JSON.stringify(timeLogs)); renderLogs(); };

@@ -24,13 +24,18 @@
     <div class="app-container" id="main-container">
         <div id="list-view">
             <div class="tool-header">
-                <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
+                <a href="index.html" class="back-btn" aria-label="Go Back to Home"><i class="fa-solid fa-arrow-left"></i></a>
                 <h2 class="m-0">Notes Library</h2>
-                <button class="info-btn" data-bs-toggle="modal" data-bs-target="#infoModal"><i class="fa-solid fa-info"></i></button>
+                <button class="info-btn" data-bs-toggle="modal" data-bs-target="#infoModal" aria-label="Tool Information"><i class="fa-solid fa-info"></i></button>
             </div>
             
             <div class="tool-panel">
-                <button id="create-new-btn" class="btn custom-btn w-100 m-0"><i class="fa-solid fa-plus"></i> CREATE NEW NOTE</button>
+                <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
+                    <button id="create-new-btn" class="btn custom-btn" style="flex: 2; min-width: 150px; margin: 0;" aria-label="Create New Note"><i class="fa-solid fa-plus"></i> CREATE NEW NOTE</button>
+                    <button id="btn-export-notes" class="btn custom-btn btn-secondary" style="flex: 1; min-width: 110px; padding: 10px; font-size: 0.85rem;" aria-label="Export Notes JSON"><i class="fa-solid fa-file-export"></i> Export</button>
+                    <button id="btn-import-notes" class="btn custom-btn btn-secondary" style="flex: 1; min-width: 110px; padding: 10px; font-size: 0.85rem;" aria-label="Import Notes JSON"><i class="fa-solid fa-file-import"></i> Import</button>
+                    <input type="file" id="notes-import-input" accept=".json" style="display: none;">
+                </div>
                 <div id="notes-grid"></div>
             </div>
         </div>
@@ -38,22 +43,45 @@
         <div id="editor-view" style="display: none; flex-direction: column; height: 100%;">
             <div class="tool-panel" id="editor-panel" style="display: flex; flex-direction: column; flex-grow: 1; padding: 20px;">
                 <div class="notes-header">
-                    <button id="back-to-list" class="back-btn"><i class="fa-solid fa-arrow-left"></i></button>
-                    <button id="toggle-fullscreen" class="tool-btn" style="flex-grow: 0; width: 45px; margin: 0;"><i class="fa-solid fa-expand"></i></button>
+                    <button id="back-to-list" class="back-btn" aria-label="Back to Notes List"><i class="fa-solid fa-arrow-left"></i></button>
+                    <button id="toggle-fullscreen" class="tool-btn" style="flex-grow: 0; width: 45px; margin: 0;" aria-label="Toggle Fullscreen Editor"><i class="fa-solid fa-expand"></i></button>
                 </div>
 
-                <input type="text" id="note-title-input" placeholder="Note Title..." style="width: 100%; background: transparent; border: none; border-bottom: 2px solid var(--surface-border); color: #fff; font-size: 1.5rem; font-weight: 600; padding: 10px 5px; margin-bottom: 15px; outline: none;">
+                <input type="text" id="note-title-input" placeholder="Note Title..." style="width: 100%; background: transparent; border: none; border-bottom: 2px solid var(--surface-border); color: #fff; font-size: 1.5rem; font-weight: 600; padding: 10px 5px; margin-bottom: 15px; outline: none;" aria-label="Note Title">
 
                 <div class="toolbar">
-                    <button class="tool-btn" onclick="formatDoc('bold')" title="Bold"><i class="fa-solid fa-bold"></i></button>
-                    <button class="tool-btn" onclick="formatDoc('italic')" title="Italic"><i class="fa-solid fa-italic"></i></button>
-                    <button class="tool-btn" onclick="formatDoc('formatBlock', 'H2')" title="Heading 2">H2</button>
-                    <button class="tool-btn" onclick="formatDoc('insertUnorderedList')" title="Bullet List"><i class="fa-solid fa-list-ul"></i></button>
-                    <button class="tool-btn" onclick="insertCheckbox()" title="To-Do Checkbox"><i class="fa-regular fa-square-check"></i></button>
+                    <button class="tool-btn" onclick="formatDoc('bold')" title="Bold" aria-label="Bold Format"><i class="fa-solid fa-bold"></i></button>
+                    <button class="tool-btn" onclick="formatDoc('italic')" title="Italic" aria-label="Italic Format"><i class="fa-solid fa-italic"></i></button>
+                    <button class="tool-btn" onclick="formatDoc('formatBlock', 'H2')" title="Heading 2" aria-label="Heading 2 Format">H2</button>
+                    <button class="tool-btn" onclick="formatDoc('insertUnorderedList')" title="Bullet List" aria-label="Bullet List Format"><i class="fa-solid fa-list-ul"></i></button>
+                    <button class="tool-btn" onclick="insertCheckbox()" title="To-Do Checkbox" aria-label="Insert Checkbox"><i class="fa-regular fa-square-check"></i></button>
                 </div>
 
-                <div id="editor-area" contenteditable="true" placeholder="Start typing here..."></div>
-                <button id="save-note" class="btn custom-btn w-100 mt-3"><i class="fa-solid fa-floppy-disk"></i> SAVE NOTE</button>
+                <div id="editor-area" contenteditable="true" placeholder="Start typing here..." aria-label="Note Content Editor"></div>
+                <button id="save-note" class="btn custom-btn w-100 mt-3" aria-label="Save Note"><i class="fa-solid fa-floppy-disk"></i> SAVE NOTE</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notes Import Confirmation Modal -->
+    <div class="modal fade" id="notesImportModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fa-solid fa-file-import"></i> Import Notes</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close Modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Select how you want to restore the imported JSON notes:</p>
+                    <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 15px;">
+                        <button type="button" id="btn-notes-merge" class="btn custom-btn" style="text-align: left; justify-content: flex-start;">
+                            <i class="fa-solid fa-code-merge"></i> Merge with Existing Notes
+                        </button>
+                        <button type="button" id="btn-notes-overwrite" class="btn custom-btn btn-secondary" style="border-color: var(--danger-color); color: var(--danger-color); text-align: left; justify-content: flex-start;">
+                            <i class="fa-solid fa-rotate"></i> Overwrite Current Notes
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -137,6 +165,76 @@
                     }
                 }
             });
+            // Export Notes JSON
+            const btnExportNotes = document.getElementById('btn-export-notes');
+            const btnImportNotes = document.getElementById('btn-import-notes');
+            const notesImportInput = document.getElementById('notes-import-input');
+            const notesImportModalEl = document.getElementById('notesImportModal');
+            const btnNotesMerge = document.getElementById('btn-notes-merge');
+            const btnNotesOverwrite = document.getElementById('btn-notes-overwrite');
+
+            let pendingNotesData = null;
+
+            btnExportNotes.addEventListener('click', () => {
+                if (notes.length === 0) return alert('No notes to export.');
+                const dataStr = JSON.stringify(notes, null, 2);
+                const blob = new Blob([dataStr], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `Advanced_Notes_Backup_${Date.now()}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            });
+
+            btnImportNotes.addEventListener('click', () => {
+                notesImportInput.value = '';
+                notesImportInput.click();
+            });
+
+            notesImportInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    try {
+                        const parsed = JSON.parse(event.target.result);
+                        if (!Array.isArray(parsed)) throw new Error('File must contain an array of notes.');
+                        pendingNotesData = parsed.filter(n => n && typeof n.content === 'string');
+                        if (pendingNotesData.length === 0) return alert('No valid notes found in file.');
+                        const modal = new bootstrap.Modal(notesImportModalEl);
+                        modal.show();
+                    } catch (err) {
+                        alert('Failed to parse notes file: ' + err.message);
+                    }
+                };
+                reader.readAsText(file);
+            });
+
+            btnNotesMerge.addEventListener('click', () => {
+                if (pendingNotesData) {
+                    notes = [...notes, ...pendingNotesData];
+                    localStorage.setItem('smart_notes_advanced', JSON.stringify(notes));
+                    renderNotes();
+                    bootstrap.Modal.getInstance(notesImportModalEl).hide();
+                    alert(`Successfully merged ${pendingNotesData.length} notes!`);
+                    pendingNotesData = null;
+                }
+            });
+
+            btnNotesOverwrite.addEventListener('click', () => {
+                if (pendingNotesData) {
+                    notes = [...pendingNotesData];
+                    localStorage.setItem('smart_notes_advanced', JSON.stringify(notes));
+                    renderNotes();
+                    bootstrap.Modal.getInstance(notesImportModalEl).hide();
+                    alert(`Successfully overwritten notes with ${pendingNotesData.length} imported notes!`);
+                    pendingNotesData = null;
+                }
+            });
+
             renderNotes();
         });
     </script>

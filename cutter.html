@@ -55,9 +55,31 @@
         </div>
         
         <div class="tool-panel">
-            <div class="input-group" style="margin-bottom: 5px;">
-                <label>Select Audio File</label>
-                <input type="file" id="audio-file" class="styled-input" accept="audio/*" style="padding: 10px;">
+            <!-- Modern File Upload Zone -->
+            <div class="file-dropzone" id="uploadZone" role="button" tabindex="0" aria-label="Tap or drag and drop audio file to trim">
+                <div class="dropzone-icon-pulse">
+                    <i class="fa-solid fa-scissors"></i>
+                </div>
+                <div class="dropzone-text-group">
+                    <h4 class="dropzone-title">Tap to Choose Audio</h4>
+                    <p class="dropzone-subtitle">or Drag & Drop audio file here</p>
+                    <span class="dropzone-badge"><i class="fa-solid fa-music"></i> Supports MP3, WAV, AAC, M4A & OGG</span>
+                </div>
+                <input type="file" id="audio-file" accept="audio/*" style="display: none;" aria-label="Select Audio File">
+            </div>
+
+            <!-- Selected File Card -->
+            <div class="selected-file-card" id="selectedFileCard" style="display: none;">
+                <div class="selected-file-icon">
+                    <i class="fa-solid fa-file-audio"></i>
+                </div>
+                <div class="selected-file-details">
+                    <div class="selected-file-name" id="selectedFileName">audio.mp3</div>
+                    <div class="selected-file-size" id="selectedFileSize">3.5 MB</div>
+                </div>
+                <button type="button" class="btn-change-file" id="btnChangeFile" aria-label="Change Selected Audio File">
+                    <i class="fa-solid fa-rotate"></i> Change
+                </button>
             </div>
 
             <div id="waveform-container">
@@ -173,13 +195,50 @@
         });
         const wsRegions = wavesurfer.registerPlugin(RegionsPlugin.create());
 
-        fileInput.addEventListener('change', (e) => {
-            if (!fileInput.files[0]) return;
-            selectedFile = fileInput.files[0];
+        const uploadZone = document.getElementById('uploadZone');
+        const selectedFileCard = document.getElementById('selectedFileCard');
+        const selectedFileName = document.getElementById('selectedFileName');
+        const selectedFileSize = document.getElementById('selectedFileSize');
+        const btnChangeFile = document.getElementById('btnChangeFile');
+
+        function formatBytes(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024, dm = 2, sizes = ['Bytes', 'KB', 'MB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+        }
+
+        function loadAudioFile(file) {
+            if (!file) return;
+            selectedFile = file;
+            selectedFileName.innerText = file.name;
+            selectedFileSize.innerText = formatBytes(file.size);
+            
+            uploadZone.style.display = 'none';
+            selectedFileCard.style.display = 'flex';
+            
             const url = URL.createObjectURL(selectedFile);
-            waveformContainer.style.display = 'block'; cutControls.style.display = 'block'; downloadLink.style.display = 'none';
+            waveformContainer.style.display = 'block';
+            cutControls.style.display = 'block';
+            downloadLink.style.display = 'none';
             wavesurfer.load(url);
+        }
+
+        btnChangeFile.addEventListener('click', () => {
+            fileInput.value = '';
+            uploadZone.style.display = 'flex';
+            selectedFileCard.style.display = 'none';
+            waveformContainer.style.display = 'none';
+            cutControls.style.display = 'none';
+            downloadLink.style.display = 'none';
+            wavesurfer.pause();
         });
+
+        if (window.setupModernDropzone) {
+            window.setupModernDropzone(uploadZone, fileInput, loadAudioFile);
+        } else {
+            fileInput.addEventListener('change', (e) => loadAudioFile(e.target.files[0]));
+        }
 
         wavesurfer.on('ready', () => {
             const duration = wavesurfer.getDuration();

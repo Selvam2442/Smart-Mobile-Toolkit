@@ -51,12 +51,17 @@
             <button class="info-btn" data-bs-toggle="modal" data-bs-target="#infoModal"><i class="fa-solid fa-info"></i></button>
         </div>
 
-        <div class="tool-panel">
-            <div class="upload-zone" onclick="document.getElementById('uploadImg').click()">
-                <i class="fa-solid fa-wand-magic-sparkles"></i>
-                <h4 class="fw-bold text-white mb-1">Load Image</h4>
-                <p class="text-secondary small mb-0">Apply adjustments safely</p>
-                <input type="file" id="uploadImg" accept="image/*" hidden>
+            <!-- Modern File Upload Zone -->
+            <div class="file-dropzone" id="uploadZone" role="button" tabindex="0" aria-label="Tap or drag and drop photo to load">
+                <div class="dropzone-icon-pulse">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                </div>
+                <div class="dropzone-text-group">
+                    <h4 class="dropzone-title">Tap to Choose Photo</h4>
+                    <p class="dropzone-subtitle">or Drag & Drop image here</p>
+                    <span class="dropzone-badge"><i class="fa-solid fa-image"></i> Supports JPG, PNG, WEBP</span>
+                </div>
+                <input type="file" id="uploadImg" accept="image/*" style="display: none;" aria-label="Select Photo File">
             </div>
 
             <div class="action-panel mt-4" id="controls">
@@ -109,7 +114,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title"><i class="fa-solid fa-circle-info"></i> Tool Info</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close Modal"></button>
                 </div>
                 <div class="modal-body">
                     <p>Edit images like a pro, entirely in your browser.</p>
@@ -130,21 +135,29 @@
         let img = new Image();
         let currentTransform = { rotate: 0, flipX: 1, flipY: 1 };
 
-        document.getElementById('uploadImg').addEventListener('change', (e) => {
-            if (e.target.files[0]) {
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    img.src = event.target.result;
-                    img.onload = () => {
-                        currentTransform = { rotate: 0, flipX: 1, flipY: 1 };
-                        document.querySelector('.upload-zone').style.display = 'none';
-                        document.getElementById('controls').classList.add('active');
-                        applyRender();
-                    };
+        const fileInput = document.getElementById('uploadImg');
+        const uploadZone = document.getElementById('uploadZone');
+
+        function loadImageFile(file) {
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                img.src = event.target.result;
+                img.onload = () => {
+                    currentTransform = { rotate: 0, flipX: 1, flipY: 1 };
+                    uploadZone.style.display = 'none';
+                    document.getElementById('controls').classList.add('active');
+                    applyRender();
                 };
-                reader.readAsDataURL(e.target.files[0]);
-            }
-        });
+            };
+            reader.readAsDataURL(file);
+        }
+
+        if (window.setupModernDropzone) {
+            window.setupModernDropzone(uploadZone, fileInput, loadImageFile);
+        } else {
+            fileInput.addEventListener('change', (e) => loadImageFile(e.target.files[0]));
+        }
 
         document.querySelectorAll('.f-slider').forEach(slider => {
             slider.addEventListener('input', () => {

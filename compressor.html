@@ -32,10 +32,31 @@
         </div>
         
         <div class="tool-panel">
-            <div class="input-group">
-                <label>Select File (Images or PDF)</label>
-                <input type="file" id="upload-file" class="styled-input" accept="image/*, application/pdf" style="padding: 10px;">
-                <p id="file-info" style="color: var(--text-muted); font-size: 0.85rem; margin-top: 8px; display: none;"></p>
+            <!-- Modern File Upload Zone -->
+            <div class="file-dropzone" id="uploadZone" role="button" tabindex="0" aria-label="Tap or drag and drop image or PDF to compress">
+                <div class="dropzone-icon-pulse">
+                    <i class="fa-solid fa-file-zipper"></i>
+                </div>
+                <div class="dropzone-text-group">
+                    <h4 class="dropzone-title">Tap to Choose File</h4>
+                    <p class="dropzone-subtitle">or Drag & Drop image / PDF file here</p>
+                    <span class="dropzone-badge"><i class="fa-solid fa-compress"></i> Supports JPG, PNG, WEBP & PDF</span>
+                </div>
+                <input type="file" id="upload-file" accept="image/*, application/pdf" style="display: none;" aria-label="Select Image or PDF file">
+            </div>
+
+            <!-- Selected File Card -->
+            <div class="selected-file-card" id="selectedFileCard" style="display: none;">
+                <div class="selected-file-icon">
+                    <i class="fa-solid fa-file-image" id="selectedFileIcon"></i>
+                </div>
+                <div class="selected-file-details">
+                    <div class="selected-file-name" id="selectedFileName">filename.jpg</div>
+                    <div class="selected-file-size" id="selectedFileSize">2.4 MB</div>
+                </div>
+                <button type="button" class="btn-change-file" id="btnChangeFile" aria-label="Change Selected File">
+                    <i class="fa-solid fa-rotate"></i> Change
+                </button>
             </div>
 
             <!-- TARGET SIZE CONTROLS -->
@@ -99,17 +120,12 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            const fileInput = document.getElementById('upload-file');
-            const targetContainer = document.getElementById('target-size-container');
-            const targetInput = document.getElementById('target-size');
-            const btnRecommend = document.getElementById('btn-recommend');
-            const fileInfo = document.getElementById('file-info');
-            const btnCompress = document.getElementById('btn-compress');
-            const statusText = document.getElementById('status-text');
-            const statsBox = document.getElementById('stats-box');
-            const sizeOld = document.getElementById('size-old');
-            const sizeNew = document.getElementById('size-new');
-            const downloadLink = document.getElementById('download-link');
+            const uploadZone = document.getElementById('uploadZone');
+            const selectedFileCard = document.getElementById('selectedFileCard');
+            const selectedFileName = document.getElementById('selectedFileName');
+            const selectedFileSize = document.getElementById('selectedFileSize');
+            const selectedFileIcon = document.getElementById('selectedFileIcon');
+            const btnChangeFile = document.getElementById('btnChangeFile');
 
             let recommendedSizeMB = 0;
             let currentFileType = "";
@@ -121,14 +137,17 @@
                 return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
             }
 
-            fileInput.addEventListener('change', () => {
-                if (!fileInput.files[0]) return;
-                const file = fileInput.files[0];
+            function handleSelectedFile(file) {
+                if (!file) return;
                 currentFileType = file.type;
                 const isImage = currentFileType.startsWith("image/");
                 
-                fileInfo.style.display = "block";
-                fileInfo.innerText = `Format: ${currentFileType.split('/')[1].toUpperCase()} | Original Size: ${formatBytes(file.size)}`;
+                selectedFileName.innerText = file.name;
+                selectedFileSize.innerText = formatBytes(file.size);
+                selectedFileIcon.className = isImage ? 'fa-solid fa-file-image' : 'fa-solid fa-file-pdf';
+                
+                uploadZone.style.display = 'none';
+                selectedFileCard.style.display = 'flex';
 
                 if (isImage) {
                     targetContainer.style.display = "block";
@@ -141,7 +160,22 @@
                 statsBox.style.display = "none";
                 downloadLink.style.display = "none";
                 btnCompress.innerHTML = '<i class="fa-solid fa-compress"></i> COMPRESS FILE';
+            }
+
+            btnChangeFile.addEventListener('click', () => {
+                fileInput.value = '';
+                uploadZone.style.display = 'flex';
+                selectedFileCard.style.display = 'none';
+                targetContainer.style.display = 'none';
+                statsBox.style.display = 'none';
+                downloadLink.style.display = 'none';
             });
+
+            if (window.setupModernDropzone) {
+                window.setupModernDropzone(uploadZone, fileInput, handleSelectedFile);
+            } else {
+                fileInput.addEventListener('change', (e) => handleSelectedFile(e.target.files[0]));
+            }
 
             btnRecommend.addEventListener('click', () => {
                 targetInput.value = recommendedSizeMB.toFixed(2);

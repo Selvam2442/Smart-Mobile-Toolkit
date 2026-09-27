@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Split Bill & Tip Calculator | Smart Mobile Toolkit</title>
+    <meta name="description" content="Calculate bill splits and tip amounts easily for group dining, trips, and shared expenses with custom currency options and uneven split calculations offline.">
+    <meta name="keywords" content="split bill calculator, tip calculator, group expense divider, restaurant bill splitter, shared cost calculator">
+    <meta name="author" content="Smart Mobile Toolkit">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="Split Bill & Tip Calculator | Smart Mobile Toolkit">
+    <meta property="og:description" content="Calculate bill splits and tip amounts easily for group dining and shared expenses offline.">
+    <meta property="og:image" content="https://alaneditxz.online/Profile.png">
+    <meta property="og:url" content="https://alaneditxz.online/split-bill.html">
+    <meta property="og:type" content="website">
+
+    <!-- Schema.org JSON-LD -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Split Bill & Tip Calculator",
+      "url": "https://alaneditxz.online/split-bill.html",
+      "description": "Calculate bill splits and tip amounts easily for group dining and shared expenses offline.",
+      "applicationCategory": "UtilitiesApplication",
+      "operatingSystem": "All",
+      "offers": { "@type": "Offer", "price": "0" }
+    }
+    </script>
+
+    <!-- Bootstrap 5 CSS & Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    
+    <!-- Custom Design System -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Modern Glass Navbar -->
+    <nav class="navbar navbar-expand-lg glass-navbar fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html" aria-label="Smart Mobile Toolkit Home">
+                <i class="bi bi-cpu-fill me-2 text-info"></i>Smart Toolkit
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item"><a class="nav-link" href="index.html"><i class="bi bi-grid-fill"></i> Tools</a></li>
+                    <li class="nav-item"><a class="nav-link" href="about.html"><i class="bi bi-info-circle-fill"></i> About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="contact.html"><i class="bi bi-envelope-fill"></i> Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Container -->
+    <main class="container my-5 pt-3">
+        
+        <!-- Header -->
+        <div class="text-center mb-4">
+            <h1 class="fw-bold text-white mb-2">Split Bill &amp; Tip Calculator</h1>
+            <p class="text-muted">Divide group bills, calculate tips, and compute per-person shares instantly offline.</p>
+        </div>
+
+        <div class="row g-4 justify-content-center">
+            <div class="col-lg-8">
+                <div class="glass-card p-4">
+
+                    <!-- Bill Input & Currency -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-8 col-md-9">
+                            <label for="billAmount" class="form-label text-info fw-bold"><i class="bi bi-receipt me-2"></i>Total Bill Amount</label>
+                            <input type="number" id="billAmount" class="form-control glass-input form-control-lg" placeholder="e.g. 1500" step="0.01">
+                        </div>
+                        <div class="col-4 col-md-3">
+                            <label for="currencySelect" class="form-label text-muted small fw-bold">Currency</label>
+                            <select id="currencySelect" class="form-select glass-input form-select-lg">
+                                <option value="₹">₹ (INR)</option>
+                                <option value="$">$ (USD)</option>
+                                <option value="€">€ (EUR)</option>
+                                <option value="£">£ (GBP)</option>
+                                <option value="¥">¥ (JPY)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Tip Percentage Buttons -->
+                    <div class="mb-4">
+                        <label class="form-label text-info fw-bold mb-2"><i class="bi bi-heart-fill me-2"></i>Select Tip Percentage:</label>
+                        <div class="d-flex flex-wrap gap-2 mb-2">
+                            <button class="btn btn-outline-info tip-btn" data-tip="0" aria-label="Tip 0 percent">0%</button>
+                            <button class="btn btn-outline-info tip-btn" data-tip="5" aria-label="Tip 5 percent">5%</button>
+                            <button class="btn btn-outline-info tip-btn active" data-tip="10" aria-label="Tip 10 percent">10%</button>
+                            <button class="btn btn-outline-info tip-btn" data-tip="15" aria-label="Tip 15 percent">15%</button>
+                            <button class="btn btn-outline-info tip-btn" data-tip="20" aria-label="Tip 20 percent">20%</button>
+                        </div>
+                        <div class="row align-items-center g-2 mt-1">
+                            <div class="col-auto">
+                                <span class="text-muted small">Custom Tip:</span>
+                            </div>
+                            <div class="col-6 col-sm-4">
+                                <input type="number" id="customTip" class="form-control glass-input form-control-sm" placeholder="Custom %">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Number of People -->
+                    <div class="mb-4">
+                        <label for="numPeople" class="form-label text-info fw-bold"><i class="bi bi-people-fill me-2"></i>Number of People: <span id="peopleCount" class="badge bg-info text-dark ms-2">2</span></label>
+                        <div class="d-flex align-items-center gap-3">
+                            <button id="minusPerson" class="btn btn-outline-info rounded-circle px-3 py-2" aria-label="Decrease people count"><i class="bi bi-dash-lg"></i></button>
+                            <input type="range" id="numPeople" class="form-range flex-grow-1" min="1" max="25" value="2">
+                            <button id="plusPerson" class="btn btn-outline-info rounded-circle px-3 py-2" aria-label="Increase people count"><i class="bi bi-plus-lg"></i></button>
+                        </div>
+                    </div>
+
+                    <!-- Result Cards -->
+                    <div class="row g-3 mt-2 text-center">
+                        <div class="col-md-4">
+                            <div class="glass-panel p-3">
+                                <div class="text-muted small text-uppercase mb-1">Total Tip</div>
+                                <h3 id="totalTipDisplay" class="fw-bold text-info mb-0">₹0.00</h3>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="glass-panel p-3">
+                                <div class="text-muted small text-uppercase mb-1">Grand Total</div>
+                                <h3 id="grandTotalDisplay" class="fw-bold text-warning mb-0">₹0.00</h3>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="glass-panel p-3 border-info">
+                                <div class="text-muted small text-uppercase mb-1">Amount Per Person</div>
+                                <h2 id="perPersonDisplay" class="fw-bold text-success mb-0">₹0.00</h2>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p class="mb-0">&copy; 2026 Smart Mobile Toolkit. Calculated locally in your browser.</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="global-search.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const billAmount = document.getElementById('billAmount');
+            const currencySelect = document.getElementById('currencySelect');
+            const tipBtns = document.querySelectorAll('.tip-btn');
+            const customTip = document.getElementById('customTip');
+            const numPeople = document.getElementById('numPeople');
+            const peopleCount = document.getElementById('peopleCount');
+            const minusPerson = document.getElementById('minusPerson');
+            const plusPerson = document.getElementById('plusPerson');
+            const totalTipDisplay = document.getElementById('totalTipDisplay');
+            const grandTotalDisplay = document.getElementById('grandTotalDisplay');
+            const perPersonDisplay = document.getElementById('perPersonDisplay');
+
+            let currentTipPct = 10;
+
+            tipBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    tipBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    customTip.value = '';
+                    currentTipPct = parseFloat(btn.getAttribute('data-tip')) || 0;
+                    calculateSplit();
+                });
+            });
+
+            customTip.addEventListener('input', () => {
+                if (customTip.value !== '') {
+                    tipBtns.forEach(b => b.classList.remove('active'));
+                    currentTipPct = parseFloat(customTip.value) || 0;
+                }
+                calculateSplit();
+            });
+
+            billAmount.addEventListener('input', calculateSplit);
+            currencySelect.addEventListener('change', calculateSplit);
+
+            numPeople.addEventListener('input', () => {
+                peopleCount.textContent = numPeople.value;
+                calculateSplit();
+            });
+
+            minusPerson.addEventListener('click', () => {
+                if (parseInt(numPeople.value) > 1) {
+                    numPeople.value = parseInt(numPeople.value) - 1;
+                    peopleCount.textContent = numPeople.value;
+                    calculateSplit();
+                }
+            });
+
+            plusPerson.addEventListener('click', () => {
+                numPeople.value = parseInt(numPeople.value) + 1;
+                peopleCount.textContent = numPeople.value;
+                calculateSplit();
+            });
+
+            function calculateSplit() {
+                const bill = parseFloat(billAmount.value) || 0;
+                const people = parseInt(numPeople.value) || 1;
+                const symbol = currencySelect.value;
+
+                const tipVal = bill * (currentTipPct / 100);
+                const grandTotal = bill + tipVal;
+                const perPerson = grandTotal / people;
+
+                totalTipDisplay.textContent = `${symbol}${tipVal.toFixed(2)}`;
+                grandTotalDisplay.textContent = `${symbol}${grandTotal.toFixed(2)}`;
+                perPersonDisplay.textContent = `${symbol}${perPerson.toFixed(2)}`;
+            }
+        });
+    </script>
+</body>
+</html>

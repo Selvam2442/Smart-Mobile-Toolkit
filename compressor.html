@@ -179,12 +179,15 @@
                 uploadZone.style.display = 'none';
                 selectedFileCard.style.display = 'flex';
 
-                if (isImage) {
-                    targetContainer.style.display = "block";
-                    recommendedSizeMB = (file.size * 0.6) / (1024 * 1024);
-                    targetInput.value = recommendedSizeMB.toFixed(2);
+                // Show target container for all file types to allow manual entry
+                targetContainer.style.display = "block";
+                recommendedSizeMB = (file.size * 0.6) / (1024 * 1024);
+                targetInput.value = recommendedSizeMB.toFixed(2);
+                
+                if (!isImage) {
+                    document.getElementById('btn-recommend').innerHTML = '<i class="fa-solid fa-magic"></i> AUTO OPTIMIZE PDF';
                 } else {
-                    targetContainer.style.display = "none";
+                    document.getElementById('btn-recommend').innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> USE RECOMMENDED SIZE';
                 }
                 
                 statsBox.style.display = "none";

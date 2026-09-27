@@ -66,6 +66,33 @@
                     <label>Enter Text or URL</label>
                     <input type="text" id="qr-text" class="styled-input" placeholder="Type here to build matrix...">
                 </div>
+
+                <div class="row g-2 mb-3">
+                    <div class="col-6">
+                        <label class="text-muted small">QR Color</label>
+                        <input type="color" id="qr-color-dark" class="form-control form-control-color w-100 bg-transparent border-secondary" value="#000000" title="QR Color">
+                    </div>
+                    <div class="col-6">
+                        <label class="text-muted small">Background</label>
+                        <input type="color" id="qr-color-light" class="form-control form-control-color w-100 bg-transparent border-secondary" value="#ffffff" title="Background Color">
+                    </div>
+                </div>
+
+                <div class="input-group mb-3">
+                    <label>Templates (Theme)</label>
+                    <select id="qr-template" class="form-select glass-input border-secondary" style="background-color: rgba(255,255,255,0.05); color: #fff;">
+                        <option value="default" style="color: #000;">Default (Black & White)</option>
+                        <option value="cyber" style="color: #000;">Cyber Blue (Cyan/Black)</option>
+                        <option value="neon" style="color: #000;">Neon Green (Green/Black)</option>
+                        <option value="sunset" style="color: #000;">Sunset (Orange/White)</option>
+                    </select>
+                </div>
+
+                <div class="input-group mb-4">
+                    <label>Bottom Text (Optional)</label>
+                    <input type="text" id="qr-label" class="styled-input" placeholder="e.g. Scan Me">
+                </div>
+
                 <button id="btn-gen" class="btn custom-btn w-100"><i class="fa-solid fa-wand-magic-sparkles"></i> GENERATE QR</button>
                 
                 <div id="qr-output" style="display: none;">
@@ -150,18 +177,70 @@
             const qrTargetBox = document.getElementById('qrcode-canvas');
             let qrcodeInstance = null;
 
+            const qrTemplate = document.getElementById('qr-template');
+            const qrColorDark = document.getElementById('qr-color-dark');
+            const qrColorLight = document.getElementById('qr-color-light');
+
+            if (qrTemplate) {
+                qrTemplate.addEventListener('change', (e) => {
+                    const theme = e.target.value;
+                    if (theme === 'cyber') {
+                        qrColorDark.value = '#00f0ff';
+                        qrColorLight.value = '#0a0a0a';
+                    } else if (theme === 'neon') {
+                        qrColorDark.value = '#39ff14';
+                        qrColorLight.value = '#000000';
+                    } else if (theme === 'sunset') {
+                        qrColorDark.value = '#ff5e00';
+                        qrColorLight.value = '#ffffff';
+                    } else {
+                        qrColorDark.value = '#000000';
+                        qrColorLight.value = '#ffffff';
+                    }
+                });
+            }
+
             document.getElementById('btn-gen').addEventListener('click', () => {
                 const text = document.getElementById('qr-text').value.trim();
                 if (!text) return alert("Please enter text content or link reference.");
+
+                const cDark = qrColorDark ? qrColorDark.value : '#000000';
+                const cLight = qrColorLight ? qrColorLight.value : '#ffffff';
+                const labelText = document.getElementById('qr-label') ? document.getElementById('qr-label').value.trim() : '';
 
                 qrTargetBox.innerHTML = "";
                 qrOutputContainer.style.display = "block";
 
                 qrcodeInstance = new QRCode(qrTargetBox, {
                     text: text, width: 200, height: 200,
-                    colorDark: "#000000", colorLight: "#ffffff",
+                    colorDark: cDark, colorLight: cLight,
                     correctLevel: QRCode.CorrectLevel.H
                 });
+
+                if (labelText) {
+                    setTimeout(() => {
+                        const canvas = qrTargetBox.querySelector('canvas');
+                        if (canvas) {
+                            const newCanvas = document.createElement('canvas');
+                            const ctx = newCanvas.getContext('2d');
+                            newCanvas.width = canvas.width;
+                            newCanvas.height = canvas.height + 40;
+                            
+                            ctx.fillStyle = cLight;
+                            ctx.fillRect(0, 0, newCanvas.width, newCanvas.height);
+                            
+                            ctx.drawImage(canvas, 0, 0);
+                            
+                            ctx.fillStyle = cDark;
+                            ctx.font = "bold 16px Arial";
+                            ctx.textAlign = "center";
+                            ctx.fillText(labelText, newCanvas.width / 2, canvas.height + 25);
+                            
+                            qrTargetBox.innerHTML = "";
+                            qrTargetBox.appendChild(newCanvas);
+                        }
+                    }, 50);
+                }
             });
 
             // 🔥 FIX: Direct Canvas Data Extraction to prevent page download bug 🔥

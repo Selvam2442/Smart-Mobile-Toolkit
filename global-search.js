@@ -429,13 +429,25 @@ function injectThemeToggleBtn() {
 }
 
 // Utility helper to setup modern file input drag & drop behavior
-window.setupModernDropzone = function(dropzoneId, fileInputId, fileCardId, onFileSelected) {
+window.setupModernDropzone = function(dropzoneId, fileInputId, arg3, arg4) {
     const dropzoneEl = typeof dropzoneId === 'string' ? document.getElementById(dropzoneId) : dropzoneId;
     const fileInputEl = typeof fileInputId === 'string' ? document.getElementById(fileInputId) : fileInputId;
-    const fileCardEl = typeof fileCardId === 'string' ? document.getElementById(fileCardId) : fileCardId;
 
-    if (!dropzoneEl || !fileInputEl) return;
+    if (!dropzoneEl || !fileInputEl) {
+        console.warn('Dropzone setup failed: missing elements', { dropzoneId, fileInputId });
+        return;
+    }
     
+    let fileCardEl = null;
+    let onFileSelected = null;
+
+    if (typeof arg3 === 'function') {
+        onFileSelected = arg3;
+    } else {
+        fileCardEl = typeof arg3 === 'string' ? document.getElementById(arg3) : arg3;
+        onFileSelected = arg4;
+    }
+
     ['dragenter', 'dragover'].forEach(eventName => {
         dropzoneEl.addEventListener(eventName, (e) => {
             e.preventDefault(); e.stopPropagation();
@@ -453,6 +465,7 @@ window.setupModernDropzone = function(dropzoneId, fileInputId, fileCardId, onFil
     const handleFiles = (files) => {
         if (!files || files.length === 0) return;
         const file = files[0];
+        
         if (fileCardEl) {
             const nameEl = fileCardEl.querySelector('.dz-filename, .file-name');
             const sizeEl = fileCardEl.querySelector('.dz-filesize, .file-size');
@@ -461,8 +474,37 @@ window.setupModernDropzone = function(dropzoneId, fileInputId, fileCardId, onFil
             fileCardEl.classList.remove('d-none');
             const contentEl = dropzoneEl.querySelector('.dz-content, .dropzone-text-group');
             if (contentEl) contentEl.classList.add('d-none');
+        } else {
+            // Only inject the card if the tool does not completely hide the dropzone
+            // We check this by seeing if the tool's callback is known to hide the dropzone
+            // To be safe, we'll append the injected card, but the tool's own callback might hide it
+            const contentEl = dropzoneEl.querySelector('.dz-content, .dropzone-text-group');
+            if (contentEl) contentEl.style.display = 'none';
+
+            let injectedCard = dropzoneEl.querySelector('.injected-file-card');
+            if (!injectedCard) {
+                injectedCard = document.createElement('div');
+                injectedCard.className = 'injected-file-card text-center p-3 w-100';
+                injectedCard.innerHTML = `
+                    <i class="fa-solid fa-file-circle-check fa-3x mb-2" style="color: var(--primary-glow);"></i>
+                    <h5 class="file-name text-truncate text-white" style="max-width: 90%; margin: 0 auto; font-weight: 600;"></h5>
+                    <p class="file-size text-muted small mb-3"></p>
+                    <button class="btn btn-sm custom-btn btn-secondary remove-file-btn" type="button" style="padding: 6px 12px; font-size: 0.8rem;"><i class="fa-solid fa-times"></i> CHANGE FILE</button>
+                `;
+                dropzoneEl.appendChild(injectedCard);
+            }
+            injectedCard.style.display = 'block';
+            injectedCard.querySelector('.file-name').textContent = file.name;
+            injectedCard.querySelector('.file-size').textContent = `${(file.size / 1024).toFixed(1)} KB`;
         }
-        if (typeof onFileSelected === 'function') onFileSelected(file, files);
+
+        if (typeof onFileSelected === 'function') {
+            try {
+                onFileSelected(file, files);
+            } catch (err) {
+                console.error('Error in onFileSelected callback:', err);
+            }
+        }
     };
 
     dropzoneEl.addEventListener('drop', (e) => {
@@ -481,10 +523,19 @@ window.setupModernDropzone = function(dropzoneId, fileInputId, fileCardId, onFil
                 fileCardEl.classList.add('d-none');
                 const contentEl = dropzoneEl.querySelector('.dz-content, .dropzone-text-group');
                 if (contentEl) contentEl.classList.remove('d-none');
+            } else {
+                const injectedCard = dropzoneEl.querySelector('.injected-file-card');
+                if (injectedCard) injectedCard.style.display = 'none';
+                const contentEl = dropzoneEl.querySelector('.dz-content, .dropzone-text-group');
+                if (contentEl) contentEl.style.display = '';
             }
-            if (typeof onFileSelected === 'function') onFileSelected(null, null);
+            if (typeof onFileSelected === 'function') {
+                try { onFileSelected(null, null); } catch (err) {}
+            }
             return;
         }
+        
+        // Prevent clicking if they clicked the input itself, to avoid double-firing
         if (e.target !== fileInputEl) {
             fileInputEl.click();
         }
@@ -536,5 +587,17 @@ if ('serviceWorker' in navigator) {
 document.addEventListener('DOMContentLoaded', () => {
     injectGlobalSearchModal();
     injectThemeToggleBtn();
+    
+    // Global back button handler to preserve search state and scroll position
+    const backBtns = document.querySelectorAll('.back-btn');
+    backBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            // Check if we came from our own site
+            if (document.referrer && document.referrer.includes(window.location.hostname)) {
+                e.preventDefault();
+                window.history.back();
+            }
+            // If they landed directly on this page, it falls back to the default href="index.html"
+        });
+    });
 });
-

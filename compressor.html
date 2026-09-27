@@ -146,6 +146,17 @@
             const selectedFileIcon = document.getElementById('selectedFileIcon');
             const btnChangeFile = document.getElementById('btnChangeFile');
 
+            // FIX: Add missing DOM references
+            const targetInput = document.getElementById('target-size');
+            const targetContainer = document.getElementById('target-size-container');
+            const statsBox = document.getElementById('stats-box');
+            const btnCompress = document.getElementById('btn-compress');
+            const btnRecommend = document.getElementById('btn-recommend');
+            const sizeOld = document.getElementById('size-old');
+            const sizeNew = document.getElementById('size-new');
+            const statusText = document.getElementById('status-text');
+            const downloadLink = document.getElementById('download-link');
+
             let recommendedSizeMB = 0;
             let currentFileType = "";
 

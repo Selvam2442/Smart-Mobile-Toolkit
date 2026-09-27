@@ -537,6 +537,15 @@ window.setupModernDropzone = function(dropzoneId, fileInputId, arg3, arg4) {
         
         // Prevent clicking if they clicked the input itself, to avoid double-firing
         if (e.target !== fileInputEl) {
+            // FIX for iOS Safari: remove display:none temporarily because iOS Safari blocks .click() on display:none elements
+            if (window.getComputedStyle(fileInputEl).display === 'none' || fileInputEl.style.display === 'none') {
+                fileInputEl.style.display = 'block';
+                fileInputEl.style.position = 'absolute';
+                fileInputEl.style.opacity = '0';
+                fileInputEl.style.zIndex = '-1';
+                fileInputEl.style.width = '1px';
+                fileInputEl.style.height = '1px';
+            }
             fileInputEl.click();
         }
     });

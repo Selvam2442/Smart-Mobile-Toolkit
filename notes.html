@@ -19,6 +19,7 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script defer src="https://cdn.vercel-insights.com/v1/script.js"></script>
+    <script src="global-search.js"></script>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg glass-navbar fixed-top">
@@ -52,7 +53,7 @@
                     <button id="create-new-btn" class="btn custom-btn" style="flex: 2; min-width: 150px; margin: 0;" aria-label="Create New Note"><i class="fa-solid fa-plus"></i> CREATE NEW NOTE</button>
                     <button id="btn-export-notes" class="btn custom-btn btn-secondary" style="flex: 1; min-width: 110px; padding: 10px; font-size: 0.85rem;" aria-label="Export Notes JSON"><i class="fa-solid fa-file-export"></i> Export</button>
                     <button id="btn-import-notes" class="btn custom-btn btn-secondary" style="flex: 1; min-width: 110px; padding: 10px; font-size: 0.85rem;" aria-label="Import Notes JSON"><i class="fa-solid fa-file-import"></i> Import</button>
-                    <input type="file" id="notes-import-input" accept=".json" style="display: none;">
+                    <input type="file" id="notes-import-input" accept=".json" style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0;">
                 </div>
                 <div id="notes-grid"></div>
             </div>
@@ -256,6 +257,5 @@
             renderNotes();
         });
     </script>
-    <script src="global-search.js"></script>
 </body>
 </html>

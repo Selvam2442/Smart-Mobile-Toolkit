@@ -19,6 +19,7 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script defer src="https://cdn.vercel-insights.com/v1/script.js"></script>
+    <script src="global-search.js"></script>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg glass-navbar fixed-top">
@@ -100,6 +101,5 @@
             copyBtn.addEventListener('click', () => { if (!outTxt.value) return; navigator.clipboard.writeText(outTxt.value); const og = copyBtn.innerHTML; copyBtn.innerHTML = '<i class="fa-solid fa-check"></i> COPIED!'; setTimeout(() => copyBtn.innerHTML = og, 1500); });
         });
     </script>
-    <script src="global-search.js"></script>
 </body>
 </html>

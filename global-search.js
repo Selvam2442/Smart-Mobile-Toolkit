@@ -438,16 +438,22 @@ window.setupModernDropzone = function(dropzoneId, fileInputId, arg3, arg4) {
         return;
     }
     
-    // FORCE NATIVE FILE SELECTION FOR MOBILE RELIABILITY
+    // SAFELY HIDE FILE INPUT (iOS Safari Compatible Hack)
+    // We do NOT use display:none because iOS blocks programmatic clicks on it.
+    // Instead, we visually clip it while leaving it technically rendered.
     fileInputEl.style.display = 'block';
-    fileInputEl.style.opacity = '1';
-    fileInputEl.style.position = 'relative';
-    fileInputEl.style.zIndex = '1';
-    fileInputEl.style.margin = '15px auto 0 auto';
-    fileInputEl.style.width = '80%';
-    fileInputEl.style.maxWidth = '300px';
-    fileInputEl.style.color = '#fff';
-    fileInputEl.classList.add('form-control', 'bg-dark', 'text-white', 'border-secondary');
+    fileInputEl.style.position = 'absolute';
+    fileInputEl.style.width = '1px';
+    fileInputEl.style.height = '1px';
+    fileInputEl.style.padding = '0';
+    fileInputEl.style.margin = '-1px';
+    fileInputEl.style.overflow = 'hidden';
+    fileInputEl.style.clip = 'rect(0, 0, 0, 0)';
+    fileInputEl.style.border = '0';
+    fileInputEl.style.opacity = '0';
+    
+    // Remove ugly native styles if previously applied
+    fileInputEl.classList.remove('form-control', 'bg-dark', 'text-white', 'border-secondary');
 
     let fileCardEl = null;
     let onFileSelected = null;
@@ -546,10 +552,12 @@ window.setupModernDropzone = function(dropzoneId, fileInputId, arg3, arg4) {
             return;
         }
         
-        // Let the user click the native file input instead of forcing a programmatic click.
-        // We only trigger it if they explicitly clicked the dropzone text/icon, NOT if they clicked the input itself.
-        // Wait, actually, since the input is clearly visible now, let's just let them click it!
-        // No programmatic clicks at all! This guarantees 100% device compatibility.
+        
+        // This programmatic click WILL work on iOS because the file input is NOT display:none
+        // and it is triggered by a direct user interaction (the click on dropzoneEl).
+        if (e.target !== fileInputEl) {
+            fileInputEl.click();
+        }
     });
 
     dropzoneEl.addEventListener('keydown', (e) => {

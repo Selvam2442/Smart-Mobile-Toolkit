@@ -20,6 +20,7 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script defer src="https://cdn.vercel-insights.com/v1/script.js"></script>
+    <script src="global-search.js"></script>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg glass-navbar fixed-top">
@@ -64,7 +65,7 @@
                 <button id="btn-export-csv" class="btn custom-btn btn-secondary" style="flex: 1; min-width: 120px; padding: 10px; font-size: 0.85rem;" aria-label="Export Expenses to CSV"><i class="fa-solid fa-file-csv"></i> Export CSV</button>
                 <button id="btn-export-json" class="btn custom-btn btn-secondary" style="flex: 1; min-width: 120px; padding: 10px; font-size: 0.85rem;" aria-label="Export Expenses to JSON"><i class="fa-solid fa-file-code"></i> Export JSON</button>
                 <button id="btn-import-json" class="btn custom-btn btn-secondary" style="flex: 1; min-width: 120px; padding: 10px; font-size: 0.85rem;" aria-label="Import Expenses JSON"><i class="fa-solid fa-file-import"></i> Import Data</button>
-                <input type="file" id="import-file-input" accept=".json" style="display: none;">
+                <input type="file" id="import-file-input" accept=".json" style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0;">
             </div>
 
             <div style="display: flex; gap: 10px; margin-bottom: 15px;">
@@ -308,6 +309,5 @@
             updateUI();
         });
     </script>
-    <script src="global-search.js"></script>
 </body>
 </html>

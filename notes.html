@@ -2,24 +2,724 @@
 <html lang="en" data-bs-theme="dark">
 <head>
     <meta name="google-site-verification" content="wVRzYZ4sMCmLt2Nk0M3X0GJHZVkDaEkcYBNBnH51abw">
-
     <meta name="google-adsense-account" content="ca-pub-8050432929862649">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <title>Advanced Notes - Rich Text Notepad & To-Do List | Smart Mobile Toolkit</title>
-    <meta name="description" content="Rich-text notepad with formatting, interactive checklists, and local autosave.">
-    <meta name="keywords" content="advanced notes, rich text notepad, interactive to do list, daily diary, tasks">
+    <title>Advanced Notes - Rich Text Notepad & Task Manager | Smart Mobile Toolkit</title>
+    <meta name="description" content="Modern rich-text notepad with formatting, interactive checklists, category tagging, instant search, and local offline autosave.">
+    <meta name="keywords" content="advanced notes, rich text notepad, interactive to do list, daily diary, tasks, offline notes app">
     <meta name="author" content="Maria Antony Selvam S">
     <link rel="canonical" href="https://alaneditxz.online/notes.html">
-    <meta property="og:title" content="Advanced Notes - Rich Text Notepad & To-Do List | Smart Mobile Toolkit">
-    <meta property="og:description" content="Rich-text notepad with formatting, interactive checklists, and local autosave.">
+    <meta property="og:title" content="Advanced Notes - Rich Text Notepad & Task Manager | Smart Mobile Toolkit">
+    <meta property="og:description" content="Modern rich-text notepad with formatting, interactive checklists, category tagging, instant search, and local offline autosave.">
     <meta property="og:url" content="https://alaneditxz.online/notes.html">
+    <link rel="icon" type="image/svg+xml" href="logo.svg">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script defer src="https://cdn.vercel-insights.com/v1/script.js"></script>
     <script src="global-search.js"></script>
+
+    <style>
+        /* Notes App Specific Modern Styling */
+        :root {
+            --color-cat-default: #00f0ff;
+            --color-cat-work: #3b82f6;
+            --color-cat-ideas: #eab308;
+            --color-cat-tasks: #10b981;
+            --color-cat-personal: #aa00ff;
+            --color-cat-study: #f43f5e;
+        }
+
+        .notes-stat-pill {
+            background: rgba(0, 240, 255, 0.1);
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            color: var(--primary-glow);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Search and Filter Controls */
+        .notes-controls-box {
+            background: rgba(15, 15, 25, 0.6);
+            border: 1px solid var(--surface-border);
+            border-radius: 18px;
+            padding: 16px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .notes-search-wrapper {
+            position: relative;
+            margin-bottom: 14px;
+        }
+
+        .notes-search-input {
+            width: 100%;
+            padding: 12px 42px 12px 42px;
+            background: rgba(0, 0, 0, 0.45);
+            border: 1px solid var(--surface-border);
+            border-radius: 14px;
+            color: #fff;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .notes-search-input:focus {
+            border-color: var(--primary-glow);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.25);
+            background: rgba(0, 0, 0, 0.6);
+        }
+
+        .notes-search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            pointer-events: none;
+        }
+
+        .notes-search-clear {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1rem;
+            cursor: pointer;
+            padding: 4px 8px;
+            display: none;
+        }
+        .notes-search-clear:hover { color: #fff; }
+
+        .category-filter-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 6px;
+            scrollbar-width: none;
+        }
+        .category-filter-bar::-webkit-scrollbar { display: none; }
+
+        .cat-chip {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--surface-border);
+            color: var(--text-muted);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .cat-chip:hover {
+            color: #fff;
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .cat-chip.active {
+            background: rgba(0, 240, 255, 0.15);
+            border-color: var(--primary-glow);
+            color: var(--primary-glow);
+            box-shadow: 0 0 12px rgba(0, 240, 255, 0.25);
+        }
+
+        .notes-toolbar-actions {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 14px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .notes-sort-select {
+            background: rgba(0,0,0,0.5);
+            border: 1px solid var(--surface-border);
+            color: var(--text-muted);
+            padding: 6px 12px;
+            border-radius: 10px;
+            font-size: 0.82rem;
+            outline: none;
+            cursor: pointer;
+        }
+        .notes-sort-select:focus { border-color: var(--primary-glow); }
+
+        .view-toggle-btn {
+            background: rgba(0,0,0,0.5);
+            border: 1px solid var(--surface-border);
+            color: var(--text-muted);
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .view-toggle-btn.active, .view-toggle-btn:hover {
+            color: var(--primary-glow);
+            border-color: var(--primary-glow);
+        }
+
+        /* Note Cards Grid */
+        #notes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+            gap: 16px;
+            margin-top: 15px;
+        }
+
+        #notes-grid.list-view-mode {
+            grid-template-columns: 1fr;
+        }
+
+        .note-card {
+            background: linear-gradient(145deg, rgba(25, 25, 38, 0.7), rgba(12, 12, 20, 0.85));
+            border: 1px solid var(--surface-border);
+            border-radius: 18px;
+            padding: 18px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+            overflow: hidden;
+            border-left: 4px solid var(--primary-glow);
+        }
+
+        .note-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(0, 240, 255, 0.4);
+            box-shadow: 0 14px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 240, 255, 0.12);
+        }
+
+        .note-card.is-pinned {
+            border-top: 1px solid rgba(234, 179, 8, 0.4);
+            background: linear-gradient(145deg, rgba(35, 30, 20, 0.65), rgba(16, 14, 22, 0.85));
+        }
+
+        .note-card-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .note-card-title {
+            margin: 0;
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #ffffff;
+            line-height: 1.35;
+            word-break: break-word;
+            flex-grow: 1;
+        }
+
+        .note-badge-group {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        .note-tag {
+            font-size: 0.68rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            padding: 2px 8px;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .note-card-snippet {
+            color: #b3b3cb;
+            font-size: 0.88rem;
+            line-height: 1.5;
+            margin-bottom: 14px;
+            display: -webkit-box;
+            -webkit-line-clamp: 4;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            word-break: break-word;
+            flex-grow: 1;
+        }
+
+        #notes-grid.list-view-mode .note-card-snippet {
+            -webkit-line-clamp: 2;
+        }
+
+        /* Checkbox progress bar in card */
+        .card-todo-progress {
+            margin-bottom: 12px;
+            padding: 8px 10px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .card-todo-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+        .card-todo-bar {
+            height: 4px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .card-todo-fill {
+            height: 100%;
+            background: var(--primary-glow);
+            transition: width 0.3s ease;
+        }
+
+        .note-card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            padding-top: 10px;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            margin-top: auto;
+        }
+
+        .note-card-date {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .note-actions {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .card-action-btn {
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--text-muted);
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+
+        .card-action-btn:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        .card-action-btn.pin-btn:hover, .card-action-btn.pin-btn.active {
+            color: #eab308;
+            background: rgba(234, 179, 8, 0.15);
+            border-color: rgba(234, 179, 8, 0.3);
+        }
+        .card-action-btn.del-btn:hover {
+            color: var(--danger-color);
+            background: rgba(255, 68, 68, 0.15);
+            border-color: rgba(255, 68, 68, 0.3);
+        }
+
+        /* Category accent borders */
+        .cat-border-default { border-left-color: var(--color-cat-default); }
+        .cat-border-work { border-left-color: var(--color-cat-work); }
+        .cat-border-ideas { border-left-color: var(--color-cat-ideas); }
+        .cat-border-tasks { border-left-color: var(--color-cat-tasks); }
+        .cat-border-personal { border-left-color: var(--color-cat-personal); }
+        .cat-border-study { border-left-color: var(--color-cat-study); }
+
+        .cat-badge-default { color: var(--color-cat-default); border: 1px solid rgba(0, 240, 255, 0.3); }
+        .cat-badge-work { color: var(--color-cat-work); border: 1px solid rgba(59, 130, 246, 0.3); }
+        .cat-badge-ideas { color: var(--color-cat-ideas); border: 1px solid rgba(234, 179, 8, 0.3); }
+        .cat-badge-tasks { color: var(--color-cat-tasks); border: 1px solid rgba(16, 185, 129, 0.3); }
+        .cat-badge-personal { color: var(--color-cat-personal); border: 1px solid rgba(170, 0, 255, 0.3); }
+        .cat-badge-study { color: var(--color-cat-study); border: 1px solid rgba(244, 63, 94, 0.3); }
+
+        /* Section dividers */
+        .notes-section-heading {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+            color: var(--text-muted);
+            margin: 20px 0 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Modern Editor View Styling */
+        #editor-panel {
+            min-height: 78vh;
+            border-radius: 24px;
+            position: relative;
+            background: linear-gradient(150deg, rgba(20, 20, 32, 0.75), rgba(10, 10, 16, 0.92));
+            backdrop-filter: blur(25px);
+            border: 1px solid var(--surface-border);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .editor-top-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding-bottom: 16px;
+            margin-bottom: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            flex-wrap: wrap;
+        }
+
+        .editor-nav-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .editor-nav-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-left: auto;
+        }
+
+        .save-indicator {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            background: rgba(255,255,255,0.04);
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.06);
+            transition: all 0.3s ease;
+        }
+        .save-indicator.saving {
+            color: #eab308;
+            border-color: rgba(234, 179, 8, 0.3);
+        }
+        .save-indicator.saved {
+            color: #10b981;
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+
+        .editor-title-wrap {
+            margin-bottom: 16px;
+        }
+
+        #note-title-input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            font-size: 1.65rem;
+            font-weight: 700;
+            padding: 8px 4px;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        #note-title-input:focus {
+            border-bottom-color: var(--primary-glow);
+        }
+
+        /* Category Picker Row */
+        .category-picker-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 14px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+        .category-picker-row span {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            margin-right: 4px;
+            white-space: nowrap;
+        }
+        .color-dot-btn {
+            background: transparent;
+            border: 1px solid var(--surface-border);
+            padding: 4px 10px;
+            border-radius: 14px;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+        }
+        .color-dot-btn .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .color-dot-btn:hover { color: #fff; border-color: rgba(255,255,255,0.25); }
+        .color-dot-btn.active {
+            border-color: #fff;
+            color: #fff;
+            background: rgba(255, 255, 255, 0.1);
+            font-weight: 600;
+        }
+
+        /* Rich Text Formatting Toolbar */
+        .rich-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 6px;
+            background: rgba(0, 0, 0, 0.45);
+            border: 1px solid var(--surface-border);
+            border-radius: 14px;
+            padding: 8px;
+            margin-bottom: 16px;
+        }
+
+        .tb-group {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            position: relative;
+        }
+
+        .tb-divider {
+            width: 1px;
+            height: 22px;
+            background: rgba(255, 255, 255, 0.1);
+            margin: 0 3px;
+        }
+
+        .tool-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid transparent;
+            color: #d1d5db;
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            outline: none;
+        }
+
+        .tool-btn:hover {
+            background: rgba(0, 240, 255, 0.15);
+            border-color: rgba(0, 240, 255, 0.3);
+            color: var(--primary-glow);
+            transform: translateY(-1px);
+        }
+
+        .tool-btn:active {
+            transform: scale(0.96);
+        }
+
+        /* Editor Area */
+        #editor-area {
+            flex-grow: 1;
+            min-height: 380px;
+            padding: 16px;
+            background: rgba(0, 0, 0, 0.35);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+            color: #f1f5f9;
+            font-size: 1.05rem;
+            line-height: 1.7;
+            outline: none;
+            overflow-y: auto;
+            text-align: left;
+            word-break: break-word;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3) inset;
+        }
+
+        #editor-area:focus {
+            border-color: rgba(0, 240, 255, 0.25);
+        }
+
+        #editor-area[placeholder]:empty:before {
+            content: attr(placeholder);
+            color: var(--text-muted);
+            cursor: text;
+        }
+
+        #editor-area h1 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #fff;
+            margin: 16px 0 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            padding-bottom: 6px;
+        }
+
+        #editor-area h2 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #fff;
+            margin: 14px 0 6px 0;
+        }
+
+        #editor-area blockquote {
+            border-left: 3px solid var(--primary-glow);
+            padding-left: 14px;
+            margin: 12px 0;
+            color: #94a3b8;
+            font-style: italic;
+            background: rgba(0, 240, 255, 0.04);
+            border-radius: 0 8px 8px 0;
+            padding: 8px 14px;
+        }
+
+        #editor-area pre {
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid var(--surface-border);
+            border-radius: 8px;
+            padding: 10px;
+            color: var(--primary-glow);
+            font-family: monospace;
+            overflow-x: auto;
+        }
+
+        #editor-area mark {
+            background-color: rgba(234, 179, 8, 0.35);
+            color: #fff;
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+
+        #editor-area ul, #editor-area ol {
+            padding-left: 24px;
+            margin-bottom: 12px;
+        }
+
+        #editor-area input[type="checkbox"] {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border: 2px solid var(--primary-glow);
+            border-radius: 5px;
+            outline: none;
+            cursor: pointer;
+            vertical-align: -3px;
+            margin-right: 8px;
+            position: relative;
+            background: transparent;
+            transition: all 0.2s ease;
+        }
+
+        #editor-area input[type="checkbox"]:checked {
+            background: var(--primary-glow);
+            border-color: var(--primary-glow);
+        }
+
+        #editor-area input[type="checkbox"]:checked::after {
+            content: '\f00c';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            color: #000;
+            font-size: 11px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Editor Footer Stats */
+        .editor-footer-stats {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 14px;
+            margin-top: 14px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .stats-badge-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* Fullscreen Mode */
+        #editor-panel.fullscreen-active {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1050;
+            border-radius: 0;
+            margin: 0;
+            padding: 25px 35px;
+            background: #08080f;
+            overflow-y: auto;
+        }
+
+        @media (max-width: 600px) {
+            #editor-panel.fullscreen-active {
+                padding: 15px;
+            }
+            .tool-btn {
+                width: 32px;
+                height: 32px;
+                font-size: 0.8rem;
+            }
+            #notes-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg glass-navbar fixed-top">
@@ -33,6 +733,11 @@
             <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                 <ul class="navbar-nav">
                     <li class="nav-item"><a class="nav-link" href="index.html"><i class="fa-solid fa-house"></i> Home</a></li>
+                    <li class="nav-item">
+                        <button class="nav-link bg-transparent border-0" data-bs-toggle="modal" data-bs-target="#globalSearchModal" style="cursor: pointer;">
+                            <i class="fa-solid fa-magnifying-glass"></i> Search
+                        </button>
+                    </li>
                     <li class="nav-item"><a class="nav-link" href="about.html"><i class="fa-solid fa-circle-info"></i> About</a></li>
                     <li class="nav-item"><a class="nav-link" href="contact.html"><i class="fa-solid fa-envelope"></i> Contact</a></li>
                 </ul>
@@ -41,43 +746,171 @@
     </nav>
 
     <div class="app-container" id="main-container">
+        <!-- LIST VIEW -->
         <div id="list-view">
             <div class="tool-header">
                 <a href="index.html" class="back-btn" aria-label="Go Back to Home"><i class="fa-solid fa-arrow-left"></i></a>
-                <h2 class="m-0">Notes Library</h2>
+                <div class="d-flex align-items-center gap-2">
+                    <h2 class="m-0">Notes & Docs</h2>
+                    <span id="notes-count-badge" class="notes-stat-pill"><i class="fa-solid fa-file-lines"></i> 0</span>
+                </div>
                 <button class="info-btn" data-bs-toggle="modal" data-bs-target="#infoModal" aria-label="Tool Information"><i class="fa-solid fa-info"></i></button>
             </div>
             
             <div class="tool-panel">
-                <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
-                    <button id="create-new-btn" class="btn custom-btn" style="flex: 2; min-width: 150px; margin: 0;" aria-label="Create New Note"><i class="fa-solid fa-plus"></i> CREATE NEW NOTE</button>
-                    <button id="btn-export-notes" class="btn custom-btn btn-secondary" style="flex: 1; min-width: 110px; padding: 10px; font-size: 0.85rem;" aria-label="Export Notes JSON"><i class="fa-solid fa-file-export"></i> Export</button>
-                    <button id="btn-import-notes" class="btn custom-btn btn-secondary" style="flex: 1; min-width: 110px; padding: 10px; font-size: 0.85rem;" aria-label="Import Notes JSON"><i class="fa-solid fa-file-import"></i> Import</button>
+                <!-- Top Primary Action Row -->
+                <div style="display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap;">
+                    <button id="create-new-btn" class="btn custom-btn" style="flex: 2; min-width: 170px; margin: 0;" aria-label="Create New Note">
+                        <i class="fa-solid fa-plus"></i> NEW NOTE
+                    </button>
+                    <button id="btn-export-notes" class="btn custom-btn btn-secondary" style="flex: 1; min-width: 105px; padding: 12px; font-size: 0.85rem;" aria-label="Export Notes JSON">
+                        <i class="fa-solid fa-file-export"></i> Backup
+                    </button>
+                    <button id="btn-import-notes" class="btn custom-btn btn-secondary" style="flex: 1; min-width: 105px; padding: 12px; font-size: 0.85rem;" aria-label="Import Notes JSON">
+                        <i class="fa-solid fa-file-import"></i> Restore
+                    </button>
                     <input type="file" id="notes-import-input" accept=".json" style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0;">
                 </div>
+
+                <!-- Modern Search & Filter Controls Box -->
+                <div class="notes-controls-box text-start">
+                    <div class="notes-search-wrapper">
+                        <i class="fa-solid fa-magnifying-glass notes-search-icon"></i>
+                        <input type="text" id="notes-search-input" class="notes-search-input" placeholder="Search notes by title or content...">
+                        <button type="button" id="notes-search-clear" class="notes-search-clear" aria-label="Clear Search"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+
+                    <!-- Filter Category Chips -->
+                    <div class="category-filter-bar" id="category-filter-bar">
+                        <button type="button" class="cat-chip active" data-filter="all"><i class="fa-solid fa-layer-group"></i> All</button>
+                        <button type="button" class="cat-chip" data-filter="pinned"><i class="fa-solid fa-thumbtack text-warning"></i> Pinned</button>
+                        <button type="button" class="cat-chip" data-filter="tasks"><i class="fa-solid fa-square-check text-success"></i> Tasks</button>
+                        <button type="button" class="cat-chip" data-filter="ideas"><i class="fa-solid fa-lightbulb text-warning"></i> Ideas</button>
+                        <button type="button" class="cat-chip" data-filter="work"><i class="fa-solid fa-briefcase text-primary"></i> Work</button>
+                        <button type="button" class="cat-chip" data-filter="personal"><i class="fa-solid fa-user" style="color: var(--secondary-glow);"></i> Personal</button>
+                        <button type="button" class="cat-chip" data-filter="study"><i class="fa-solid fa-graduation-cap text-danger"></i> Study</button>
+                    </div>
+
+                    <div class="notes-toolbar-actions">
+                        <div class="d-flex align-items-center gap-2">
+                            <span style="font-size: 0.78rem; color: var(--text-muted);"><i class="fa-solid fa-arrow-down-short-wide"></i> Sort:</span>
+                            <select id="notes-sort-select" class="notes-sort-select" aria-label="Sort Notes">
+                                <option value="updated-desc">Recently Edited</option>
+                                <option value="updated-asc">Oldest First</option>
+                                <option value="title-asc">Title (A - Z)</option>
+                                <option value="title-desc">Title (Z - A)</option>
+                            </select>
+                        </div>
+                        <div class="d-flex align-items-center gap-1">
+                            <button type="button" id="view-grid-btn" class="view-toggle-btn active" title="Grid View" aria-label="Grid View"><i class="fa-solid fa-grip"></i></button>
+                            <button type="button" id="view-list-btn" class="view-toggle-btn" title="List View" aria-label="List View"><i class="fa-solid fa-bars"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notes Content Grid -->
                 <div id="notes-grid"></div>
             </div>
         </div>
 
+        <!-- EDITOR VIEW -->
         <div id="editor-view" style="display: none; flex-direction: column; height: 100%;">
-            <div class="tool-panel" id="editor-panel" style="display: flex; flex-direction: column; flex-grow: 1; padding: 20px;">
-                <div class="notes-header">
-                    <button id="back-to-list" class="back-btn" aria-label="Back to Notes List"><i class="fa-solid fa-arrow-left"></i></button>
-                    <button id="toggle-fullscreen" class="tool-btn" style="flex-grow: 0; width: 45px; margin: 0;" aria-label="Toggle Fullscreen Editor"><i class="fa-solid fa-expand"></i></button>
+            <div class="tool-panel" id="editor-panel">
+                
+                <!-- Editor Top Bar -->
+                <div class="editor-top-nav">
+                    <div class="editor-nav-left">
+                        <button id="back-to-list" class="back-btn" style="width: 42px; height: 42px;" aria-label="Back to Notes List">
+                            <i class="fa-solid fa-arrow-left"></i>
+                        </button>
+                        <span id="save-status" class="save-indicator saved">
+                            <i class="fa-solid fa-check"></i> Saved
+                        </span>
+                    </div>
+
+                    <div class="editor-nav-right">
+                        <button id="btn-pin-note" class="tool-btn" title="Pin Note" aria-label="Pin Note">
+                            <i class="fa-solid fa-thumbtack"></i>
+                        </button>
+                        <button id="btn-copy-note" class="tool-btn" title="Copy Note Text" aria-label="Copy Note Text">
+                            <i class="fa-regular fa-copy"></i>
+                        </button>
+                        <button id="btn-download-note" class="tool-btn" title="Export as TXT file" aria-label="Export as Text">
+                            <i class="fa-solid fa-download"></i>
+                        </button>
+                        <button id="toggle-fullscreen" class="tool-btn" title="Toggle Fullscreen" aria-label="Toggle Fullscreen Editor">
+                            <i class="fa-solid fa-expand"></i>
+                        </button>
+                    </div>
                 </div>
 
-                <input type="text" id="note-title-input" placeholder="Note Title..." style="width: 100%; background: transparent; border: none; border-bottom: 2px solid var(--surface-border); color: #fff; font-size: 1.5rem; font-weight: 600; padding: 10px 5px; margin-bottom: 15px; outline: none;" aria-label="Note Title">
-
-                <div class="toolbar">
-                    <button class="tool-btn" onclick="formatDoc('bold')" title="Bold" aria-label="Bold Format"><i class="fa-solid fa-bold"></i></button>
-                    <button class="tool-btn" onclick="formatDoc('italic')" title="Italic" aria-label="Italic Format"><i class="fa-solid fa-italic"></i></button>
-                    <button class="tool-btn" onclick="formatDoc('formatBlock', 'H2')" title="Heading 2" aria-label="Heading 2 Format">H2</button>
-                    <button class="tool-btn" onclick="formatDoc('insertUnorderedList')" title="Bullet List" aria-label="Bullet List Format"><i class="fa-solid fa-list-ul"></i></button>
-                    <button class="tool-btn" onclick="insertCheckbox()" title="To-Do Checkbox" aria-label="Insert Checkbox"><i class="fa-regular fa-square-check"></i></button>
+                <!-- Note Title Input -->
+                <div class="editor-title-wrap">
+                    <input type="text" id="note-title-input" placeholder="Untitled Note..." aria-label="Note Title">
                 </div>
 
-                <div id="editor-area" contenteditable="true" placeholder="Start typing here..." aria-label="Note Content Editor"></div>
-                <button id="save-note" class="btn custom-btn w-100 mt-3" aria-label="Save Note"><i class="fa-solid fa-floppy-disk"></i> SAVE NOTE</button>
+                <!-- Category Tag Selection -->
+                <div class="category-picker-row">
+                    <span><i class="fa-solid fa-tag"></i> Category:</span>
+                    <button type="button" class="color-dot-btn active" data-cat="default"><span class="dot" style="background: var(--color-cat-default);"></span> General</button>
+                    <button type="button" class="color-dot-btn" data-cat="work"><span class="dot" style="background: var(--color-cat-work);"></span> Work</button>
+                    <button type="button" class="color-dot-btn" data-cat="ideas"><span class="dot" style="background: var(--color-cat-ideas);"></span> Ideas</button>
+                    <button type="button" class="color-dot-btn" data-cat="tasks"><span class="dot" style="background: var(--color-cat-tasks);"></span> Tasks</button>
+                    <button type="button" class="color-dot-btn" data-cat="personal"><span class="dot" style="background: var(--color-cat-personal);"></span> Personal</button>
+                    <button type="button" class="color-dot-btn" data-cat="study"><span class="dot" style="background: var(--color-cat-study);"></span> Study</button>
+                </div>
+
+                <!-- Rich Text Formatting Toolbar -->
+                <div class="rich-toolbar">
+                    <div class="tb-group">
+                        <button type="button" class="tool-btn" onclick="formatDoc('bold')" title="Bold (Ctrl+B)"><i class="fa-solid fa-bold"></i></button>
+                        <button type="button" class="tool-btn" onclick="formatDoc('italic')" title="Italic (Ctrl+I)"><i class="fa-solid fa-italic"></i></button>
+                        <button type="button" class="tool-btn" onclick="formatDoc('underline')" title="Underline (Ctrl+U)"><i class="fa-solid fa-underline"></i></button>
+                        <button type="button" class="tool-btn" onclick="formatDoc('strikeThrough')" title="Strikethrough"><i class="fa-solid fa-strikethrough"></i></button>
+                        <button type="button" class="tool-btn" onclick="highlightText()" title="Highlight Text"><i class="fa-solid fa-highlighter" style="color: #eab308;"></i></button>
+                    </div>
+
+                    <div class="tb-divider"></div>
+
+                    <div class="tb-group">
+                        <button type="button" class="tool-btn" onclick="formatDoc('formatBlock', 'H1')" title="Heading 1">H1</button>
+                        <button type="button" class="tool-btn" onclick="formatDoc('formatBlock', 'H2')" title="Heading 2">H2</button>
+                        <button type="button" class="tool-btn" onclick="formatDoc('formatBlock', 'P')" title="Paragraph (Normal)"><i class="fa-solid fa-paragraph"></i></button>
+                    </div>
+
+                    <div class="tb-divider"></div>
+
+                    <div class="tb-group">
+                        <button type="button" class="tool-btn" onclick="formatDoc('insertUnorderedList')" title="Bullet List"><i class="fa-solid fa-list-ul"></i></button>
+                        <button type="button" class="tool-btn" onclick="formatDoc('insertOrderedList')" title="Numbered List"><i class="fa-solid fa-list-ol"></i></button>
+                        <button type="button" class="tool-btn" onclick="insertCheckbox()" title="Insert Interactive Task Box"><i class="fa-regular fa-square-check text-success"></i></button>
+                        <button type="button" class="tool-btn" onclick="insertQuote()" title="Blockquote"><i class="fa-solid fa-quote-left"></i></button>
+                        <button type="button" class="tool-btn" onclick="insertCodeBlock()" title="Code Block"><i class="fa-solid fa-code"></i></button>
+                    </div>
+
+                    <div class="tb-divider"></div>
+
+                    <div class="tb-group">
+                        <button type="button" class="tool-btn" onclick="formatDoc('removeFormat')" title="Clear Formatting"><i class="fa-solid fa-eraser"></i></button>
+                        <button type="button" class="tool-btn" onclick="formatDoc('undo')" title="Undo"><i class="fa-solid fa-rotate-left"></i></button>
+                        <button type="button" class="tool-btn" onclick="formatDoc('redo')" title="Redo"><i class="fa-solid fa-rotate-right"></i></button>
+                    </div>
+                </div>
+
+                <!-- Note Content Canvas -->
+                <div id="editor-area" contenteditable="true" placeholder="Start typing your thoughts, notes, or tasks here..." aria-label="Note Content Editor"></div>
+                
+                <!-- Live Stats and Actions Footer -->
+                <div class="editor-footer-stats">
+                    <div class="stats-badge-group">
+                        <span id="stat-words"><i class="fa-solid fa-font"></i> 0 words</span>
+                        <span id="stat-chars">0 characters</span>
+                        <span id="stat-read-time"><i class="fa-regular fa-clock"></i> 1 min read</span>
+                    </div>
+                    <button id="save-note" class="btn custom-btn" style="padding: 10px 24px; font-size: 0.9rem;" aria-label="Save Note">
+                        <i class="fa-solid fa-floppy-disk"></i> SAVE NOTE
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -91,7 +924,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close Modal"></button>
                 </div>
                 <div class="modal-body">
-                    <p>Select how you want to restore the imported JSON notes:</p>
+                    <p>Choose how you want to restore the imported notes:</p>
                     <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 15px;">
                         <button type="button" id="btn-notes-merge" class="btn custom-btn" style="text-align: left; justify-content: flex-start;">
                             <i class="fa-solid fa-code-merge"></i> Merge with Existing Notes
@@ -105,6 +938,7 @@
         </div>
     </div>
 
+    <!-- Info Modal -->
     <div class="modal fade" id="infoModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -113,11 +947,12 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <p>Jot down formatted ideas instantly without heavy apps. Everything saves securely to your device offline!</p>
+                    <p>A fast, distraction-free markdown-capable notepad and task manager. All notes are saved 100% securely offline on your device.</p>
                     <ul>
-                        <li><i class="fa-solid fa-pen-nib"></i> <strong>Rich Text:</strong> Use the toolbar to Bold, Italicize, or add clean Headings.</li>
-                        <li><i class="fa-solid fa-square-check"></i> <strong>Smart Lists:</strong> Click the Checkbox icon. Press 'Enter' and a new box appears automatically!</li>
-                        <li><i class="fa-solid fa-floppy-disk"></i> <strong>Auto-Save:</strong> Click back, and your note is automatically stored locally.</li>
+                        <li><i class="fa-solid fa-pen-nib"></i> <strong>Rich Formatting:</strong> Headings, bold, italics, highlights, blockquotes, and code blocks.</li>
+                        <li><i class="fa-solid fa-square-check"></i> <strong>Interactive Tasks:</strong> Insert checkboxes. Tap them right inside notes or view task completion progress on your cards!</li>
+                        <li><i class="fa-solid fa-thumbtack"></i> <strong>Pin & Organize:</strong> Pin important notes to top, assign categories (Work, Personal, Ideas, Study), and filter with one tap.</li>
+                        <li><i class="fa-solid fa-cloud-arrow-down"></i> <strong>Real-time Autosave:</strong> Notes save continuously in the background so you never lose your progress.</li>
                     </ul>
                 </div>
                 <div class="modal-footer">
@@ -130,68 +965,543 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            const listView = document.getElementById('list-view'), editorView = document.getElementById('editor-view');
-            const notesGrid = document.getElementById('notes-grid'), titleInput = document.getElementById('note-title-input');
-            const editorArea = document.getElementById('editor-area'), editorPanel = document.getElementById('editor-panel');
-            
-            let notes = JSON.parse(localStorage.getItem('smart_notes_advanced')) || []; let currentId = null;
+            const listView = document.getElementById('list-view');
+            const editorView = document.getElementById('editor-view');
+            const notesGrid = document.getElementById('notes-grid');
+            const titleInput = document.getElementById('note-title-input');
+            const editorArea = document.getElementById('editor-area');
+            const editorPanel = document.getElementById('editor-panel');
+            const saveStatus = document.getElementById('save-status');
+            const notesCountBadge = document.getElementById('notes-count-badge');
+            const searchInput = document.getElementById('notes-search-input');
+            const searchClearBtn = document.getElementById('notes-search-clear');
+            const sortSelect = document.getElementById('notes-sort-select');
+            const viewGridBtn = document.getElementById('view-grid-btn');
+            const viewListBtn = document.getElementById('view-list-btn');
+            const pinNoteBtn = document.getElementById('btn-pin-note');
+            const statWords = document.getElementById('stat-words');
+            const statChars = document.getElementById('stat-chars');
+            const statReadTime = document.getElementById('stat-read-time');
 
+            let notes = JSON.parse(localStorage.getItem('smart_notes_advanced')) || [];
+            let currentId = null;
+            let currentCategory = 'default';
+            let isCurrentPinned = false;
+            let currentFilter = 'all';
+            let autoSaveTimeout = null;
+
+            // Update UI count badge
+            function updateNotesBadge() {
+                notesCountBadge.innerHTML = `<i class="fa-solid fa-file-lines"></i> ${notes.length} ${notes.length === 1 ? 'Note' : 'Notes'}`;
+            }
+
+            // Convert HTML to human text snippet
+            function getSnippet(html) {
+                const tmp = document.createElement('div');
+                tmp.innerHTML = html || '';
+                return tmp.innerText.trim().replace(/\s+/g, ' ') || 'No content yet...';
+            }
+
+            // Format date relative or localized
+            function formatNoteDate(timestamp) {
+                if (!timestamp) return '';
+                const date = new Date(timestamp);
+                const now = new Date();
+                const diff = (now - date) / 1000;
+                if (diff < 60) return 'Just now';
+                if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+                if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+                return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: date.getFullYear() !== now.getFullYear() ? 'numeric' : undefined });
+            }
+
+            // Render Notes List with Filter and Sort
             function renderNotes() {
+                updateNotesBadge();
                 notesGrid.innerHTML = '';
-                if(notes.length === 0) return notesGrid.innerHTML = '<p style="color: var(--text-muted); grid-column: 1/-1; text-align: center; margin-top: 20px;">No notes yet.</p>';
-                notes.sort((a,b) => b.updatedAt - a.updatedAt).forEach(n => {
-                    const tmp = document.createElement('div'); tmp.innerHTML = n.content;
-                    notesGrid.innerHTML += `<div class="note-card" onclick="openEditor(${n.id})"><h4>${n.title || 'Untitled'}</h4><p>${tmp.innerText || 'Empty...'}</p><span class="date">${new Date(n.updatedAt).toLocaleString()}</span><button class="delete-note" onclick="deleteNote(event, ${n.id})"><i class="fa-solid fa-trash"></i></button></div>`;
+
+                let filtered = [...notes];
+                const query = (searchInput.value || '').trim().toLowerCase();
+
+                // Search query filter
+                if (query) {
+                    filtered = filtered.filter(n => {
+                        const t = (n.title || '').toLowerCase();
+                        const c = getSnippet(n.content).toLowerCase();
+                        return t.includes(query) || c.includes(query);
+                    });
+                }
+
+                // Category or Pinned filter
+                if (currentFilter === 'pinned') {
+                    filtered = filtered.filter(n => n.pinned);
+                } else if (currentFilter === 'tasks') {
+                    filtered = filtered.filter(n => (n.content || '').includes('type="checkbox"'));
+                } else if (currentFilter !== 'all') {
+                    filtered = filtered.filter(n => (n.category || 'default') === currentFilter);
+                }
+
+                // Sort logic
+                const sortMode = sortSelect.value;
+                filtered.sort((a, b) => {
+                    // Pinned notes always surface first unless sorting by title
+                    if (a.pinned !== b.pinned && !sortMode.startsWith('title')) {
+                        return b.pinned ? 1 : -1;
+                    }
+                    if (sortMode === 'updated-desc') return (b.updatedAt || 0) - (a.updatedAt || 0);
+                    if (sortMode === 'updated-asc') return (a.updatedAt || 0) - (b.updatedAt || 0);
+                    if (sortMode === 'title-asc') return (a.title || '').localeCompare(b.title || '');
+                    if (sortMode === 'title-desc') return (b.title || '').localeCompare(a.title || '');
+                    return 0;
+                });
+
+                if (filtered.length === 0) {
+                    const msg = query 
+                        ? `No notes match "<strong>${query}</strong>"` 
+                        : (currentFilter !== 'all' ? `No notes in this category.` : `No notes yet. Tap "NEW NOTE" to create one!`);
+                    notesGrid.innerHTML = `
+                        <div style="grid-column: 1/-1; text-align: center; padding: 40px 20px; color: var(--text-muted);">
+                            <i class="fa-regular fa-note-sticky" style="font-size: 3rem; margin-bottom: 12px; opacity: 0.5;"></i>
+                            <p style="margin: 0; font-size: 1rem;">${msg}</p>
+                            ${query ? `<button onclick="document.getElementById('notes-search-clear').click()" class="btn custom-btn mt-3" style="padding: 6px 16px; font-size: 0.85rem;"><i class="fa-solid fa-rotate-left"></i> Clear Search</button>` : ''}
+                        </div>
+                    `;
+                    return;
+                }
+
+                filtered.forEach(n => {
+                    const cat = n.category || 'default';
+                    const isPinned = !!n.pinned;
+                    const snippet = getSnippet(n.content);
+                    const formattedDate = formatNoteDate(n.updatedAt);
+
+                    // Checkbox statistics
+                    const totalCheckboxes = (n.content.match(/<input[^>]*type=["']checkbox["']/gi) || []).length;
+                    const checkedCheckboxes = (n.content.match(/<input[^>]*type=["']checkbox["'][^>]*checked/gi) || []).length;
+                    
+                    let todoProgressHtml = '';
+                    if (totalCheckboxes > 0) {
+                        const pct = Math.round((checkedCheckboxes / totalCheckboxes) * 100);
+                        todoProgressHtml = `
+                            <div class="card-todo-progress">
+                                <div class="card-todo-info">
+                                    <span><i class="fa-regular fa-square-check"></i> Tasks: ${checkedCheckboxes}/${totalCheckboxes}</span>
+                                    <span>${pct}%</span>
+                                </div>
+                                <div class="card-todo-bar">
+                                    <div class="card-todo-fill" style="width: ${pct}%;"></div>
+                                </div>
+                            </div>
+                        `;
+                    }
+
+                    const card = document.createElement('div');
+                    card.className = `note-card cat-border-${cat} ${isPinned ? 'is-pinned' : ''}`;
+                    card.setAttribute('role', 'button');
+                    card.setAttribute('tabindex', '0');
+                    card.onclick = () => openEditor(n.id);
+
+                    card.innerHTML = `
+                        <div class="note-card-top">
+                            <h4 class="note-card-title">${escapeHtml(n.title || 'Untitled Note')}</h4>
+                            <div class="note-badge-group">
+                                ${isPinned ? `<span class="note-tag text-warning" title="Pinned Note"><i class="fa-solid fa-thumbtack"></i></span>` : ''}
+                                <span class="note-tag cat-badge-${cat}">${cat}</span>
+                            </div>
+                        </div>
+
+                        ${todoProgressHtml}
+
+                        <p class="note-card-snippet">${escapeHtml(snippet)}</p>
+
+                        <div class="note-card-footer">
+                            <span class="note-card-date"><i class="fa-regular fa-clock"></i> ${formattedDate}</span>
+                            <div class="note-actions">
+                                <button type="button" class="card-action-btn pin-btn ${isPinned ? 'active' : ''}" title="${isPinned ? 'Unpin' : 'Pin to top'}" onclick="togglePinNote(event, ${n.id})">
+                                    <i class="fa-solid fa-thumbtack"></i>
+                                </button>
+                                <button type="button" class="card-action-btn" title="Copy text" onclick="copyNoteContent(event, ${n.id})">
+                                    <i class="fa-regular fa-copy"></i>
+                                </button>
+                                <button type="button" class="card-action-btn del-btn" title="Delete note" onclick="deleteNote(event, ${n.id})">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+
+                    notesGrid.appendChild(card);
                 });
             }
 
-            window.openEditor = id => {
-                listView.style.display = 'none'; editorView.style.display = 'flex';
-                if (id) { const n = notes.find(x => x.id === id); currentId = id; titleInput.value = n.title; editorArea.innerHTML = n.content; } 
-                else { currentId = Date.now(); titleInput.value = ''; editorArea.innerHTML = ''; }
+            function escapeHtml(str) {
+                if (!str) return '';
+                const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+                return str.replace(/[&<>"']/g, m => map[m]);
+            }
+
+            // Open Editor
+            window.openEditor = (id) => {
+                listView.style.display = 'none';
+                editorView.style.display = 'flex';
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+
+                if (id) {
+                    const n = notes.find(x => x.id === id);
+                    currentId = id;
+                    titleInput.value = n.title || '';
+                    editorArea.innerHTML = n.content || '';
+                    currentCategory = n.category || 'default';
+                    isCurrentPinned = !!n.pinned;
+                } else {
+                    currentId = Date.now();
+                    titleInput.value = '';
+                    editorArea.innerHTML = '';
+                    currentCategory = 'default';
+                    isCurrentPinned = false;
+                }
+
+                // Update category and pin buttons in editor
+                updateEditorCategoryUI();
+                updatePinBtnUI();
+                updateLiveStats();
+                setSaveStatus('saved');
             };
 
-            document.getElementById('save-note').addEventListener('click', () => {
-                const t = titleInput.value.trim(), c = editorArea.innerHTML, i = notes.findIndex(n => n.id === currentId);
-                if (i > -1) { notes[i].title = t; notes[i].content = c; notes[i].updatedAt = Date.now(); } 
-                else if (t !== '' || c !== '') notes.push({ id: currentId, title: t, content: c, updatedAt: Date.now() });
+            function updateEditorCategoryUI() {
+                document.querySelectorAll('.color-dot-btn').forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.cat === currentCategory);
+                });
+            }
+
+            function updatePinBtnUI() {
+                pinNoteBtn.classList.toggle('active', isCurrentPinned);
+                pinNoteBtn.style.color = isCurrentPinned ? '#eab308' : '';
+                pinNoteBtn.title = isCurrentPinned ? 'Unpin Note' : 'Pin Note';
+            }
+
+            function setSaveStatus(state) {
+                if (state === 'saving') {
+                    saveStatus.className = 'save-indicator saving';
+                    saveStatus.innerHTML = '<i class="fa-solid fa-rotate fa-spin"></i> Saving...';
+                } else {
+                    saveStatus.className = 'save-indicator saved';
+                    saveStatus.innerHTML = '<i class="fa-solid fa-check"></i> Saved';
+                }
+            }
+
+            // Live Word & Character Counter
+            function updateLiveStats() {
+                const text = editorArea.innerText || '';
+                const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+                const chars = text.length;
+                const mins = Math.max(1, Math.ceil(words / 200));
+
+                statWords.innerHTML = `<i class="fa-solid fa-font"></i> ${words} ${words === 1 ? 'word' : 'words'}`;
+                statChars.innerText = `${chars} characters`;
+                statReadTime.innerHTML = `<i class="fa-regular fa-clock"></i> ${mins} min read`;
+            }
+
+            // Save Note Execution
+            function executeSave(silent = false) {
+                const t = titleInput.value.trim();
+                const c = editorArea.innerHTML;
+                if (!currentId) return;
+
+                // Don't save completely empty new notes
+                if (t === '' && (c === '' || c === '<br>')) {
+                    setSaveStatus('saved');
+                    return;
+                }
+
+                const i = notes.findIndex(n => n.id === currentId);
+                const noteObj = {
+                    id: currentId,
+                    title: t,
+                    content: c,
+                    category: currentCategory,
+                    pinned: isCurrentPinned,
+                    updatedAt: Date.now()
+                };
+
+                if (i > -1) {
+                    notes[i] = noteObj;
+                } else {
+                    notes.unshift(noteObj);
+                }
+
                 localStorage.setItem('smart_notes_advanced', JSON.stringify(notes));
-                const b = document.getElementById('save-note'), og = b.innerHTML; b.innerHTML = '<i class="fa-solid fa-check"></i> SAVED!'; b.style.background = 'var(--primary-glow)'; b.style.color = '#000'; setTimeout(()=> { b.innerHTML=og; b.style.background=''; b.style.color=''; }, 1500);
+                setSaveStatus('saved');
+
+                if (!silent) {
+                    const b = document.getElementById('save-note');
+                    const og = b.innerHTML;
+                    b.innerHTML = '<i class="fa-solid fa-check"></i> SAVED!';
+                    b.style.background = 'var(--primary-glow)';
+                    b.style.color = '#000';
+                    setTimeout(() => {
+                        b.innerHTML = og;
+                        b.style.background = '';
+                        b.style.color = '';
+                    }, 1200);
+                }
+            }
+
+            // Debounced auto-save handler
+            function triggerAutoSave() {
+                setSaveStatus('saving');
+                updateLiveStats();
+                clearTimeout(autoSaveTimeout);
+                autoSaveTimeout = setTimeout(() => {
+                    executeSave(true);
+                }, 600);
+            }
+
+            titleInput.addEventListener('input', triggerAutoSave);
+            editorArea.addEventListener('input', triggerAutoSave);
+
+            // Handle Checkbox clicks in editor to persist checked state attribute
+            editorArea.addEventListener('change', (e) => {
+                if (e.target && e.target.type === 'checkbox') {
+                    if (e.target.checked) {
+                        e.target.setAttribute('checked', 'checked');
+                    } else {
+                        e.target.removeAttribute('checked');
+                    }
+                    triggerAutoSave();
+                }
             });
 
-            window.deleteNote = (e, id) => { e.stopPropagation(); if(confirm("Delete note?")) { notes = notes.filter(n => n.id !== id); localStorage.setItem('smart_notes_advanced', JSON.stringify(notes)); renderNotes(); } };
-            document.getElementById('create-new-btn').addEventListener('click', () => openEditor(null));
-            document.getElementById('back-to-list').addEventListener('click', () => { document.getElementById('save-note').click(); editorView.style.display = 'none'; listView.style.display = 'block'; if(editorPanel.classList.contains('fullscreen-active')) toggleFullscreen(); renderNotes(); });
+            document.getElementById('save-note').addEventListener('click', () => executeSave(false));
 
+            // Pin toggle in Editor
+            pinNoteBtn.addEventListener('click', () => {
+                isCurrentPinned = !isCurrentPinned;
+                updatePinBtnUI();
+                triggerAutoSave();
+            });
+
+            // Category picker in Editor
+            document.querySelectorAll('.color-dot-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    currentCategory = btn.dataset.cat;
+                    updateEditorCategoryUI();
+                    triggerAutoSave();
+                });
+            });
+
+            // Back to List View
+            document.getElementById('back-to-list').addEventListener('click', () => {
+                executeSave(true);
+                editorView.style.display = 'none';
+                listView.style.display = 'block';
+                if (editorPanel.classList.contains('fullscreen-active')) toggleFullscreen();
+                renderNotes();
+            });
+
+            // Create New Note
+            document.getElementById('create-new-btn').addEventListener('click', () => openEditor(null));
+
+            // Pin Note from Card
+            window.togglePinNote = (e, id) => {
+                e.stopPropagation();
+                const note = notes.find(n => n.id === id);
+                if (note) {
+                    note.pinned = !note.pinned;
+                    note.updatedAt = Date.now();
+                    localStorage.setItem('smart_notes_advanced', JSON.stringify(notes));
+                    renderNotes();
+                }
+            };
+
+            // Copy Note Plain Text
+            window.copyNoteContent = (e, id) => {
+                e.stopPropagation();
+                const note = notes.find(n => n.id === id);
+                if (!note) return;
+                const text = `${note.title || 'Untitled'}\n\n${getSnippet(note.content)}`;
+                navigator.clipboard.writeText(text).then(() => {
+                    const btn = e.currentTarget;
+                    const og = btn.innerHTML;
+                    btn.innerHTML = '<i class="fa-solid fa-check text-success"></i>';
+                    setTimeout(() => btn.innerHTML = og, 1400);
+                });
+            };
+
+            // Copy Note from inside Editor
+            document.getElementById('btn-copy-note').addEventListener('click', () => {
+                const title = titleInput.value.trim() || 'Untitled Note';
+                const text = `${title}\n\n${getSnippet(editorArea.innerHTML)}`;
+                navigator.clipboard.writeText(text).then(() => {
+                    const btn = document.getElementById('btn-copy-note');
+                    const og = btn.innerHTML;
+                    btn.innerHTML = '<i class="fa-solid fa-check text-success"></i>';
+                    setTimeout(() => btn.innerHTML = og, 1400);
+                });
+            });
+
+            // Export Single Note as TXT
+            document.getElementById('btn-download-note').addEventListener('click', () => {
+                const title = titleInput.value.trim() || 'Untitled_Note';
+                const text = `${title}\n\n${getSnippet(editorArea.innerHTML)}`;
+                const blob = new Blob([text], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${title.replace(/[^a-z0-9_-]/gi, '_')}.txt`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            });
+
+            // Delete Note
+            window.deleteNote = (e, id) => {
+                e.stopPropagation();
+                if (confirm("Are you sure you want to delete this note?")) {
+                    notes = notes.filter(n => n.id !== id);
+                    localStorage.setItem('smart_notes_advanced', JSON.stringify(notes));
+                    renderNotes();
+                }
+            };
+
+            // Fullscreen Toggle
             const fsBtn = document.getElementById('toggle-fullscreen');
-            window.toggleFullscreen = () => { editorPanel.classList.toggle('fullscreen-active'); fsBtn.innerHTML = editorPanel.classList.contains('fullscreen-active') ? '<i class="fa-solid fa-compress"></i>' : '<i class="fa-solid fa-expand"></i>'; };
+            window.toggleFullscreen = () => {
+                editorPanel.classList.toggle('fullscreen-active');
+                fsBtn.innerHTML = editorPanel.classList.contains('fullscreen-active') 
+                    ? '<i class="fa-solid fa-compress"></i>' 
+                    : '<i class="fa-solid fa-expand"></i>';
+            };
             fsBtn.addEventListener('click', toggleFullscreen);
 
-            window.formatDoc = (cmd, val=null) => { document.execCommand(cmd, false, val); editorArea.focus(); };
-            window.insertCheckbox = () => { document.execCommand('insertHTML', false, '&nbsp;<input type="checkbox" style="vertical-align: middle;">&nbsp;'); editorArea.focus(); };
+            // Rich Text Formatting Tools
+            window.formatDoc = (cmd, val = null) => {
+                document.execCommand(cmd, false, val);
+                editorArea.focus();
+                triggerAutoSave();
+            };
 
-            editorArea.addEventListener('paste', e => { e.preventDefault(); document.execCommand('insertText', false, (e.originalEvent || e).clipboardData.getData('text/plain')); });
-            editorArea.addEventListener('keyup', function() { if(this.innerHTML==='<br>'||this.innerHTML==='<br><br>') this.innerHTML=''; });
+            window.highlightText = () => {
+                const sel = window.getSelection();
+                if (!sel.rangeCount || sel.isCollapsed) return;
+                const range = sel.getRangeAt(0);
+                const mark = document.createElement('mark');
+                mark.appendChild(range.extractContents());
+                range.insertNode(mark);
+                editorArea.focus();
+                triggerAutoSave();
+            };
+
+            window.insertCheckbox = () => {
+                document.execCommand('insertHTML', false, '&nbsp;<input type="checkbox">&nbsp;');
+                editorArea.focus();
+                triggerAutoSave();
+            };
+
+            window.insertQuote = () => {
+                document.execCommand('formatBlock', false, 'blockquote');
+                editorArea.focus();
+                triggerAutoSave();
+            };
+
+            window.insertCodeBlock = () => {
+                document.execCommand('formatBlock', false, 'pre');
+                editorArea.focus();
+                triggerAutoSave();
+            };
+
+            // Paste as plain text
+            editorArea.addEventListener('paste', e => {
+                e.preventDefault();
+                const text = (e.clipboardData || window.clipboardData).getData('text/plain');
+                document.execCommand('insertText', false, text);
+            });
+
+            // Smart Checklist behavior on Enter key
             editorArea.addEventListener('keydown', e => {
                 if (e.key === 'Enter') {
-                    const sel = window.getSelection(); if (!sel.rangeCount) return; const range = sel.getRangeAt(0);
+                    const sel = window.getSelection();
+                    if (!sel.rangeCount) return;
+                    const range = sel.getRangeAt(0);
                     let block = range.startContainer.nodeType === 3 ? range.startContainer.parentElement : range.startContainer;
-                    while (block && block.parentElement !== editorArea && block !== editorArea) block = block.parentElement;
+                    while (block && block.parentElement !== editorArea && block !== editorArea) {
+                        block = block.parentElement;
+                    }
                     if (block === editorArea) block = range.startContainer;
+
                     if (block && block.querySelector && block.querySelector('input[type="checkbox"]')) {
-                        if (block.textContent.replace(/\u00A0/g, '').trim() === '') { e.preventDefault(); block.innerHTML = ''; document.execCommand('insertParagraph', false); } 
-                        else { e.preventDefault(); document.execCommand('insertParagraph', false); document.execCommand('insertHTML', false, '&nbsp;<input type="checkbox" style="vertical-align: middle;">&nbsp;'); }
+                        if (block.textContent.replace(/\u00A0/g, '').trim() === '') {
+                            e.preventDefault();
+                            block.innerHTML = '';
+                            document.execCommand('insertParagraph', false);
+                        } else {
+                            e.preventDefault();
+                            document.execCommand('insertParagraph', false);
+                            document.execCommand('insertHTML', false, '&nbsp;<input type="checkbox">&nbsp;');
+                        }
+                    }
+                } else if (e.key === 'Tab') {
+                    e.preventDefault();
+                    document.execCommand('insertText', false, '    ');
+                }
+            });
+
+            // Keyboard shortcut Ctrl+S or Cmd+S
+            document.addEventListener('keydown', e => {
+                if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
+                    if (editorView.style.display !== 'none') {
+                        e.preventDefault();
+                        executeSave(false);
                     }
                 }
             });
-            // Export Notes JSON
+
+            // Filter Chips Event Listeners
+            document.querySelectorAll('#category-filter-bar .cat-chip').forEach(chip => {
+                chip.addEventListener('click', () => {
+                    document.querySelectorAll('#category-filter-bar .cat-chip').forEach(c => c.classList.remove('active'));
+                    chip.classList.add('active');
+                    currentFilter = chip.dataset.filter;
+                    renderNotes();
+                });
+            });
+
+            // Search input handlers
+            searchInput.addEventListener('input', () => {
+                searchClearBtn.style.display = searchInput.value ? 'block' : 'none';
+                renderNotes();
+            });
+
+            searchClearBtn.addEventListener('click', () => {
+                searchInput.value = '';
+                searchClearBtn.style.display = 'none';
+                renderNotes();
+                searchInput.focus();
+            });
+
+            // Sort Select
+            sortSelect.addEventListener('change', renderNotes);
+
+            // View Mode Toggle (Grid vs List)
+            viewGridBtn.addEventListener('click', () => {
+                viewGridBtn.classList.add('active');
+                viewListBtn.classList.remove('active');
+                notesGrid.classList.remove('list-view-mode');
+            });
+
+            viewListBtn.addEventListener('click', () => {
+                viewListBtn.classList.add('active');
+                viewGridBtn.classList.remove('active');
+                notesGrid.classList.add('list-view-mode');
+            });
+
+            // Export All Notes Backup (JSON)
             const btnExportNotes = document.getElementById('btn-export-notes');
             const btnImportNotes = document.getElementById('btn-import-notes');
             const notesImportInput = document.getElementById('notes-import-input');
             const notesImportModalEl = document.getElementById('notesImportModal');
             const btnNotesMerge = document.getElementById('btn-notes-merge');
             const btnNotesOverwrite = document.getElementById('btn-notes-overwrite');
-
             let pendingNotesData = null;
 
             btnExportNotes.addEventListener('click', () => {
@@ -201,7 +1511,7 @@
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = `Advanced_Notes_Backup_${Date.now()}.json`;
+                a.download = `Advanced_Notes_Backup_${new Date().toISOString().slice(0,10)}.json`;
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
@@ -220,7 +1530,7 @@
                 reader.onload = (event) => {
                     try {
                         const parsed = JSON.parse(event.target.result);
-                        if (!Array.isArray(parsed)) throw new Error('File must contain an array of notes.');
+                        if (!Array.isArray(parsed)) throw new Error('File must contain a list of notes.');
                         pendingNotesData = parsed.filter(n => n && typeof n.content === 'string');
                         if (pendingNotesData.length === 0) return alert('No valid notes found in file.');
                         const modal = new bootstrap.Modal(notesImportModalEl);
@@ -234,11 +1544,19 @@
 
             btnNotesMerge.addEventListener('click', () => {
                 if (pendingNotesData) {
-                    notes = [...notes, ...pendingNotesData];
+                    // Avoid duplicating identical IDs
+                    const existingIds = new Set(notes.map(n => n.id));
+                    const newNotes = pendingNotesData.map(n => {
+                        if (existingIds.has(n.id)) {
+                            return { ...n, id: Date.now() + Math.floor(Math.random() * 1000) };
+                        }
+                        return n;
+                    });
+                    notes = [...notes, ...newNotes];
                     localStorage.setItem('smart_notes_advanced', JSON.stringify(notes));
                     renderNotes();
                     bootstrap.Modal.getInstance(notesImportModalEl).hide();
-                    alert(`Successfully merged ${pendingNotesData.length} notes!`);
+                    alert(`Successfully imported and merged ${newNotes.length} notes!`);
                     pendingNotesData = null;
                 }
             });
@@ -249,11 +1567,12 @@
                     localStorage.setItem('smart_notes_advanced', JSON.stringify(notes));
                     renderNotes();
                     bootstrap.Modal.getInstance(notesImportModalEl).hide();
-                    alert(`Successfully overwritten notes with ${pendingNotesData.length} imported notes!`);
+                    alert(`Successfully restored ${pendingNotesData.length} notes!`);
                     pendingNotesData = null;
                 }
             });
 
+            // Initial render
             renderNotes();
         });
     </script>

@@ -2,48 +2,352 @@
 <html lang="en" data-bs-theme="dark">
 <head>
     <meta name="google-site-verification" content="wVRzYZ4sMCmLt2Nk0M3X0GJHZVkDaEkcYBNBnH51abw">
-
     <meta name="google-adsense-account" content="ca-pub-8050432929862649">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <title>Event Countdown & Timer | Smart Mobile Toolkit</title>
-    <meta name="description" content="Countdown remaining days, hours, and minutes for upcoming events, birthdays, and reminders.">
-    <meta name="keywords" content="event countdown, days left timer, event reminder, countdown clock, event tracker">
+    <meta name="description" content="Countdown remaining days, hours, and minutes for upcoming events, birthdays, and reminders with push notifications and audible celebration alerts.">
+    <meta name="keywords" content="event countdown, days left timer, event reminder, countdown clock, event tracker, countdown notification">
     <meta name="author" content="Maria Antony Selvam S">
     <link rel="canonical" href="https://alaneditxz.online/countdown.html">
     <meta property="og:title" content="Event Countdown & Timer | Smart Mobile Toolkit">
-    <meta property="og:description" content="Countdown remaining days, hours, and minutes for upcoming events, birthdays, and reminders.">
+    <meta property="og:description" content="Countdown remaining days, hours, and minutes for upcoming events, birthdays, and reminders with push notifications and audible celebration alerts.">
     <meta property="og:url" content="https://alaneditxz.online/countdown.html">
     <link rel="icon" type="image/svg+xml" href="logo.svg">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
-        .event-card {
-            background: rgba(0,0,0,0.5); border: 1px solid var(--surface-border);
-            border-radius: 16px; padding: 20px; margin-bottom: 20px; text-align: center;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        /* Modern Event Countdown Styling */
+        .notification-status-card {
+            background: rgba(15, 15, 25, 0.65);
+            border: 1px solid var(--surface-border);
+            border-radius: 18px;
+            padding: 16px 20px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            flex-wrap: wrap;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+            backdrop-filter: blur(15px);
+            text-align: left;
         }
-        .event-card h3 { color: #fff; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 20px; text-shadow: 0 0 10px rgba(255,255,255,0.1); }
-        .clock-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
-        .time-box { padding: 10px; border-radius: 12px; }
-        .time-box h2 { margin: 0; font-size: 1.8rem; font-weight: 800; }
-        .time-box span { font-size: 0.7rem; text-transform: uppercase; font-weight: 600; color: var(--text-muted); }
-        
-        .box-days { border: 1px solid var(--primary-glow); box-shadow: 0 0 15px rgba(0,240,255,0.1) inset; }
-        .box-days h2 { color: var(--primary-glow); }
-        .box-hours { border: 1px solid var(--secondary-glow); box-shadow: 0 0 15px rgba(170,0,255,0.1) inset; }
-        .box-hours h2 { color: var(--secondary-glow); }
-        .box-mins { border: 1px solid var(--primary-glow); box-shadow: 0 0 15px rgba(0,240,255,0.1) inset; }
-        .box-mins h2 { color: var(--primary-glow); }
-        .box-secs { border: 1px solid var(--secondary-glow); box-shadow: 0 0 15px rgba(170,0,255,0.1) inset; }
-        .box-secs h2 { color: var(--secondary-glow); }
+
+        .notif-info-box {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex: 1;
+            min-width: 220px;
+        }
+
+        .notif-icon-circle {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--surface-border);
+        }
+
+        .notif-icon-circle.granted {
+            background: rgba(16, 185, 129, 0.15);
+            color: #10b981;
+            border-color: rgba(16, 185, 129, 0.3);
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.2);
+        }
+
+        .notif-icon-circle.denied {
+            background: rgba(255, 68, 68, 0.15);
+            color: var(--danger-color);
+            border-color: rgba(255, 68, 68, 0.3);
+        }
+
+        .notif-icon-circle.prompt {
+            background: rgba(234, 179, 8, 0.15);
+            color: #eab308;
+            border-color: rgba(234, 179, 8, 0.3);
+        }
+
+        .notif-text-title {
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: #fff;
+            margin-bottom: 2px;
+        }
+
+        .notif-text-desc {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            margin: 0;
+            line-height: 1.35;
+        }
+
+        /* Preset Chips */
+        .preset-chips-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            overflow-x: auto;
+            margin-bottom: 18px;
+            padding-bottom: 4px;
+            scrollbar-width: none;
+        }
+        .preset-chips-row::-webkit-scrollbar { display: none; }
+
+        .preset-chip {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--surface-border);
+            color: var(--text-muted);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .preset-chip:hover {
+            color: #fff;
+            border-color: var(--primary-glow);
+            background: rgba(0, 240, 255, 0.1);
+        }
+
+        /* Event Cards */
+        .event-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            background: rgba(0, 0, 0, 0.35);
+            padding: 6px;
+            border-radius: 14px;
+            border: 1px solid var(--surface-border);
+        }
+
+        .event-tab-btn {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 10px;
+            font-size: 0.88rem;
+            font-weight: 700;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .event-tab-btn.active {
+            background: rgba(0, 240, 255, 0.15);
+            color: var(--primary-glow);
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
+        }
+
+        .event-card {
+            background: linear-gradient(150deg, rgba(22, 22, 34, 0.75), rgba(12, 12, 18, 0.9));
+            border: 1px solid var(--surface-border);
+            border-radius: 20px;
+            padding: 22px;
+            margin-bottom: 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        .event-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(0, 240, 255, 0.3);
+        }
+
+        .event-card.event-completed {
+            border-color: rgba(16, 185, 129, 0.4);
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.15);
+        }
+
+        .event-card-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 16px;
+            text-align: left;
+        }
+
+        .event-card-title {
+            margin: 0;
+            color: #ffffff;
+            font-size: 1.3rem;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            word-break: break-word;
+        }
+
+        .event-target-date {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .event-badges-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        .event-pill-badge {
+            font-size: 0.72rem;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .event-pill-notif {
+            background: rgba(170, 0, 255, 0.15);
+            border: 1px solid rgba(170, 0, 255, 0.35);
+            color: var(--secondary-glow);
+        }
+
+        /* Clock Grid */
+        .clock-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin: 18px 0;
+        }
+
+        .time-box {
+            padding: 12px 6px;
+            border-radius: 14px;
+            background: rgba(0, 0, 0, 0.45);
+            border: 1px solid var(--surface-border);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3) inset;
+        }
+
+        .time-box h2 {
+            margin: 0;
+            font-size: 1.85rem;
+            font-weight: 800;
+            font-family: monospace;
+            line-height: 1.1;
+        }
+
+        .time-box span {
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            color: var(--text-muted);
+            margin-top: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        .box-days { border-color: rgba(0, 240, 255, 0.3); box-shadow: 0 0 15px rgba(0, 240, 255, 0.1) inset; }
+        .box-days h2 { color: var(--primary-glow); text-shadow: 0 0 12px rgba(0, 240, 255, 0.4); }
+
+        .box-hours { border-color: rgba(170, 0, 255, 0.3); box-shadow: 0 0 15px rgba(170, 0, 255, 0.1) inset; }
+        .box-hours h2 { color: var(--secondary-glow); text-shadow: 0 0 12px rgba(170, 0, 255, 0.4); }
+
+        .box-mins { border-color: rgba(0, 240, 255, 0.3); box-shadow: 0 0 15px rgba(0, 240, 255, 0.1) inset; }
+        .box-mins h2 { color: var(--primary-glow); text-shadow: 0 0 12px rgba(0, 240, 255, 0.4); }
+
+        .box-secs { border-color: rgba(170, 0, 255, 0.3); box-shadow: 0 0 15px rgba(170, 0, 255, 0.1) inset; }
+        .box-secs h2 { color: var(--secondary-glow); text-shadow: 0 0 12px rgba(170, 0, 255, 0.4); }
+
+        /* Progress Bar */
+        .event-progress-wrap {
+            margin: 14px 0 18px 0;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+            height: 6px;
+            overflow: hidden;
+        }
+
+        .event-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-glow), var(--secondary-glow));
+            transition: width 0.5s ease;
+            box-shadow: 0 0 8px var(--primary-glow);
+        }
+
+        /* Celebration Banner */
+        .celebration-banner {
+            display: none;
+            background: linear-gradient(90deg, rgba(16, 185, 129, 0.2), rgba(0, 240, 255, 0.2));
+            border: 1px solid #10b981;
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 16px;
+            color: #10b981;
+            font-weight: 800;
+            font-size: 1.05rem;
+            animation: pulseGlow 2s infinite ease-in-out;
+        }
+
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 10px rgba(16, 185, 129, 0.3); }
+            50% { box-shadow: 0 0 25px rgba(16, 185, 129, 0.6); }
+            100% { box-shadow: 0 0 10px rgba(16, 185, 129, 0.3); }
+        }
+
+        .event-actions-row {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 10px;
+            padding-top: 14px;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        /* Canvas for confetti */
+        #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        @media (max-width: 600px) {
+            .clock-grid { gap: 6px; }
+            .time-box { padding: 10px 4px; }
+            .time-box h2 { font-size: 1.45rem; }
+            .time-box span { font-size: 0.65rem; }
+            .notification-status-card { flex-direction: column; align-items: stretch; }
+        }
     </style>
     <script defer src="https://cdn.vercel-insights.com/v1/script.js"></script>
     <script src="global-search.js"></script>
 </head>
 <body>
+    <canvas id="confetti-canvas"></canvas>
+
     <nav class="navbar navbar-expand-lg glass-navbar fixed-top">
         <div class="container-fluid">
             <a class="navbar-brand" href="index.html" style="display: flex; align-items: center; gap: 10px;">
@@ -76,27 +380,71 @@
         </div>
         
         <div class="tool-panel">
-            
-            <div id="setup-panel" style="margin-bottom: 40px; padding-bottom: 30px; border-bottom: 2px solid rgba(255,255,255,0.05);">
-                <div class="input-group">
-                    <label>Add a New Event</label>
-                    <input type="text" id="event-name" class="styled-input" placeholder="e.g., BCA Semester Exams...">
+
+            <!-- Notification Status & Test Center Banner -->
+            <div class="notification-status-card" id="notif-status-card">
+                <div class="notif-info-box">
+                    <div class="notif-icon-circle prompt" id="notif-status-icon">
+                        <i class="fa-solid fa-bell"></i>
+                    </div>
+                    <div>
+                        <div class="notif-text-title" id="notif-status-title">Checking Notifications...</div>
+                        <p class="notif-text-desc" id="notif-status-desc">Allow notifications so you never miss your countdown alerts.</p>
+                    </div>
                 </div>
+                <div class="d-flex align-items-center gap-2">
+                    <button type="button" id="btn-request-notif" class="btn custom-btn" style="padding: 8px 16px; font-size: 0.82rem; margin: 0;">
+                        <i class="fa-solid fa-bell"></i> Enable Alerts
+                    </button>
+                    <button type="button" id="btn-test-notif" class="btn custom-btn btn-secondary" style="padding: 8px 16px; font-size: 0.82rem; margin: 0; display: none;">
+                        <i class="fa-solid fa-paper-plane"></i> Test Notification
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Setup New Event Form -->
+            <div id="setup-panel" style="margin-bottom: 30px; padding-bottom: 25px; border-bottom: 2px solid rgba(255,255,255,0.06); text-align: left;">
                 <div class="input-group">
-                    <label>Select Target Date & Time</label>
+                    <label><i class="fa-solid fa-pen"></i> Event Name</label>
+                    <input type="text" id="event-name" class="styled-input" placeholder="e.g., Birthday Party, Project Launch, Final Exam...">
+                </div>
+
+                <!-- Quick Presets -->
+                <div class="preset-chips-row">
+                    <span style="font-size: 0.78rem; color: var(--text-muted); font-weight: 600; white-space: nowrap;"><i class="fa-solid fa-bolt"></i> Quick:</span>
+                    <button type="button" class="preset-chip" onclick="applyQuickPreset(1, 'hours')">+1 Hour</button>
+                    <button type="button" class="preset-chip" onclick="applyQuickPreset(3, 'hours')">+3 Hours</button>
+                    <button type="button" class="preset-chip" onclick="applyQuickPreset(1, 'days')">Tomorrow 9 AM</button>
+                    <button type="button" class="preset-chip" onclick="applyQuickPreset(3, 'days')">+3 Days</button>
+                    <button type="button" class="preset-chip" onclick="applyQuickPreset(7, 'days')">+1 Week</button>
+                    <button type="button" class="preset-chip" onclick="applyQuickPreset(30, 'days')">+1 Month</button>
+                </div>
+
+                <div class="input-group">
+                    <label><i class="fa-regular fa-calendar-days"></i> Target Date & Time</label>
                     <input type="datetime-local" id="event-date" class="styled-input">
                 </div>
-                
-                <div class="control-row" style="margin-bottom: 25px;">
-                    <span style="font-weight: 600; color: #fff;"><i class="fa-solid fa-bell" style="color: var(--secondary-glow); margin-right: 8px;"></i> Notify when time is up</span>
-                    <label class="switch"><input type="checkbox" id="notify-toggle"><span class="slider"></span></label>
+
+                <div class="control-row" style="margin-bottom: 14px;">
+                    <span style="font-weight: 600; color: #fff;"><i class="fa-solid fa-bell" style="color: var(--secondary-glow); margin-right: 8px;"></i> Push notification & audio chime when time is up</span>
+                    <label class="switch"><input type="checkbox" id="notify-toggle" checked><span class="slider"></span></label>
                 </div>
 
-                <button id="btn-start" class="btn custom-btn w-100"><i class="fa-solid fa-plus"></i> ADD COUNTDOWN</button>
+                <button id="btn-start" class="btn custom-btn w-100" style="padding: 14px;"><i class="fa-solid fa-plus"></i> ADD COUNTDOWN</button>
             </div>
 
-            <div id="events-container">
-                </div>
+            <!-- Tab Switcher (Active vs Completed) -->
+            <div class="event-tabs">
+                <button type="button" class="event-tab-btn active" id="tab-active" onclick="switchEventTab('active')">
+                    <i class="fa-solid fa-hourglass-half"></i> Active (<span id="count-active">0</span>)
+                </button>
+                <button type="button" class="event-tab-btn" id="tab-completed" onclick="switchEventTab('completed')">
+                    <i class="fa-solid fa-flag-checkered"></i> Completed (<span id="count-completed">0</span>)
+                </button>
+            </div>
+
+            <!-- Events List Container -->
+            <div id="events-container"></div>
 
         </div>
     </div>
@@ -105,16 +453,17 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" style="color: var(--secondary-glow) !important;"><i class="fa-solid fa-hourglass-half"></i> Event Countdown</h5>
+                    <h5 class="modal-title" style="color: var(--secondary-glow) !important;"><i class="fa-solid fa-hourglass-half"></i> Event Countdown & Alerts</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <p>Track the exact time left until your most important events.</p>
+                    <p>Track remaining days, hours, and minutes for all your milestones with real-time push notifications.</p>
                     <hr style="border-color: rgba(255,255,255,0.1); margin: 15px 0;">
                     <ul style="padding-left: 0;">
-                        <li><i class="fa-solid fa-layer-group"></i> <strong>Multiple Events:</strong> You can now track as many events as you want simultaneously!</li>
-                        <li><i class="fa-solid fa-bell"></i> <strong>Push Alerts:</strong> Enable notifications to get an alert the exact second a countdown hits zero.</li>
-                        <li><i class="fa-solid fa-trash"></i> <strong>Persistent Data:</strong> Events stay forever until you delete them.</li>
+                        <li><i class="fa-solid fa-bell"></i> <strong>Mobile & Desktop Push:</strong> Uses Service Worker notifications so you receive alerts even on Android & iOS mobile PWAs!</li>
+                        <li><i class="fa-solid fa-music"></i> <strong>Offline Chime & Vibration:</strong> Synthesizes a celebratory fanfare and vibrates your phone when the timer hits zero.</li>
+                        <li><i class="fa-solid fa-paper-plane"></i> <strong>Test Notifications:</strong> Tap "Test Notification" anytime to ensure your device displays alerts properly.</li>
+                        <li><i class="fa-solid fa-rotate"></i> <strong>Background Recovery:</strong> If your screen was locked or the tab was backgrounded, it automatically alerts you the moment you wake your phone.</li>
                     </ul>
                 </div>
                 <div class="modal-footer"><button type="button" class="btn custom-btn btn-secondary w-100 m-0" data-bs-dismiss="modal">GOT IT</button></div>
@@ -131,6 +480,16 @@
             const btnStart = document.getElementById('btn-start');
             const eventsContainer = document.getElementById('events-container');
 
+            const notifStatusIcon = document.getElementById('notif-status-icon');
+            const notifStatusTitle = document.getElementById('notif-status-title');
+            const notifStatusDesc = document.getElementById('notif-status-desc');
+            const btnRequestNotif = document.getElementById('btn-request-notif');
+            const btnTestNotif = document.getElementById('btn-test-notif');
+            const countActiveEl = document.getElementById('count-active');
+            const countCompletedEl = document.getElementById('count-completed');
+
+            let currentTab = 'active';
+
             // Set minimum date to right now to prevent past dates
             const now = new Date();
             now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
@@ -143,63 +502,362 @@
                 localStorage.setItem('toolkit_events_v2', JSON.stringify(eventsArray));
             }
 
+            // ==========================================
+            // SOUND & AUDIO SYNTHESIS (Offline Web Audio)
+            // ==========================================
+            function playCelebrationFanfare() {
+                try {
+                    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                    if (!AudioCtx) return;
+                    const ctx = new AudioCtx();
+                    
+                    // Fanfare note sequence: C5, E5, G5, C6
+                    const notes = [523.25, 659.25, 783.99, 1046.50];
+                    notes.forEach((freq, idx) => {
+                        const osc = ctx.createOscillator();
+                        const gain = ctx.createGain();
+                        osc.type = 'triangle';
+                        osc.frequency.setValueAtTime(freq, ctx.currentTime + idx * 0.14);
+                        gain.gain.setValueAtTime(0.25, ctx.currentTime + idx * 0.14);
+                        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + idx * 0.14 + 0.38);
+                        osc.connect(gain);
+                        gain.connect(ctx.destination);
+                        osc.start(ctx.currentTime + idx * 0.14);
+                        osc.stop(ctx.currentTime + idx * 0.14 + 0.42);
+                    });
+                } catch(e) {
+                    console.log("Audio synthesis error:", e);
+                }
+            }
+
+            // ==========================================
+            // CONFETTI PARTICLE SYSTEM (Canvas Zero-Dep)
+            // ==========================================
+            const canvas = document.getElementById('confetti-canvas');
+            const ctx = canvas.getContext('2d');
+            let confettiPieces = [];
+            let animationFrameId = null;
+
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+
+            function triggerConfetti() {
+                const colors = ['#00f0ff', '#aa00ff', '#10b981', '#f59e0b', '#ec4899', '#ffffff'];
+                confettiPieces = [];
+                for (let i = 0; i < 100; i++) {
+                    confettiPieces.push({
+                        x: canvas.width / 2 + (Math.random() * 200 - 100),
+                        y: canvas.height / 3 + (Math.random() * 100 - 50),
+                        w: Math.random() * 10 + 6,
+                        h: Math.random() * 6 + 4,
+                        vx: (Math.random() - 0.5) * 12,
+                        vy: (Math.random() - 1.2) * 14,
+                        angle: Math.random() * 360,
+                        vAngle: (Math.random() - 0.5) * 10,
+                        color: colors[Math.floor(Math.random() * colors.length)],
+                        opacity: 1
+                    });
+                }
+
+                if (!animationFrameId) {
+                    renderConfetti();
+                }
+            }
+
+            function renderConfetti() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                confettiPieces.forEach(p => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.vy += 0.35; // gravity
+                    p.angle += p.vAngle;
+                    p.opacity -= 0.008;
+
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate((p.angle * Math.PI) / 180);
+                    ctx.fillStyle = p.color;
+                    ctx.globalAlpha = Math.max(0, p.opacity);
+                    ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+                    ctx.restore();
+                });
+
+                confettiPieces = confettiPieces.filter(p => p.opacity > 0 && p.y < canvas.height);
+                if (confettiPieces.length > 0) {
+                    animationFrameId = requestAnimationFrame(renderConfetti);
+                } else {
+                    animationFrameId = null;
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                }
+            }
+
+            // ==========================================
+            // CROSS-PLATFORM NOTIFICATION DISPATCHER
+            // ==========================================
+            async function sendEventNotification(title, body, eventTag = 'countdown') {
+                // Trigger audible & vibration feedback
+                playCelebrationFanfare();
+                if ('vibrate' in navigator) {
+                    try { navigator.vibrate([300, 150, 300, 150, 600]); } catch(e){}
+                }
+
+                if (!("Notification" in window)) {
+                    console.log("Web Notifications not supported.");
+                    return false;
+                }
+
+                if (Notification.permission !== "granted") {
+                    console.log("Notification permission not granted.");
+                    return false;
+                }
+
+                const notifOptions = {
+                    body: body,
+                    icon: 'logo.svg',
+                    badge: 'logo.svg',
+                    tag: eventTag,
+                    renotify: true,
+                    requireInteraction: true,
+                    vibrate: [300, 150, 300, 150, 600],
+                    data: { url: '/countdown.html' }
+                };
+
+                // Method 1: Mobile Chrome / Android / PWA ServiceWorker Registration
+                if ('serviceWorker' in navigator) {
+                    try {
+                        const reg = await navigator.serviceWorker.ready;
+                        if (reg && typeof reg.showNotification === 'function') {
+                            await reg.showNotification(title, notifOptions);
+                            return true;
+                        }
+                    } catch (swErr) {
+                        console.warn("ServiceWorker notification failed, using window fallback:", swErr);
+                    }
+                }
+
+                // Method 2: Standard Desktop Window Notification
+                try {
+                    const n = new Notification(title, notifOptions);
+                    n.onclick = () => {
+                        window.focus();
+                        n.close();
+                    };
+                    return true;
+                } catch (winErr) {
+                    console.warn("window.Notification error:", winErr);
+                }
+
+                return false;
+            }
+
+            // Update Notification Status Card UI
+            function updateNotificationStatusUI() {
+                if (!("Notification" in window)) {
+                    notifStatusIcon.className = 'notif-icon-circle denied';
+                    notifStatusIcon.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i>';
+                    notifStatusTitle.innerText = 'Notifications Not Supported';
+                    notifStatusDesc.innerText = 'Your current browser does not support Web Notifications, but audio and visual alerts will work!';
+                    btnRequestNotif.style.display = 'none';
+                    btnTestNotif.style.display = 'none';
+                    return;
+                }
+
+                if (Notification.permission === 'granted') {
+                    notifStatusIcon.className = 'notif-icon-circle granted';
+                    notifStatusIcon.innerHTML = '<i class="fa-solid fa-bell"></i>';
+                    notifStatusTitle.innerText = 'Push Alerts Active';
+                    notifStatusDesc.innerText = 'You will receive device push alerts, sound chimes & vibration when your countdowns finish!';
+                    btnRequestNotif.style.display = 'none';
+                    btnTestNotif.style.display = 'inline-flex';
+                } else if (Notification.permission === 'denied') {
+                    notifStatusIcon.className = 'notif-icon-circle denied';
+                    notifStatusIcon.innerHTML = '<i class="fa-solid fa-bell-slash"></i>';
+                    notifStatusTitle.innerText = 'Alerts Blocked in Browser';
+                    notifStatusDesc.innerText = 'Notifications are blocked in your browser site settings. Tap the lock/tune icon near your address bar to enable.';
+                    btnRequestNotif.style.display = 'none';
+                    btnTestNotif.style.display = 'none';
+                } else {
+                    notifStatusIcon.className = 'notif-icon-circle prompt';
+                    notifStatusIcon.innerHTML = '<i class="fa-solid fa-bell"></i>';
+                    notifStatusTitle.innerText = 'Notifications Not Enabled';
+                    notifStatusDesc.innerText = 'Enable push notifications so you get alerted the exact second your timers complete.';
+                    btnRequestNotif.style.display = 'inline-flex';
+                    btnTestNotif.style.display = 'none';
+                }
+            }
+
             // Request Notification Permission
+            async function requestPermission() {
+                if (!("Notification" in window)) {
+                    alert("This browser does not support desktop notifications.");
+                    return;
+                }
+                try {
+                    const permission = await Notification.requestPermission();
+                    updateNotificationStatusUI();
+                    if (permission === 'granted') {
+                        notifyToggle.checked = true;
+                        sendEventNotification("🔔 Notifications Enabled!", "Smart Mobile Toolkit will now alert you when events arrive.", "permission-granted");
+                    } else if (permission === 'denied') {
+                        notifyToggle.checked = false;
+                        alert("Notifications were blocked. You can re-enable them in your browser site settings.");
+                    }
+                } catch (e) {
+                    console.error("Permission request error:", e);
+                }
+            }
+
+            btnRequestNotif.addEventListener('click', requestPermission);
+
+            // Test Notification Button
+            btnTestNotif.addEventListener('click', async () => {
+                triggerConfetti();
+                const ok = await sendEventNotification("🎉 Test Notification Successful!", "Smart Mobile Toolkit alerts are working with push and sound!", "test-alert");
+                if (ok) {
+                    const og = btnTestNotif.innerHTML;
+                    btnTestNotif.innerHTML = '<i class="fa-solid fa-check text-success"></i> Sent!';
+                    setTimeout(() => btnTestNotif.innerHTML = og, 1800);
+                }
+            });
+
+            // Toggle switch handler
             notifyToggle.addEventListener('change', async () => {
                 if (notifyToggle.checked) {
-                    if (!("Notification" in window)) {
-                        alert("This browser does not support desktop notifications.");
-                        notifyToggle.checked = false;
-                        return;
-                    }
-                    if (Notification.permission !== "granted" && Notification.permission !== "denied") {
-                        const permission = await Notification.requestPermission();
-                        if (permission !== "granted") {
-                            notifyToggle.checked = false;
-                            alert("Notification permission denied. We cannot send you an alert.");
-                        }
-                    } else if (Notification.permission === "denied") {
-                        notifyToggle.checked = false;
-                        alert("Notifications are blocked by your browser settings.");
+                    if (Notification.permission !== "granted") {
+                        await requestPermission();
                     }
                 }
             });
 
+            // Quick Preset Buttons
+            window.applyQuickPreset = (amount, unit) => {
+                const target = new Date();
+                if (unit === 'hours') {
+                    target.setHours(target.getHours() + amount);
+                } else if (unit === 'days') {
+                    target.setDate(target.getDate() + amount);
+                    target.setHours(9, 0, 0, 0); // Default to 9:00 AM
+                }
+                target.setMinutes(target.getMinutes() - target.getTimezoneOffset());
+                eventDateInput.value = target.toISOString().slice(0, 16);
+            };
+
             function formatTime(time) { return time < 10 ? `0${time}` : time; }
 
-            // Render the HTML for all events
+            // Switch between Active and Completed Tabs
+            window.switchEventTab = (tab) => {
+                currentTab = tab;
+                document.getElementById('tab-active').classList.toggle('active', tab === 'active');
+                document.getElementById('tab-completed').classList.toggle('active', tab === 'completed');
+                renderEvents();
+            };
+
+            // Render Events List
             function renderEvents() {
                 eventsContainer.innerHTML = '';
-                
-                if (eventsArray.length === 0) {
-                    eventsContainer.innerHTML = '<p style="color: var(--text-muted); font-size: 0.9rem;">No active countdowns. Add one above!</p>';
+                const currentTime = Date.now();
+
+                const activeEvents = [];
+                const completedEvents = [];
+
+                eventsArray.forEach((ev, idx) => {
+                    const targetTime = new Date(ev.date).getTime();
+                    if (targetTime <= currentTime) {
+                        completedEvents.push({ ev, idx });
+                    } else {
+                        activeEvents.push({ ev, idx });
+                    }
+                });
+
+                countActiveEl.innerText = activeEvents.length;
+                countCompletedEl.innerText = completedEvents.length;
+
+                const listToRender = currentTab === 'active' ? activeEvents : completedEvents;
+
+                if (listToRender.length === 0) {
+                    const emptyMsg = currentTab === 'active' 
+                        ? 'No active countdowns. Add one above!' 
+                        : 'No completed countdowns yet.';
+                    eventsContainer.innerHTML = `
+                        <div style="padding: 35px 20px; text-align: center; color: var(--text-muted);">
+                            <i class="fa-regular fa-clock" style="font-size: 2.8rem; margin-bottom: 12px; opacity: 0.5;"></i>
+                            <p style="margin: 0; font-size: 0.95rem;">${emptyMsg}</p>
+                        </div>
+                    `;
                     return;
                 }
 
-                eventsArray.forEach((ev, index) => {
+                listToRender.forEach(({ ev, idx }) => {
+                    const targetTime = new Date(ev.date).getTime();
+                    const isFinished = targetTime <= currentTime;
+                    const dateFormatted = new Date(ev.date).toLocaleString(undefined, { 
+                        weekday: 'short', month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' 
+                    });
+
                     const card = document.createElement('div');
-                    card.className = 'event-card';
+                    card.className = `event-card ${isFinished ? 'event-completed' : ''}`;
+                    card.id = `card-${idx}`;
+
                     card.innerHTML = `
-                        <h3>${ev.name}</h3>
-                        <div class="clock-grid">
-                            <div class="time-box box-days"><h2 id="d-${index}">00</h2><span>Days</span></div>
-                            <div class="time-box box-hours"><h2 id="h-${index}">00</h2><span>Hours</span></div>
-                            <div class="time-box box-mins"><h2 id="m-${index}">00</h2><span>Mins</span></div>
-                            <div class="time-box box-secs"><h2 id="s-${index}">00</h2><span>Secs</span></div>
+                        <div class="event-card-header">
+                            <div>
+                                <h3 class="event-card-title">${escapeHtml(ev.name)}</h3>
+                                <div class="event-target-date">
+                                    <i class="fa-regular fa-calendar-check text-primary"></i> ${dateFormatted}
+                                </div>
+                            </div>
+                            <div class="event-badges-row">
+                                ${ev.notify ? `<span class="event-pill-badge event-pill-notif" title="Push Alerts Enabled"><i class="fa-solid fa-bell"></i> Alert On</span>` : ''}
+                                ${isFinished ? `<span class="event-pill-badge" style="background: rgba(16,185,129,0.15); color: #10b981; border: 1px solid rgba(16,185,129,0.3);"><i class="fa-solid fa-check"></i> Finished</span>` : ''}
+                            </div>
                         </div>
-                        <p id="msg-${index}" style="color: #25D366; display: none; font-weight: 800; font-size: 1.1rem; margin-bottom: 15px;"><i class="fa-solid fa-party-horn"></i> The event is here!</p>
-                        <button onclick="deleteEvent(${index})" class="btn custom-btn w-100" style="border-color: var(--danger-color); color: var(--danger-color); background: rgba(255, 68, 68, 0.08); padding: 10px;">
-                            <i class="fa-solid fa-trash"></i> DELETE
-                        </button>
+
+                        <div class="clock-grid">
+                            <div class="time-box box-days"><h2 id="d-${idx}">00</h2><span>Days</span></div>
+                            <div class="time-box box-hours"><h2 id="h-${idx}">00</h2><span>Hours</span></div>
+                            <div class="time-box box-mins"><h2 id="m-${idx}">00</h2><span>Mins</span></div>
+                            <div class="time-box box-secs"><h2 id="s-${idx}">00</h2><span>Secs</span></div>
+                        </div>
+
+                        <div class="celebration-banner" id="msg-${idx}">
+                            <i class="fa-solid fa-party-horn"></i> 🎉 The event has arrived!
+                        </div>
+
+                        <div class="event-actions-row">
+                            <button onclick="shareEvent(${idx})" class="btn custom-btn" style="padding: 8px 14px; font-size: 0.8rem; border-color: rgba(255,255,255,0.2); color: #fff;">
+                                <i class="fa-solid fa-share-nodes"></i> Share
+                            </button>
+                            ${isFinished ? `
+                                <button onclick="restartEvent(${idx})" class="btn custom-btn" style="padding: 8px 14px; font-size: 0.8rem;">
+                                    <i class="fa-solid fa-rotate-right"></i> Reset +1 Day
+                                </button>
+                            ` : ''}
+                            <button onclick="deleteEvent(${idx})" class="btn custom-btn" style="border-color: var(--danger-color); color: var(--danger-color); background: rgba(255, 68, 68, 0.08); padding: 8px 14px; font-size: 0.8rem;">
+                                <i class="fa-solid fa-trash"></i> Delete
+                            </button>
+                        </div>
                     `;
+
                     eventsContainer.appendChild(card);
                 });
-                
-                updateAllClocks(); // Run immediately so there's no 1-second delay
+
+                updateAllClocks();
             }
 
-            // The main engine that updates every clock every second
+            function escapeHtml(str) {
+                if (!str) return '';
+                const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+                return str.replace(/[&<>"']/g, m => map[m]);
+            }
+
+            // Main Clock Engine
             function updateAllClocks() {
-                const currentTime = new Date().getTime();
+                const currentTime = Date.now();
+                let stateChanged = false;
 
                 eventsArray.forEach((ev, index) => {
                     const targetDate = new Date(ev.date).getTime();
@@ -211,20 +869,23 @@
                     const elS = document.getElementById(`s-${index}`);
                     const elMsg = document.getElementById(`msg-${index}`);
 
-                    if (!elD) return; // safety check
-
                     if (distance <= 0) {
-                        elD.innerText = "00"; elH.innerText = "00"; elM.innerText = "00"; elS.innerText = "00";
-                        elMsg.style.display = "block";
+                        if (elD) elD.innerText = "00";
+                        if (elH) elH.innerText = "00";
+                        if (elM) elM.innerText = "00";
+                        if (elS) elS.innerText = "00";
+                        if (elMsg) elMsg.style.display = "block";
                         
                         // Fire notification if requested and not yet fired
-                        if (ev.notify && !ev.notified && Notification.permission === "granted") {
-                            try {
-                                new Notification("🎉 It's Time!", { body: `${ev.name} is happening right now!`, icon: "logo.svg" });
-                            } catch (e) { console.log(e); }
-                            
-                            ev.notified = true; // Mark as notified
-                            saveEvents();       // Save state to prevent spam
+                        if (ev.notify && !ev.notified) {
+                            sendEventNotification(
+                                `🎉 It's Time: ${ev.name}!`,
+                                `Your countdown for "${ev.name}" has completed!`,
+                                `event-${index}`
+                            );
+                            triggerConfetti();
+                            ev.notified = true;
+                            stateChanged = true;
                         }
                     } else {
                         const days = Math.floor(distance / (1000 * 60 * 60 * 24));
@@ -232,16 +893,28 @@
                         const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
                         const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-                        elD.innerText = formatTime(days);
-                        elH.innerText = formatTime(hours);
-                        elM.innerText = formatTime(minutes);
-                        elS.innerText = formatTime(seconds);
+                        if (elD) elD.innerText = formatTime(days);
+                        if (elH) elH.innerText = formatTime(hours);
+                        if (elM) elM.innerText = formatTime(minutes);
+                        if (elS) elS.innerText = formatTime(seconds);
                     }
                 });
+
+                if (stateChanged) {
+                    saveEvents();
+                    renderEvents();
+                }
             }
 
-            // Start the global timer interval
+            // Interval timer
             setInterval(updateAllClocks, 1000);
+
+            // Re-check clocks immediately when user returns to tab
+            document.addEventListener('visibilitychange', () => {
+                if (!document.hidden) {
+                    updateAllClocks();
+                }
+            });
 
             // Add new event
             btnStart.addEventListener('click', () => {
@@ -251,30 +924,69 @@
 
                 if (!name || !date) return alert("Please enter an event name and select a date/time.");
 
-                if (new Date(date).getTime() <= new Date().getTime()) {
-                    return alert("Please select a time in the future.");
+                if (new Date(date).getTime() <= Date.now()) {
+                    return alert("Please select a target date & time in the future.");
                 }
 
-                eventsArray.push({ name: name, date: date, notify: wantsNotify, notified: false });
+                // If user wants notifications and permission isn't granted yet, prompt them
+                if (wantsNotify && "Notification" in window && Notification.permission !== "granted") {
+                    requestPermission();
+                }
+
+                eventsArray.push({
+                    id: Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+                    name: name,
+                    date: date,
+                    notify: wantsNotify,
+                    notified: false
+                });
+
                 saveEvents();
                 renderEvents();
 
                 // Clear form
                 eventNameInput.value = '';
                 eventDateInput.value = '';
-                notifyToggle.checked = false;
             });
 
             // Global delete function
             window.deleteEvent = function(index) {
-                if (confirm("Are you sure you want to delete this event?")) {
+                if (confirm("Are you sure you want to delete this countdown?")) {
                     eventsArray.splice(index, 1);
                     saveEvents();
                     renderEvents();
                 }
             };
 
-            // Initial render
+            // Reset finished event
+            window.restartEvent = function(index) {
+                const ev = eventsArray[index];
+                if (!ev) return;
+                const nextDate = new Date();
+                nextDate.setDate(nextDate.getDate() + 1);
+                nextDate.setMinutes(nextDate.getMinutes() - nextDate.getTimezoneOffset());
+                ev.date = nextDate.toISOString().slice(0, 16);
+                ev.notified = false;
+                saveEvents();
+                renderEvents();
+            };
+
+            // Share event
+            window.shareEvent = function(index) {
+                const ev = eventsArray[index];
+                if (!ev) return;
+                const text = `⏳ Countdown to ${ev.name}: Target date is ${new Date(ev.date).toLocaleString()}!`;
+                if (navigator.share) {
+                    navigator.share({ title: ev.name, text: text, url: window.location.href }).catch(() => {});
+                } else {
+                    navigator.clipboard.writeText(text).then(() => {
+                        alert("Countdown summary copied to clipboard!");
+                    });
+                }
+            };
+
+            // Initial setup
+            updateNotificationStatusUI();
             renderEvents();
         });
     </script>

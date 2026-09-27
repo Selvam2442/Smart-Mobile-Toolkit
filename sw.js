@@ -1,4 +1,4 @@
-const CACHE_NAME = 'toolkit-cache-v14';
+const CACHE_NAME = 'toolkit-cache-v15';
 
 // List all the files saved for offline use
 const urlsToCache = [
@@ -89,6 +89,23 @@ self.addEventListener('activate', event => {
           }
         })
       );
+    })
+  );
+});
+
+// 4. NOTIFICATION CLICK STAGE: Focus or open countdown page on notification tap
+self.addEventListener('notificationclick', event => {
+  event.notification.close();
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clientList => {
+      for (const client of clientList) {
+        if (client.url.includes('countdown.html') && 'focus' in client) {
+          return client.focus();
+        }
+      }
+      if (clients.openWindow) {
+        return clients.openWindow('/countdown.html');
+      }
     })
   );
 });

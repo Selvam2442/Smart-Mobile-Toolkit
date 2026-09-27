@@ -1,4 +1,4 @@
-const CACHE_NAME = 'toolkit-cache-v7';
+const CACHE_NAME = 'toolkit-cache-v8';
 
 // List all the files saved for offline use
 const urlsToCache = [
@@ -56,15 +56,15 @@ self.addEventListener('fetch', event => {
         if (response) {
           return response;
         }
-        
+
         // If not in cache, fetch from the internet and dynamically cache it (for CDNs like FontAwesome/Bootstrap)
         return fetch(event.request).then(
-          function(networkResponse) {
-            if(!networkResponse || networkResponse.status !== 200 || networkResponse.type !== 'basic') {
+          function (networkResponse) {
+            if (!networkResponse || networkResponse.status !== 200 || networkResponse.type !== 'basic') {
               return networkResponse;
             }
             const responseToCache = networkResponse.clone();
-            caches.open(CACHE_NAME).then(function(cache) {
+            caches.open(CACHE_NAME).then(function (cache) {
               cache.put(event.request, responseToCache);
             });
             return networkResponse;

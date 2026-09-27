@@ -429,7 +429,11 @@ function injectThemeToggleBtn() {
 }
 
 // Utility helper to setup modern file input drag & drop behavior
-window.setupModernDropzone = function(dropzoneEl, fileInputEl, onFileSelected) {
+window.setupModernDropzone = function(dropzoneId, fileInputId, fileCardId, onFileSelected) {
+    const dropzoneEl = typeof dropzoneId === 'string' ? document.getElementById(dropzoneId) : dropzoneId;
+    const fileInputEl = typeof fileInputId === 'string' ? document.getElementById(fileInputId) : fileInputId;
+    const fileCardEl = typeof fileCardId === 'string' ? document.getElementById(fileCardId) : fileCardId;
+
     if (!dropzoneEl || !fileInputEl) return;
     
     ['dragenter', 'dragover'].forEach(eventName => {
@@ -446,16 +450,46 @@ window.setupModernDropzone = function(dropzoneEl, fileInputEl, onFileSelected) {
         }, false);
     });
 
+    const handleFiles = (files) => {
+        if (!files || files.length === 0) return;
+        const file = files[0];
+        if (fileCardEl) {
+            const nameEl = fileCardEl.querySelector('.dz-filename, .file-name');
+            const sizeEl = fileCardEl.querySelector('.dz-filesize, .file-size');
+            if (nameEl) nameEl.textContent = file.name;
+            if (sizeEl) sizeEl.textContent = `${(file.size / 1024).toFixed(1)} KB`;
+            fileCardEl.classList.remove('d-none');
+            const contentEl = dropzoneEl.querySelector('.dz-content, .dropzone-text-group');
+            if (contentEl) contentEl.classList.add('d-none');
+        }
+        if (typeof onFileSelected === 'function') onFileSelected(file, files);
+    };
+
     dropzoneEl.addEventListener('drop', (e) => {
         const dt = e.dataTransfer;
-        const files = dt.files;
-        if (files && files.length > 0) {
-            fileInputEl.files = files;
-            if (typeof onFileSelected === 'function') onFileSelected(files[0], files);
+        if (dt && dt.files && dt.files.length > 0) {
+            try { fileInputEl.files = dt.files; } catch(err){}
+            handleFiles(dt.files);
         }
     });
 
-    dropzoneEl.addEventListener('click', () => fileInputEl.click());
+    dropzoneEl.addEventListener('click', (e) => {
+        if (e.target.closest('.dz-remove-btn, .btn-close, .remove-file-btn')) {
+            e.stopPropagation();
+            fileInputEl.value = '';
+            if (fileCardEl) {
+                fileCardEl.classList.add('d-none');
+                const contentEl = dropzoneEl.querySelector('.dz-content, .dropzone-text-group');
+                if (contentEl) contentEl.classList.remove('d-none');
+            }
+            if (typeof onFileSelected === 'function') onFileSelected(null, null);
+            return;
+        }
+        if (e.target !== fileInputEl) {
+            fileInputEl.click();
+        }
+    });
+
     dropzoneEl.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
@@ -464,9 +498,7 @@ window.setupModernDropzone = function(dropzoneEl, fileInputEl, onFileSelected) {
     });
 
     fileInputEl.addEventListener('change', () => {
-        if (fileInputEl.files && fileInputEl.files.length > 0) {
-            if (typeof onFileSelected === 'function') onFileSelected(fileInputEl.files[0], fileInputEl.files);
-        }
+        handleFiles(fileInputEl.files);
     });
 };
 

@@ -713,3 +713,176 @@ input[type=range]::-webkit-slider-thumb { height: 22px; width: 22px; border-radi
     transform: translateX(4px);
 }
 
+/* --- PREMIUM WELCOME BANNER --- */
+.welcome-intro-banner {
+    background: linear-gradient(135deg, rgba(20, 20, 30, 0.8), rgba(10, 10, 15, 0.95));
+    backdrop-filter: blur(25px);
+    border: 1px solid rgba(0, 240, 255, 0.3);
+    border-radius: 24px;
+    padding: 35px;
+    margin: 20px 0 30px;
+    position: relative;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.6), 0 0 30px rgba(0, 240, 255, 0.1) inset;
+    text-align: center;
+    overflow: hidden;
+    animation: slideDown 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.welcome-intro-banner::before {
+    content: '';
+    position: absolute;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background: radial-gradient(circle, rgba(0, 240, 255, 0.05) 0%, transparent 60%);
+    animation: rotateSlow 20s linear infinite;
+    pointer-events: none;
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes rotateSlow {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.welcome-badge {
+    display: inline-block;
+    background: rgba(16, 185, 129, 0.15);
+    border: 1px solid rgba(16, 185, 129, 0.4);
+    color: #10b981;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin-bottom: 15px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.welcome-title {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 12px;
+}
+.welcome-title .text-glow {
+    color: var(--primary-glow);
+    text-shadow: 0 0 15px rgba(0, 240, 255, 0.4);
+}
+
+.welcome-desc {
+    color: var(--text-muted);
+    font-size: 1.05rem;
+    max-width: 600px;
+    margin: 0 auto 30px;
+    line-height: 1.6;
+}
+
+.welcome-features {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-bottom: 35px;
+}
+
+.welcome-feature-card {
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid var(--surface-border);
+    border-radius: 16px;
+    padding: 20px;
+    transition: 0.3s;
+}
+
+.welcome-feature-card:hover {
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+}
+
+.feat-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin: 0 auto 15px;
+}
+
+.welcome-feature-card h4 {
+    color: #fff;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.welcome-feature-card p {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    margin: 0;
+    line-height: 1.5;
+}
+
+.welcome-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+}
+
+.btn-glow-primary {
+    background: var(--primary-glow) !important;
+    color: #000 !important;
+    border: none !important;
+    box-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
+}
+.btn-glow-primary:hover {
+    background: #fff !important;
+    box-shadow: 0 0 30px rgba(0, 240, 255, 0.6);
+}
+
+.btn-outline {
+    background: transparent !important;
+    border: 1px solid var(--surface-border) !important;
+    color: #fff !important;
+}
+.btn-outline:hover {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-color: #fff !important;
+}
+
+.welcome-close-btn {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 1.8rem;
+    cursor: pointer;
+    transition: 0.3s;
+}
+.welcome-close-btn:hover {
+    color: #fff;
+    transform: rotate(90deg);
+}
+
+@media (max-width: 768px) {
+    .welcome-features {
+        grid-template-columns: 1fr;
+    }
+    .welcome-title {
+        font-size: 1.8rem;
+    }
+    .welcome-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+    .welcome-actions .btn {
+        width: 100%;
+    }
+}

@@ -118,7 +118,111 @@
     </nav>
 
     <main class="app-container">
-        
+        <!-- PREMIUM WELCOME & INSTALL BANNER -->
+        <div id="welcome-intro-banner" class="welcome-intro-banner" style="display: none;">
+            <button id="btn-close-intro-top" class="welcome-close-btn">&times;</button>
+            <div class="welcome-intro-content">
+                <div class="welcome-badge"><span><i class="fa-solid fa-shield-halved"></i> 100% Secure & Offline</span></div>
+                <h1 class="welcome-title">Your Ultimate <span class="text-glow">Pocket Toolkit</span></h1>
+                <p class="welcome-desc">Over 20+ powerful web utilities. No servers, no tracking, no uploads. Everything happens securely right on your device.</p>
+                
+                <div class="welcome-features">
+                    <div class="welcome-feature-card">
+                        <div class="feat-icon" style="color: var(--primary-glow); background: rgba(0, 240, 255, 0.1);"><i class="fa-solid fa-wifi"></i></div>
+                        <h4>Works Offline</h4>
+                        <p>Access all tools instantly without an internet connection.</p>
+                    </div>
+                    <div class="welcome-feature-card">
+                        <div class="feat-icon" style="color: var(--secondary-glow); background: rgba(170, 0, 255, 0.1);"><i class="fa-solid fa-user-shield"></i></div>
+                        <h4>Private Data</h4>
+                        <p>Your files never leave your device. Zero cloud uploads.</p>
+                    </div>
+                    <div class="welcome-feature-card">
+                        <div class="feat-icon" style="color: #10b981; background: rgba(16, 185, 129, 0.1);"><i class="fa-solid fa-microchip"></i></div>
+                        <h4>Local Storage</h4>
+                        <p>All data and settings are stored locally in your browser.</p>
+                    </div>
+                </div>
+
+                <div class="welcome-actions">
+                    <button id="btn-install-pwa" class="btn custom-btn btn-glow-primary">
+                        <i class="fa-solid fa-download"></i> INSTALL APP
+                    </button>
+                    <button id="btn-dismiss-intro" class="btn custom-btn btn-outline">
+                        Ask Me Later
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const introBanner = document.getElementById('welcome-intro-banner');
+                const btnInstall = document.getElementById('btn-install-pwa');
+                const btnDismiss = document.getElementById('btn-dismiss-intro');
+                const btnClose = document.getElementById('btn-close-intro-top');
+                
+                let deferredPrompt;
+
+                // Check if user has already dismissed the banner
+                const isDismissed = localStorage.getItem('hide_intro_banner') === 'true';
+
+                // Display banner if not dismissed
+                if (!isDismissed) {
+                    introBanner.style.display = 'block';
+                }
+
+                // Handle PWA beforeinstallprompt
+                window.addEventListener('beforeinstallprompt', (e) => {
+                    // Prevent the mini-infobar from appearing on mobile
+                    e.preventDefault();
+                    // Stash the event so it can be triggered later
+                    deferredPrompt = e;
+                });
+
+                // Check if already running in standalone mode (PWA installed)
+                const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+                if (isStandalone) {
+                    btnInstall.style.display = 'none';
+                } else if (!isStandalone && !deferredPrompt && /iPhone|iPad|iPod/.test(navigator.userAgent)) {
+                    // For iOS, beforeinstallprompt isn't supported. Show instruction.
+                    btnInstall.innerHTML = '<i class="fa-brands fa-apple"></i> ADD TO HOME SCREEN';
+                    btnInstall.onclick = () => {
+                        alert("To install on iOS: tap the Share button at the bottom of Safari, then tap 'Add to Home Screen'.");
+                    };
+                }
+
+                // Install Button Click Handler
+                btnInstall.addEventListener('click', async () => {
+                    if (deferredPrompt) {
+                        // Show the install prompt
+                        deferredPrompt.prompt();
+                        // Wait for the user to respond to the prompt
+                        const { outcome } = await deferredPrompt.userChoice;
+                        if (outcome === 'accepted') {
+                            console.log('User accepted the install prompt');
+                            dismissBanner();
+                        }
+                        deferredPrompt = null;
+                    } else if (!/iPhone|iPad|iPod/.test(navigator.userAgent)) {
+                        alert("App is already installed or your browser doesn't support automatic installation.");
+                    }
+                });
+
+                // Dismiss Banner Function
+                function dismissBanner() {
+                    introBanner.style.animation = 'slideDown 0.4s cubic-bezier(0.25, 1, 0.5, 1) reverse forwards';
+                    setTimeout(() => {
+                        introBanner.style.display = 'none';
+                        localStorage.setItem('hide_intro_banner', 'true');
+                    }, 400);
+                }
+
+                btnDismiss.addEventListener('click', dismissBanner);
+                btnClose.addEventListener('click', dismissBanner);
+            });
+        </script>
+
         <!-- ADVANCED GLOBAL SEARCH DASHBOARD ENGINE -->
         <div class="search-container mb-3" style="margin-top: 10px;">
             <div class="search-input-wrapper">

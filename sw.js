@@ -1,4 +1,4 @@
-const CACHE_NAME = 'toolkit-cache-v15';
+const CACHE_NAME = 'toolkit-cache-v16';
 
 // List all the files saved for offline use
 const urlsToCache = [

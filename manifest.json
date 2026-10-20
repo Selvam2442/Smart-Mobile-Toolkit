@@ -1,78 +1,55 @@
 {
-  "name": "Smart Mobile Toolkit - Free Offline Utilities",
-  "short_name": "Toolkit",
-  "description": "The ultimate offline web utility toolkit. File Compressor, Photo Studio, Audio Cutter, PDF Tools, QR Suite & more.",
-  "start_url": "/index.html",
-  "display": "standalone",
-  "background_color": "#050508",
-  "theme_color": "#00f0ff",
-  "orientation": "any",
-  "icons": [
-    {
-      "src": "/logo.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "/logo.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any"
-    }
-  ],
-  "shortcuts": [
-    {
-      "name": "Global Search",
-      "short_name": "Search",
-      "description": "Search 20+ offline tools",
-      "url": "/index.html?q=",
-      "icons": [
-        {
-          "src": "/logo.png",
-          "sizes": "192x192",
-          "type": "image/png"
-        }
-      ]
-    },
-    {
-      "name": "PDF Manager",
-      "short_name": "PDF",
-      "description": "Merge and split PDF files",
-      "url": "/pdf.html",
-      "icons": [
-        {
-          "src": "/logo.png",
-          "sizes": "192x192",
-          "type": "image/png"
-        }
-      ]
-    },
-    {
-      "name": "Photo Studio",
-      "short_name": "Photo Editor",
-      "description": "Edit images offline",
-      "url": "/studio.html",
-      "icons": [
-        {
-          "src": "/logo-192.png",
-          "sizes": "192x192",
-          "type": "image/png"
-        }
-      ]
-    },
-    {
-      "name": "Video to Audio",
-      "short_name": "MP4 to MP3",
-      "description": "Convert video to MP3",
-      "url": "/vid2aud.html",
-      "icons": [
-        {
-          "src": "/logo-192.png",
-          "sizes": "192x192",
-          "type": "image/png"
-        }
-      ]
-    }
-  ]
+"name": "Smart Mobile Toolkit - Free Offline Utilities",
+"short_name": "Toolkit",
+"description": "The ultimate offline web utility toolkit. File Compressor, Photo Studio, Audio Cutter, PDF Tools, QR Suite & more.",
+"start_url": "/index.html",
+"display": "standalone",
+"background_color": "#050508",
+"theme_color": "#00f0ff",
+"orientation": "any",
+"icons": [
+{
+"src": "logo.svg",
+"sizes": "192x192 512x512",
+"type": "image/svg+xml",
+"purpose": "any maskable"
+},
+  {
+"src": "logo.png",
+"sizes": "192x192 512x512",
+"type": "image/png",
+"purpose": "any maskable"
+  }
+],
+"shortcuts": [
+{
+"name": "Global Search",
+"short_name": "Search",
+"description": "Search 20+ offline tools",
+"url": "/index.html?q=",
+"icons": [{ "src": "logo.svg", "sizes": "192x192" }]
+},
+{
+"name": "PDF Manager",
+"short_name": "PDF",
+"description": "Merge and split PDF files",
+"url": "/pdf.html",
+"icons": [{ "src": "logo.svg", "sizes": "192x192" }]
+},
+{
+"name": "Photo Studio",
+"short_name": "Photo Editor",
+"description": "Edit images offline",
+"url": "/studio.html",
+"icons": [{ "src": "logo.svg", "sizes": "192x192" }]
+},
+{
+"name": "Video to Audio",
+"short_name": "MP4 to MP3",
+"description": "Convert video to MP3",
+"url": "/vid2aud.html",
+"icons": [{ "src": "logo.svg", "sizes": "192x192" }]
 }
+]
+}
+

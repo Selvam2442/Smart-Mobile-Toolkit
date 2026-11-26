@@ -1,4 +1,4 @@
-const CACHE_NAME = 'toolkit-cache-v18';
+const CACHE_NAME = 'toolkit-cache-v19';
 
 // List all the files saved for offline use
 const urlsToCache = [
@@ -38,6 +38,7 @@ const urlsToCache = [
 
 // 1. INSTALL STAGE: Cache all local files
 self.addEventListener('install', event => {
+  self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => {
@@ -89,7 +90,7 @@ self.addEventListener('activate', event => {
           }
         })
       );
-    })
+    }).then(() => self.clients.claim())
   );
 });
 

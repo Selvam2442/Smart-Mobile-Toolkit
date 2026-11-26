@@ -1,11 +1,4 @@
-self.options = {
-    "domain": "5gvci.com",
-    "zoneId": 12305546
-};
-self.lary = "";
-importScripts('https://5gvci.com/act/files/service-worker.min.js?r=sw');
-
-const CACHE_NAME = 'toolkit-cache-v17';
+const CACHE_NAME = 'toolkit-cache-v18';
 
 // List all the files saved for offline use
 const urlsToCache = [
